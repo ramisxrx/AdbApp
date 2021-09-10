@@ -49,6 +49,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_TIME + " INTEGER, FOREIGN KEY ("
                 + COLUMN_OBJECT_ID + ") REFERENCES " + TABLE_OBJECTS + "(" + COLUMN_ID + "), FOREIGN KEY ("
                 + COLUMN_FIELD_ID + ") REFERENCES " + TABLE_FIELDS + "(" + COLUMN_ID + "));");
+
+        // добавление начальных данных
+        db.execSQL("INSERT INTO "+ TABLE_NAMES +" (" + COLUMN_NAME + ")" +
+                   "VALUES ('Друг')," +
+                          "('Валеев')," +
+                          "('Азат');");
+
+        db.execSQL("INSERT INTO "+ TABLE_FIELDS +" (" + COLUMN_TYPE + "," + COLUMN_NAME_ID + ")" +
+                "VALUES (0,1)," +
+                       "(0,2)," +
+                       "(0,3);");
+
+        db.execSQL("INSERT INTO "+ TABLE_OBJECTS +" (" + COLUMN_ID + ")" +
+                "VALUES (1);");
+
+        db.execSQL("INSERT INTO "+ TABLE_MAIN +" (" + COLUMN_OBJECT_ID + "," + COLUMN_PARENT_ID + "," + COLUMN_FIELD_ID +")" +
+                "VALUES (1,0,1)," +
+                       "(1,1,1)," +
+                       "(1,1,1);");
+
     }
 
     @Override
