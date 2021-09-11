@@ -25,6 +25,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         userList = (ListView) findViewById(R.id.list);
+        userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+                intent.putExtra("id", id);
+                startActivity(intent);
+            }
+        });
 
         databaseHelper = new DatabaseHelper(getApplicationContext());
     }
@@ -45,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
         userAdapter = new SimpleCursorAdapter(this, android.R.layout.two_line_list_item,
                 userCursor, headers, new int[]{android.R.id.text1, android.R.id.text2}, 0);
         userList.setAdapter(userAdapter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Закрываем подключение и курсор
+        db.close();
+        userCursor.close();
     }
 
 }
