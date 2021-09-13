@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
     ListView userList;
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
-    Cursor userCursor;
+    Cursor userCursor, objectCursor, recordCursor;
     SimpleCursorAdapter userAdapter;
 
     @Override
@@ -42,6 +42,21 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         // открываем подключение
         db = databaseHelper.getReadableDatabase();
+
+        objectCursor = db.rawQuery("select list_objects.id FROM list_objects", null);
+        objectCursor.moveToFirst();
+        while(!objectCursor.isAfterLast()) {
+            recordCursor = db.rawQuery("select record_claster._id, parent_id, _type, _name, _time FROM " +
+                    "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                    "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id", new String[]{objectCursor.getString(0)})
+
+            recordCursor.moveToFirst();
+            while(!recordCursor.isAfterLast() & recordCursor.getInt(1)!=0){
+                recordCursor.moveToNext();
+            }
+
+            objectCursor.moveToNext();
+        }
 
         //получаем данные из бд в виде курсора
         userCursor = db.rawQuery("select record_clusters._id, name_ FROM " +

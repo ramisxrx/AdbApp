@@ -14,8 +14,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // названия столбцов
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TYPE = "type_";
-    public static final String COLUMN_TIME = "time_";
-    public static final String COLUMN_NAME = "name_";
+    public static final String COLUMN_TIME = "_time";
+    public static final String COLUMN_NAME = "_name";
     public static final String COLUMN_NAME_ID = "name_id";
     public static final String COLUMN_FIELD_ID = "field_id";
     public static final String COLUMN_PARENT_ID = "parent_id";
