@@ -10,22 +10,35 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 public class AddActivity extends AppCompatActivity {
 
+    TextView parentRec;
     EditText nameBox;
     Button saveButton;
+    ListView fieldList;
 
     DatabaseHelper sqlHelper;
     SQLiteDatabase db;
     Cursor userCursor;
-    long userId=0;
+    long recordId=0, objectId=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
+        setContentView(R.layout.activity_add);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        parentRec = (TextView) findViewById(R.id.parentRec);
         nameBox = (EditText) findViewById(R.id.name);
+        fieldList = (ListView) findViewById(R.id.fieldList);
         saveButton = (Button) findViewById(R.id.saveButton);
 
         sqlHelper = new DatabaseHelper(this);
@@ -33,32 +46,28 @@ public class AddActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            userId = extras.getLong("id");
+            recordId = extras.getLong("id");
         }
         // если 0, то добавление
-        if (userId > 0) {
+        if (recordId > 0) {
             // получаем элемент по id из бд
-            userCursor = db.rawQuery("select * from " + DatabaseHelper.TABLE + " where " +
-                    DatabaseHelper.COLUMN_ID + "=?", new String[]{String.valueOf(userId)});
+            userCursor = db.rawQuery("select object_id, name_ FROM " +
+                    "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                    "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                    "WHERE  record_clusters._id=?", new String[]{String.valueOf(recordId)});
             userCursor.moveToFirst();
-            nameBox.setText(userCursor.getString(1));
-            yearBox.setText(String.valueOf(userCursor.getInt(2)));
+            objectId = userCursor.getInt(0);
+            parentRec.setText(userCursor.getString(1));
             userCursor.close();
         } else {
 
         }
+
+
     }
 
     public void save(View view){
-        ContentValues cv = new ContentValues();
-        cv.put(DatabaseHelper.COLUMN_NAME, nameBox.getText().toString());
-        cv.put(DatabaseHelper.COLUMN_YEAR, Integer.parseInt(yearBox.getText().toString()));
 
-        if (userId > 0) {
-            db.update(DatabaseHelper.TABLE, cv, DatabaseHelper.COLUMN_ID + "=" + String.valueOf(userId), null);
-        } else {
-            db.insert(DatabaseHelper.TABLE, null, cv);
-        }
         goHome();
     }
 

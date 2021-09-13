@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
         db = databaseHelper.getReadableDatabase();
 
         //получаем данные из бд в виде курсора
-        userCursor = db.rawQuery("select main_clusters._id, name_ FROM " +
-                                     "main_clusters INNER JOIN field_clusters ON main_clusters.field_id=field_clusters._id " +
+        userCursor = db.rawQuery("select record_clusters._id, name_ FROM " +
+                                     "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                                      "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id", null);
         // определяем, какие столбцы из курсора будут выводиться в ListView
         String[] headers = new String[]{"main_clusters._id", DatabaseHelper.COLUMN_NAME};

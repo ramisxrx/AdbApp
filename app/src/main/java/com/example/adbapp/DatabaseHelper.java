@@ -9,7 +9,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int SCHEMA = 1; // версия базы данных
     static final String TABLE_NAMES = "name_clusters"; // название таблицы в бд
     static final String TABLE_FIELDS = "field_clusters"; // название таблицы в бд
-    static final String TABLE_MAIN = "main_clusters"; // название таблицы в бд
+    static final String TABLE_RECORDS = "record_clusters"; // название таблицы в бд
     static final String TABLE_OBJECTS = "list_objects"; // название таблицы в бд
     // названия столбцов
     public static final String COLUMN_ID = "_id";
@@ -41,7 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + TABLE_OBJECTS +
                 " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL);");
 
-        db.execSQL("CREATE TABLE " + TABLE_MAIN +
+        db.execSQL("CREATE TABLE " + TABLE_RECORDS +
                 " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, "
                 + COLUMN_OBJECT_ID + " INTEGER NOT NULL, "
                 + COLUMN_PARENT_ID + " INTEGER, "
@@ -64,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "+ TABLE_OBJECTS +" (" + COLUMN_ID + ")" +
                 "VALUES (1);");
 
-        db.execSQL("INSERT INTO "+ TABLE_MAIN +" (" + COLUMN_OBJECT_ID + "," + COLUMN_PARENT_ID + "," + COLUMN_FIELD_ID +")" +
+        db.execSQL("INSERT INTO "+ TABLE_RECORDS +" (" + COLUMN_OBJECT_ID + "," + COLUMN_PARENT_ID + "," + COLUMN_FIELD_ID +")" +
                 "VALUES (1,0,1)," +
                        "(1,1,2)," +
                        "(1,1,3);");
@@ -75,7 +75,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion,  int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAMES);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_FIELDS);
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_MAIN);
+        db.execSQL("DROP TABLE IF EXISTS "+TABLE_RECORDS);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_OBJECTS);
         onCreate(db);
     }
