@@ -25,6 +25,10 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<String> records = new ArrayList<String>();
     ArrayAdapter<String> recordAdapter;
+    ArrayList<Long> levels = new ArrayList<Long>();
+
+    long rec_id_1=0;
+    int cur_level=0, count_rec=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +57,33 @@ public class MainActivity extends AppCompatActivity {
                     "WHERE object_id=?", new String[]{objectCursor.getString(0)});
 
             recordCursor.moveToFirst();
-            while(!recordCursor.isAfterLast() & recordCursor.getInt(1)!=0){
+            while(!recordCursor.isAfterLast() & recordCursor.getInt(1)!=0)
                 recordCursor.moveToNext();
-            }
 
+            records.add(recordCursor.getString(3));
+
+            count_rec = recordCursor.getCount();
+            cur_level = 0;
+            levels.add(cur_level,recordCursor.getLong(0));
+
+            while(count_rec!=0){
+                recordCursor.moveToFirst();
+
+                while(!recordCursor.isAfterLast() & recordCursor.getInt(1)!=levels.get(cur_level))
+                    recordCursor.moveToNext();
+
+                if(recordCursor.getInt(1)==levels.get(cur_level)){
+                    cur_level = cur_level+1;
+                    levels.add(cur_level,recordCursor.getLong(0));
+                    records.add(recordCursor.getString(3));
+
+                    count_rec = count_rec-1;
+                }
+                if(recordCursor.isAfterLast()){
+                    cur_level = cur_level-1;
+                }
+
+            }
 
             objectCursor.moveToNext();
         }
