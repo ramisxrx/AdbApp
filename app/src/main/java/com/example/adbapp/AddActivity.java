@@ -81,29 +81,13 @@ public class AddActivity extends AppCompatActivity {
             // при изменении текста выполняем фильтрацию
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                fieldCursor = db.rawQuery("select record_claster._id, parent_id, _type, _name, _time FROM " +
+                fieldCursor = db.rawQuery("select record_clasters._id, parent_id, _type, _name, _time FROM " +
                         "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                         "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                         "WHERE _name like ?", new String[]{"%" + s.toString() + "%"});
 
 
                 fieldAdapter.getFilter().filter(s.toString());
-            }
-        });
-
-        // устанавливаем провайдер фильтрации
-        fieldAdapter.setFilterQueryProvider(new FilterQueryProvider() {
-            @Override
-            public Cursor runQuery(CharSequence constraint) {
-
-                if (constraint == null || constraint.length() == 0) {
-
-                    return db.rawQuery("select * from " + DatabaseHelper.TABLE, null);
-                }
-                else {
-                    return db.rawQuery("select * from " + DatabaseHelper.TABLE + " where " +
-                            DatabaseHelper.COLUMN_NAME + " like ?", new String[]{"%" + constraint.toString() + "%"});
-                }
             }
         });
 

@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     static final String TABLE_OBJECTS = "list_objects"; // название таблицы в бд
     // названия столбцов
     public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_TYPE = "type_";
+    public static final String COLUMN_TYPE = "_type";
     public static final String COLUMN_TIME = "_time";
     public static final String COLUMN_NAME = "_name";
     public static final String COLUMN_NAME_ID = "name_id";
@@ -66,6 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("INSERT INTO "+ TABLE_RECORDS +" (" + COLUMN_OBJECT_ID + "," + COLUMN_PARENT_ID + "," + COLUMN_FIELD_ID +")" +
                 "VALUES (1,0,1)," +
+                       "(1,1,2)," +
                        "(1,1,2)," +
                        "(1,1,3);");
 

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.SimpleCursorAdapter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -16,19 +15,18 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ListView userList;
     ListView recordList;
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
-    Cursor userCursor, objectCursor, recordCursor;
-    SimpleCursorAdapter userAdapter;
+    Cursor objectCursor, recordCursor;
 
-    ArrayList<String> records = new ArrayList<String>();
+    ArrayList<String> records = new ArrayList<>();
     ArrayAdapter<String> recordAdapter;
-    ArrayList<Long> levels = new ArrayList<Long>();
+    ArrayList<Long> levels = new ArrayList<>();
+    ArrayList<Long> record_id = new ArrayList<>();
 
-    long rec_id_1=0;
-    int cur_level=0, count_rec=0;
+    int cur_level=0, count_rec=0, i=0;
+    String indent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
 
         recordList = (ListView) findViewById(R.id.list);
         databaseHelper = new DatabaseHelper(getApplicationContext());
+
+        recordAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,records);
+        recordList.setAdapter(recordAdapter);
+
+
+
     }
 
     @Override
@@ -45,48 +49,77 @@ public class MainActivity extends AppCompatActivity {
         // открываем подключение
         db = databaseHelper.getReadableDatabase();
 
-        recordAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,records);
-        recordList.setAdapter(recordAdapter);
+        recordAdapter.clear();
+        records.clear();
+        levels.clear();
+        record_id.clear();
 
-        objectCursor = db.rawQuery("select list_objects.id FROM list_objects", null);
-        objectCursor.moveToFirst();
-        while(!objectCursor.isAfterLast()) {
-            recordCursor = db.rawQuery("select record_claster._id, parent_id, _type, _name, _time FROM " +
+        objectCursor = db.rawQuery("select _id FROM list_objects", null);
+        while(objectCursor.moveToNext()) {
+            recordCursor = db.rawQuery("select record_clusters._id, parent_id, _type, _name, _time FROM " +
                     "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                     "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                     "WHERE object_id=?", new String[]{objectCursor.getString(0)});
 
+            count_rec = recordCursor.getCount();
+
             recordCursor.moveToFirst();
-            while(!recordCursor.isAfterLast() & recordCursor.getInt(1)!=0)
-                recordCursor.moveToNext();
+            i=0;
+            while(i<(recordCursor.getCount()-1) && recordCursor.getInt(1)!=0){
+                i=i+1;
+                recordCursor.moveToPosition(i);
+            }
 
             records.add(recordCursor.getString(3));
+        //    records.add(String.valueOf(count_rec));
+            count_rec = count_rec-1;
 
-            count_rec = recordCursor.getCount();
             cur_level = 0;
-            levels.add(cur_level,recordCursor.getLong(0));
+            levels.add(recordCursor.getLong(0));
 
             while(count_rec!=0){
+
                 recordCursor.moveToFirst();
+                i=0;
+             //   records.add(String.valueOf(levels.get(cur_level)));
+             //   records.add(String.valueOf(cur_level));
+                while(i<(recordCursor.getCount()-1) && (recordCursor.getLong(1)!=levels.get(cur_level) || record_id.contains(recordCursor.getLong(0)))){
+                    i=i+1;
+                    recordCursor.moveToPosition(i);
+                }
 
-                while(!recordCursor.isAfterLast() & recordCursor.getInt(1)!=levels.get(cur_level))
-                    recordCursor.moveToNext();
 
-                if(recordCursor.getInt(1)==levels.get(cur_level)){
+                if(recordCursor.getLong(1)==levels.get(cur_level)){
+                    record_id.add(recordCursor.getLong(0));
+
+                    levels.add(recordCursor.getLong(0));
                     cur_level = cur_level+1;
-                    levels.add(cur_level,recordCursor.getLong(0));
-                    records.add(recordCursor.getString(3));
+
+                    indent = "";
+                    for(i=cur_level; i>0; i--)
+                        indent = indent + "...";
+
+                    records.add(indent + recordCursor.getString(3));
+
+                //    records.add(String.valueOf(cur_level));
 
                     count_rec = count_rec-1;
                 }
-                if(recordCursor.isAfterLast()){
-                    cur_level = cur_level-1;
+                else{
+                    if(i>=(recordCursor.getCount()-1)){
+                        levels.remove(cur_level);
+                        cur_level = cur_level-1;
+                    }
                 }
-
             }
 
-            objectCursor.moveToNext();
+            recordAdapter.notifyDataSetChanged();
+
         }
+
+     //   recordAdapter.notifyDataSetChanged();
+
+
 
 
 
@@ -97,26 +130,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                intent.putExtra("id", id);
+                intent.putExtra("id", record_id.get(Integer.valueOf(id.)));
                 startActivity(intent);
             }
         });
 
-
-
-
-
-
-        //получаем данные из бд в виде курсора
-        userCursor = db.rawQuery("select record_clusters._id, name_ FROM " +
-                                     "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                                     "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id", null);
-        // определяем, какие столбцы из курсора будут выводиться в ListView
-        String[] headers = new String[]{"main_clusters._id", DatabaseHelper.COLUMN_NAME};
-        // создаем адаптер, передаем в него курсор
-        userAdapter = new SimpleCursorAdapter(this, android.R.layout.two_line_list_item,
-                userCursor, headers, new int[]{android.R.id.text1, android.R.id.text2}, 0);
-        userList.setAdapter(userAdapter);
     }
 
     @Override
@@ -124,7 +142,9 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         // Закрываем подключение и курсор
         db.close();
-        userCursor.close();
+        recordCursor.close();
+        objectCursor.close();
+
     }
 
 }
