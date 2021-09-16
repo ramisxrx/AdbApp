@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.ListView;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             records.add(recordCursor.getString(3));
+            record_id.add(recordCursor.getLong(0));
         //    records.add(String.valueOf(count_rec));
             count_rec = count_rec-1;
 
@@ -125,13 +125,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
         recordList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                intent.putExtra("id", record_id.get(Integer.valueOf(id.)));
+                intent.putExtra("id", record_id.get(position-1));
                 startActivity(intent);
+
+
+
             }
         });
 
