@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
-                if(recordCursor.getLong(1)==levels.get(cur_level)){
+                if(recordCursor.getLong(1)==levels.get(cur_level) && !record_id.contains(recordCursor.getLong(0))){
                     record_id.add(recordCursor.getLong(0));
 
                     levels.add(recordCursor.getLong(0));
@@ -97,9 +97,9 @@ public class MainActivity extends AppCompatActivity {
 
                     indent = "";
                     for(i=cur_level; i>0; i--)
-                        indent = indent + "...";
+                        indent = indent + "... ";
 
-                    records.add(indent + recordCursor.getString(3));
+                    records.add(indent + recordCursor.getString(0)+recordCursor.getString(3));
 
                 //    records.add(String.valueOf(cur_level));
 

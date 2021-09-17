@@ -30,11 +30,12 @@ public class AddActivity extends AppCompatActivity {
 
     DatabaseHelper sqlHelper;
     SQLiteDatabase db;
-    Cursor recordCursor;
+    Cursor recordCursor, nameCursor, fieldCursor;
     ArrayAdapter<String> fieldAdapter;
     long recordId=0, objectId=0, fieldIdForSave=0;
     ArrayList<String> fields = new ArrayList<>();
     ArrayList<Long> field_id = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +110,6 @@ public class AddActivity extends AppCompatActivity {
                 fieldAdapter.notifyDataSetChanged();
 
             }
-
-
         });
 
         fieldList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -130,9 +129,11 @@ public class AddActivity extends AppCompatActivity {
 
     public void save(View view){
 
+        ContentValues cv = new ContentValues();
+
         if(fieldIdForSave>0){
 
-            ContentValues cv = new ContentValues();
+            cv.clear();
             cv.put(DatabaseHelper.COLUMN_OBJECT_ID, String.valueOf(objectId));
             cv.put(DatabaseHelper.COLUMN_PARENT_ID, String.valueOf(recordId));
             cv.put(DatabaseHelper.COLUMN_FIELD_ID, String.valueOf(fieldIdForSave));
@@ -141,6 +142,42 @@ public class AddActivity extends AppCompatActivity {
 
   //          recordCursor = db.rawQuery("insert into record_clusters(object_id, parent_id, field_id)" +
      //               "VALUES(?);", new String[]{String.valueOf(objectId)+", "+String.valueOf(recordId)+", "+String.valueOf(fieldIdForSave)});
+        } else {
+            nameCursor = db.rawQuery("select _id FROM name_clusters " +
+                    "WHERE  _name = ?", new String[]{nameBox.getText().toString()});
+
+            if(!nameCursor.moveToFirst()){
+                cv.clear();
+                cv.put(DatabaseHelper.COLUMN_NAME, nameBox.getText().toString());
+                db.insert(DatabaseHelper.TABLE_NAMES,null,cv);
+
+                nameCursor = db.rawQuery("select _id FROM name_clusters " +
+                        "WHERE  _name = ?", new String[]{nameBox.getText().toString()});
+                nameCursor.moveToFirst();
+            }
+
+            cv.clear();
+            cv.put(DatabaseHelper.COLUMN_TYPE, 0);
+            cv.put(DatabaseHelper.COLUMN_NAME_ID, nameCursor.getInt(0));
+            db.insert(DatabaseHelper.TABLE_FIELDS,null,cv);
+
+            fieldCursor = db.rawQuery("select _id FROM field_clusters " +
+                    "WHERE  name_id = ?", new String[]{nameCursor.getString(0)});
+
+            fieldCursor.moveToFirst();
+
+            cv.clear();
+            cv.put(DatabaseHelper.COLUMN_OBJECT_ID, String.valueOf(objectId));
+            cv.put(DatabaseHelper.COLUMN_PARENT_ID, String.valueOf(recordId));
+            cv.put(DatabaseHelper.COLUMN_FIELD_ID, fieldCursor.getString(0));
+
+            db.insert(DatabaseHelper.TABLE_RECORDS,null,cv);
+
+            nameBox.getText().toString();
+
+            nameCursor.close();
+            fieldCursor.close();
+            cv.clear();
         }
 
         goHome();

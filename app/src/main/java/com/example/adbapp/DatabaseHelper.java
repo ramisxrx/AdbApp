@@ -67,7 +67,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "+ TABLE_RECORDS +" (" + COLUMN_OBJECT_ID + "," + COLUMN_PARENT_ID + "," + COLUMN_FIELD_ID +")" +
                 "VALUES (1,0,1)," +
                        "(1,1,2)," +
-                       "(1,1,2)," +
                        "(1,1,3);");
 
     }
