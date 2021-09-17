@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                intent.putExtra("id", record_id.get(position-1));
+                intent.putExtra("id", record_id.get(position));
                 startActivity(intent);
 
 
