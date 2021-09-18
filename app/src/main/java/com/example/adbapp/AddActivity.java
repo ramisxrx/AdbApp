@@ -14,9 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FilterQueryProvider;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
 
@@ -30,7 +28,7 @@ public class AddActivity extends AppCompatActivity {
 
     DatabaseHelper sqlHelper;
     SQLiteDatabase db;
-    Cursor recordCursor, nameCursor, fieldCursor;
+    Cursor recordCursor, nameCursor, fieldCursor, objectCursor;
     ArrayAdapter<String> fieldAdapter;
     long recordId=0, objectId=0, fieldIdForSave=0;
     ArrayList<String> fields = new ArrayList<>();
@@ -64,7 +62,7 @@ public class AddActivity extends AppCompatActivity {
         if (extras != null) {
             recordId = extras.getLong("id");
         }
-        // если 0, то добавление
+
         if (recordId > 0) {
             // получаем элемент по id из бд
             recordCursor = db.rawQuery("select object_id, _name FROM " +
@@ -77,7 +75,13 @@ public class AddActivity extends AppCompatActivity {
             //parentRec.setText(String.valueOf(recordId));
             recordCursor.close();
         } else {
+            objectCursor = db.rawQuery("select _id FROM list_objects", null);
 
+            if(objectCursor.moveToLast())
+                objectId = objectCursor.getInt(0)+1;
+             else
+                objectId = 1;
+            objectCursor.close();
         }
 
         // если в текстовом поле есть текст, выполняем фильтрацию
@@ -108,7 +112,7 @@ public class AddActivity extends AppCompatActivity {
                 }
 
                 fieldAdapter.notifyDataSetChanged();
-
+                recordCursor.close();
             }
         });
 
@@ -130,6 +134,11 @@ public class AddActivity extends AppCompatActivity {
     public void save(View view){
 
         ContentValues cv = new ContentValues();
+
+        if (recordId == 0) {
+            cv.put(DatabaseHelper.COLUMN_ID, objectId);
+            db.insert(DatabaseHelper.TABLE_OBJECTS,null,cv);
+        }
 
         if(fieldIdForSave>0){
 
@@ -173,8 +182,6 @@ public class AddActivity extends AppCompatActivity {
 
             db.insert(DatabaseHelper.TABLE_RECORDS,null,cv);
 
-            nameBox.getText().toString();
-
             nameCursor.close();
             fieldCursor.close();
             cv.clear();
@@ -183,11 +190,14 @@ public class AddActivity extends AppCompatActivity {
         goHome();
     }
 
+    public void back(View view){
+        goHome();
+    }
+
     private void goHome(){
         // закрываем подключение
         db.close();
 
-        recordCursor.close();
         // переход к главной activity
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

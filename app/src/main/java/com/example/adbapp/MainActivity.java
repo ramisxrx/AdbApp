@@ -9,12 +9,14 @@ import android.widget.ArrayAdapter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ListView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     ListView recordList;
+    Button addButton;
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
     Cursor objectCursor, recordCursor;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        addButton = (Button) findViewById(R.id.addButton);
         recordList = (ListView) findViewById(R.id.list);
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
@@ -99,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     for(i=cur_level; i>0; i--)
                         indent = indent + "... ";
 
-                    records.add(indent + recordCursor.getString(0)+recordCursor.getString(3));
+                    records.add(indent + objectCursor.getString(0)+recordCursor.getString(3));
 
                 //    records.add(String.valueOf(cur_level));
 
@@ -112,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+
+            levels.clear();
 
             recordAdapter.notifyDataSetChanged();
 
@@ -137,6 +142,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    public void addObject(View view){
+        Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+        startActivity(intent);
     }
 
     @Override
