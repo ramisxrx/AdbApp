@@ -4,26 +4,22 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.ListView;
 import java.util.ArrayList;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 
-    ListView recordList;
     Button addButton;
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
     Cursor objectCursor, recordCursor;
+    RecordAdapter recordAdapter;
 
-    ArrayList<Record> records = new ArrayList<Record>();
-    ArrayAdapter<String> recordAdapter;
+    ArrayList<Record> records = new ArrayList<>();
     ArrayList<Long> levels = new ArrayList<>();
     ArrayList<Long> record_id = new ArrayList<>();
 
@@ -39,7 +35,15 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
-        RecordAdapter recordAdapter = new RecordAdapter(this, records);
+        RecordAdapter.OnRecordClickListener recordClickListener = new RecordAdapter.OnRecordClickListener() {
+            @Override
+            public void onRecordClick(Record record, int position) {
+                Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+                intent.putExtra("id", record_id.get(position));
+                startActivity(intent);
+            }
+        };
+        RecordAdapter recordAdapter = new RecordAdapter(this, records, recordClickListener);
         recordList.setAdapter(recordAdapter);
 
 
@@ -52,11 +56,10 @@ public class MainActivity extends AppCompatActivity {
         // открываем подключение
         db = databaseHelper.getReadableDatabase();
 
-        recordAdapter.clear();
         records.clear();
-        levels.clear();
+    //    levels.clear();
         record_id.clear();
-
+    /*
         objectCursor = db.rawQuery("select _id FROM list_objects", null);
         while(objectCursor.moveToNext()) {
             recordCursor = db.rawQuery("select record_clusters._id, parent_id, _type, _name, _time FROM " +
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             records.add(new Record(recordCursor.getString(3),1));
+           // recordAdapter.notifyItemRangeInserted(0,records.size());
             record_id.add(recordCursor.getLong(0));
         //    records.add(String.valueOf(count_rec));
             count_rec = count_rec-1;
@@ -104,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                         indent = indent + "... ";
 
                     records.add(new Record(indent + objectCursor.getString(0)+recordCursor.getString(3),1));
-
+                 //   recordAdapter.notifyItemRangeChanged(0,records.size());
                 //    records.add(String.valueOf(cur_level));
 
                     count_rec = count_rec-1;
@@ -119,38 +123,24 @@ public class MainActivity extends AppCompatActivity {
 
             levels.clear();
 
-            recordAdapter.notifyDataSetChanged();
+        //    recordAdapter.notifyDataSetChanged();
 
         }
+    */
+        recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                "WHERE parent_id=?", new String[]{String.valueOf(0)});
 
-     //   recordAdapter.notifyDataSetChanged();
+        while(recordCursor.moveToNext()){
+            records.add(new Record(recordCursor.getString(2),3));
+            record_id.add(recordCursor.getLong(0));
+        }
 
+   //     objectCursor = db.rawQuery("select _id FROM list_objects", null);
+    //    while(objectCursor.moveToNext()) {
 
-
-
-
-
-
-        recordList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                intent.putExtra("id", record_id.get(position));
-                startActivity(intent);
-
-
-
-            }
-        });
-
-
-        RecordAdapter.OnStateClickListener stateClickListener = new RecordAdapter.OnStateClickListener() {
-            @Override
-            public void onStateClick(Record record, int position) {
-
-
-            }
-        };
+     //   }
 
     }
 

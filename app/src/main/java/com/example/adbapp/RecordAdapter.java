@@ -12,17 +12,17 @@ import java.util.List;
 
 public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder> {
 
-    interface OnStateClickListener{
-        void onStateClick(Record record, int position);
+    interface OnRecordClickListener{
+        void onRecordClick(Record record, int position);
     }
 
-    private final OnStateClickListener onClickListener;
+    private final OnRecordClickListener onClickListener;
 
     private final LayoutInflater inflater;
     private final List<Record> records;
 
 
-    RecordAdapter(Context context, List<Record> records, OnStateClickListener onClickListener) {
+    RecordAdapter(Context context, List<Record> records, OnRecordClickListener onClickListener) {
         this.onClickListener = onClickListener;
         this.records = records;
         this.inflater = LayoutInflater.from(context);
@@ -39,7 +39,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public void onBindViewHolder(RecordAdapter.ViewHolder holder, int position) {
         Record record = records.get(position);
         holder.nameView.setText(record.getName());
-        holder.timeView.setText(record.getTime());
+        holder.timeView.setText(String.valueOf(record.getTime()));
 
         // обработка нажатия
         holder.itemView.setOnClickListener(new View.OnClickListener(){
@@ -47,7 +47,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
             public void onClick(View v)
             {
                 // вызываем метод слушателя, передавая ему данные
-                onClickListener.onStateClick(record, holder.getAdapterPosition());
+                onClickListener.onRecordClick(record, holder.getAdapterPosition());
             }
         });
 
