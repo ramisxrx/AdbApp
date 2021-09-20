@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ListView;
 import java.util.ArrayList;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db;
     Cursor objectCursor, recordCursor;
 
-    ArrayList<String> records = new ArrayList<>();
+    ArrayList<Record> records = new ArrayList<Record>();
     ArrayAdapter<String> recordAdapter;
     ArrayList<Long> levels = new ArrayList<>();
     ArrayList<Long> record_id = new ArrayList<>();
@@ -35,10 +36,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         addButton = (Button) findViewById(R.id.addButton);
-        recordList = (ListView) findViewById(R.id.list);
+        RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
-        recordAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,records);
+        RecordAdapter recordAdapter = new RecordAdapter(this, records);
         recordList.setAdapter(recordAdapter);
 
 
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 recordCursor.moveToPosition(i);
             }
 
-            records.add(recordCursor.getString(3));
+            records.add(new Record(recordCursor.getString(3),1));
             record_id.add(recordCursor.getLong(0));
         //    records.add(String.valueOf(count_rec));
             count_rec = count_rec-1;
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                     for(i=cur_level; i>0; i--)
                         indent = indent + "... ";
 
-                    records.add(indent + objectCursor.getString(0)+recordCursor.getString(3));
+                    records.add(new Record(indent + objectCursor.getString(0)+recordCursor.getString(3),1));
 
                 //    records.add(String.valueOf(cur_level));
 
@@ -141,6 +142,15 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+        RecordAdapter.OnStateClickListener stateClickListener = new RecordAdapter.OnStateClickListener() {
+            @Override
+            public void onStateClick(Record record, int position) {
+
+
+            }
+        };
 
     }
 
