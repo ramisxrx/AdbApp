@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     int cur_level=0, count_rec=0, i=0;
     String indent;
+    long count_childRec=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,14 +128,18 @@ public class MainActivity extends AppCompatActivity {
 
         }
     */
-        recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+        objectCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
                 "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                 "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                 "WHERE parent_id=?", new String[]{String.valueOf(0)});
 
-        while(recordCursor.moveToNext()){
-            records.add(new Record(recordCursor.getString(2),3));
-            record_id.add(recordCursor.getLong(0));
+        recordCursor = db.rawQuery("select _id FROM record_clusters WHERE ;", null);
+
+        while(objectCursor.moveToNext()){
+
+            records.add(new Record(objectCursor.getString(2),3));
+            record_id.add(objectCursor.getLong(0));
+
         }
 
    //     objectCursor = db.rawQuery("select _id FROM list_objects", null);

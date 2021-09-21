@@ -6,6 +6,7 @@ public class Record {
 
     private String _name;
     private int _time;
+    private boolean haveChildRec;
 
 
     public Record(String _name, int _time) {
