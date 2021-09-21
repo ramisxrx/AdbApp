@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -41,6 +42,9 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         holder.nameView.setText(record.getName());
         holder.timeView.setText(String.valueOf(record.getTime()));
 
+        holder.blockView.setPadding(records.get(position).getLevel()*80,0,0,0);
+
+
         // обработка нажатия
         holder.itemView.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -61,10 +65,12 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView nameView, timeView;
+        final ConstraintLayout blockView;
         ViewHolder(View view){
             super(view);
             nameView = (TextView) view.findViewById(R.id.name);
             timeView = (TextView) view.findViewById(R.id.time);
+            blockView = (ConstraintLayout) view.findViewById(R.id.block_field);
         }
     }
 }

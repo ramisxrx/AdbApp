@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     int cur_level=0, count_rec=0, i=0;
     String indent;
+    long count_childRec=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRecordClick(Record record, int position) {
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                intent.putExtra("id", record_id.get(position));
+                //intent.putExtra("id", record_id.get(position));
+                intent.putExtra("id", records.get(position).getRecord_id());
                 startActivity(intent);
             }
         };
@@ -127,15 +129,29 @@ public class MainActivity extends AppCompatActivity {
 
         }
     */
-        recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+        objectCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
                 "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                 "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                "WHERE parent_id=?", new String[]{String.valueOf(0)});
+                "WHERE parent_id=0", null);
 
-        while(recordCursor.moveToNext()){
-            records.add(new Record(recordCursor.getString(2),3));
-            record_id.add(recordCursor.getLong(0));
+
+
+        while(objectCursor.moveToNext()){
+
+            recordCursor = db.rawQuery("select _id FROM record_clusters WHERE parent_id=?", new String[]{objectCursor.getString(0)});
+            if(recordCursor.moveToFirst()){
+                count_childRec = count_childRec+1;
+                records.add(new Record(objectCursor.getInt(0),objectCursor.getString(2),objectCursor.getInt(3),true,0));
+            } else
+                records.add(new Record(objectCursor.getInt(0),objectCursor.getString(2),objectCursor.getInt(3),false,0));
+
         }
+
+        while (count_childRec>0){
+
+
+        }
+
 
    //     objectCursor = db.rawQuery("select _id FROM list_objects", null);
     //    while(objectCursor.moveToNext()) {
