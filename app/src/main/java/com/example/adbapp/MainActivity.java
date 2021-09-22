@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Long> levels = new ArrayList<>();
     ArrayList<Long> record_id = new ArrayList<>();
 
-    int cur_level=0, count_rec=0, i=0;
+    int cur_level=0, count_rec=0, i=0, curRecId=0;
     String indent;
     long count_childRec=0;
 
@@ -129,34 +129,108 @@ public class MainActivity extends AppCompatActivity {
 
         }
     */
-        objectCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
-                "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                "WHERE parent_id=0", null);
 
 
 
-        while(objectCursor.moveToNext()){
+        curRecId = -1;
+        objectCursor = db.rawQuery("select _id FROM list_objects", null);
+        while(objectCursor.moveToNext()) {
+            recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                    "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                    "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                    "WHERE object_id=0", new String[]{objectCursor.getString(0)});
 
-            recordCursor = db.rawQuery("select _id FROM record_clusters WHERE parent_id=?", new String[]{objectCursor.getString(0)});
-            if(recordCursor.moveToFirst()){
-                count_childRec = count_childRec+1;
-                records.add(new Record(objectCursor.getInt(0),objectCursor.getString(2),objectCursor.getInt(3),true,0));
-            } else
-                records.add(new Record(objectCursor.getInt(0),objectCursor.getString(2),objectCursor.getInt(3),false,0));
+            count_rec = recordCursor.getCount();
+
+            cur_level = 0;
+
+            if(count_rec>0) {
+
+                for(i=0;i<recordCursor.getCount();i++){
+                    recordCursor.moveToPosition(i);
+                    if(recordCursor.getInt(1) == 0) {
+                        records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(3), cur_level));
+                        curRecId = curRecId + 1;
+                        count_rec = count_rec -1;
+                        break;
+                    }
+                }
+
+                for(i=0;i<recordCursor.getCount();i++){
+                    recordCursor.moveToPosition(i);
+                    if(recordCursor.getInt(1) == records.get(curRecId).getRecord_id()) {
+                        records.get(curRecId).setHasChildRec(true);
+                        break;
+                    }
+                }
+            }
+
+            cur_level=0;
+            levels.add(recordCursor.getLong(0));
+            while (cur_level>-1){
+
+                for(i=0;i<recordCursor.getCount();i++){
+                    recordCursor.moveToPosition(i);
+                    if(recordCursor.getInt(1) == levels.get(cur_level)) {
+                        records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(3), cur_level));
+                        curRecId = curRecId + 1;
+                        count_rec = count_rec -1;
+                        levels.add(recordCursor.getLong(0));
+                        cur_level = cur_level+1;
+                        break;
+                    }
+                }
+                if(i==recordCursor.getCount()){
+                    levels.remove(cur_level);
+                    cur_level = cur_level-1;
+                }
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            count_rec = recordCursor.getCount();
+            curRecId = -1;
+            cur_level = -1;
+
+            while(count_rec>0){
+
+                i = 0;
+                while (i < (recordCursor.getCount() - 1) && recordCursor.getInt(1) != 0) {
+                    i = i + 1;
+                    recordCursor.moveToPosition(i);
+                }
+
+                curRecId = curRecId+1;
+                records.add(new Record(recordCursor.getInt(0),recordCursor.getString(2),recordCursor.getInt(3),cur_level+1));
+
+                i = 0;
+                while (i < (recordCursor.getCount() - 1) && recordCursor.getInt(1) != records.get(curRecId).getRecord_id()) {
+                    i = i + 1;
+                    recordCursor.moveToPosition(i);
+                }
+
+                records.get(curRecId).setHasChildRec(recordCursor.getInt(1) != records.get(curRecId).getRecord_id());
+
+                cur_level = cur_level+1;
+
+            }
 
         }
-
-        while (count_childRec>0){
-
-
-        }
-
-
-   //     objectCursor = db.rawQuery("select _id FROM list_objects", null);
-    //    while(objectCursor.moveToNext()) {
-
-     //   }
 
     }
 

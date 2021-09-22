@@ -6,15 +6,14 @@ public class Record {
 
     private int record_id,_time, level;
     private String _name;
-    private boolean hasChildRec;
+    private boolean hasChildRec=false;
 
 
-    public Record(int record_id, String _name, int _time, boolean haveChildRec,int level) {
+    public Record(int record_id, String _name, int _time,int level) {
 
         this.record_id =record_id;
         this._name = _name;
         this._time = _time;
-        this.hasChildRec = haveChildRec
         this.level = level;
     }
 
