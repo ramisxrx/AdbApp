@@ -18,11 +18,14 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db;
     Cursor objectCursor, recordCursor;
     RecordAdapter recordAdapter;
+    RecordAdapter.OnRecordClickListener recordClickListener;
 
 
     ArrayList<Record> records = new ArrayList<>();
     ArrayList<Long> levels = new ArrayList<>();
     ArrayList<Long> record_id = new ArrayList<>();
+
+    boolean reqToFillRec;
 
     int cur_level=0, count_rec=0, i,j, curRecId=0;
     String indent;
@@ -37,105 +40,37 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
-        RecordAdapter.OnRecordClickListener recordClickListener = new RecordAdapter.OnRecordClickListener() {
+        recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
             public void onRecordClick(Record record, int position) {
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                //intent.putExtra("id", record_id.get(position));
-                intent.putExtra("id", records.get(position).getRecord_id());
+                //intent.putExtra("id", 1);
+                intent.putExtra("id", record.getRecord_id());
                 startActivity(intent);
             }
         };
-        RecordAdapter recordAdapter = new RecordAdapter(this, records, recordClickListener);
+        recordAdapter = new RecordAdapter(this, records, recordClickListener);
         recordList.setAdapter(recordAdapter);
 
-
+        reqToFillRec = true;
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        if(reqToFillRec) {
+            fillingOfRecords();
+            reqToFillRec = false;
+        }
+    }
+
+    public void fillingOfRecords(){
+
         // открываем подключение
         db = databaseHelper.getReadableDatabase();
 
-
-
-        records.clear();
-    //    levels.clear();
-        record_id.clear();
-    /*
-        objectCursor = db.rawQuery("select _id FROM list_objects", null);
-        while(objectCursor.moveToNext()) {
-            recordCursor = db.rawQuery("select record_clusters._id, parent_id, _type, _name, _time FROM " +
-                    "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                    "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                    "WHERE object_id=?", new String[]{objectCursor.getString(0)});
-
-            count_rec = recordCursor.getCount();
-
-            recordCursor.moveToFirst();
-            i=0;
-            while(i<(recordCursor.getCount()-1) && recordCursor.getInt(1)!=0){
-                i=i+1;
-                recordCursor.moveToPosition(i);
-            }
-
-            records.add(new Record(recordCursor.getString(3),1));
-           // recordAdapter.notifyItemRangeInserted(0,records.size());
-            record_id.add(recordCursor.getLong(0));
-        //    records.add(String.valueOf(count_rec));
-            count_rec = count_rec-1;
-
-            cur_level = 0;
-            levels.add(recordCursor.getLong(0));
-
-            while(count_rec!=0){
-
-                recordCursor.moveToFirst();
-                i=0;
-             //   records.add(String.valueOf(levels.get(cur_level)));
-             //   records.add(String.valueOf(cur_level));
-                while(i<(recordCursor.getCount()-1) && (recordCursor.getLong(1)!=levels.get(cur_level) || record_id.contains(recordCursor.getLong(0)))){
-                    i=i+1;
-                    recordCursor.moveToPosition(i);
-                }
-
-
-                if(recordCursor.getLong(1)==levels.get(cur_level) && !record_id.contains(recordCursor.getLong(0))){
-                    record_id.add(recordCursor.getLong(0));
-
-                    levels.add(recordCursor.getLong(0));
-                    cur_level = cur_level+1;
-
-                    indent = "";
-                    for(i=cur_level; i>0; i--)
-                        indent = indent + "... ";
-
-                    records.add(new Record(indent + objectCursor.getString(0)+recordCursor.getString(3),1));
-                 //   recordAdapter.notifyItemRangeChanged(0,records.size());
-                //    records.add(String.valueOf(cur_level));
-
-                    count_rec = count_rec-1;
-                }
-                else{
-                    if(i>=(recordCursor.getCount()-1)){
-                        levels.remove(cur_level);
-                        cur_level = cur_level-1;
-                    }
-                }
-            }
-
-            levels.clear();
-
-        //    recordAdapter.notifyDataSetChanged();
-
-        }
-    */
-
-
-
-        curRecId = -1;
         objectCursor = db.rawQuery("select _id FROM list_objects", null);
         while(objectCursor.moveToNext()) {
             recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
@@ -144,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
                     "WHERE object_id=?", new String[]{objectCursor.getString(0)});
 
             count_rec = recordCursor.getCount();
+
+            curRecId = -1;
 
             levels.clear();
             cur_level=0;

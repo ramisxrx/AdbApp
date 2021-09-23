@@ -60,7 +60,7 @@ public class AddActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            recordId = extras.getLong("id");
+            recordId = extras.getInt("id");
         }
 
         if (recordId > 0) {
