@@ -39,10 +39,4 @@
                 app:layout_constraintTop_toBottomOf="@+id/name" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="2dp"
-        android:background="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/block_field"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

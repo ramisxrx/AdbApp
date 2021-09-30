@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
 import java.util.ArrayList;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
 
         addButton = (Button) findViewById(R.id.addButton);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
+
+        LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
+        layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);
+
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
         recordClickListener = new RecordAdapter.OnRecordClickListener() {
@@ -51,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
         };
         recordAdapter = new RecordAdapter(this, records, recordClickListener);
         recordList.setAdapter(recordAdapter);
+
+        recordList.setLayoutManager(layoutmanager);
+        recordList.addItemDecoration(new RecordDecoration());
 
         reqToFillRec = true;
 
