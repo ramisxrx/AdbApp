@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         recordList.setAdapter(recordAdapter);
 
         recordList.setLayoutManager(layoutmanager);
-        recordList.addItemDecoration(new RecordDecoration());
+        recordList.addItemDecoration(new RecordDecoration(records));
 
         reqToFillRec = true;
 

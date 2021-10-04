@@ -33,9 +33,6 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public RecordAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = inflater.inflate(R.layout.record_item, parent, false);
-        RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
-        layoutParams.topMargin = 100;
-        view.setLayoutParams(layoutParams);
         return new ViewHolder(view);
     }
 
@@ -45,7 +42,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         holder.nameView.setText(record.getName());
         holder.timeView.setText(String.valueOf(record.getTime()));
 
-        holder.blockView.setPadding(records.get(position).getLevel()*80,0,0,0);
+    //    holder.blockView.setPadding(records.get(position).getLevel()*80,0,0,0);
 
 
         // обработка нажатия
