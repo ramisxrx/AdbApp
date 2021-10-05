@@ -15,6 +15,7 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
     private final List<Record> records;
 
     private float mDividerHeight=2;
+    private int itemOffsets=80;
     private Paint mPaint;
     private View view;
 
@@ -26,7 +27,7 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
 
-        outRect.left=records.get(parent.getChildViewHolder(view).getAdapterPosition()).getLevel()*80;
+        outRect.left=records.get(parent.getChildViewHolder(view).getAdapterPosition()).getLevel()*itemOffsets;
 // // Если это не первый, установить значение top.
         if (parent.getChildAdapterPosition(view) != 0){
             // Здесь прямо прописан в 1px
@@ -61,12 +62,25 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
 
         }
 */
+        int levels;
+
         mPaint.setStyle(Paint.Style.FILL);
 
         for ( int i = 0; i < childCount; i++ ) {
 
             view = parent.getChildAt(i);
-            c.drawRoundRect(view.getLeft(),view.getTop(),view.getRight(),view.getBottom(),50,50,mPaint);
+            levels=records.get(parent.getChildAdapterPosition(view)).getLevel();
+
+            for ( int j = 0; j < levels; j++ ) {
+
+                if (j == levels - 1) {
+                    c.drawLine(view.getLeft() - itemOffsets / 2, view.getTop() + (view.getBottom() - view.getTop()) / 2, view.getLeft(), view.getTop() + (view.getBottom() - view.getTop()) / 2, mPaint);
+                }
+
+                c.drawLine(view.getLeft() - itemOffsets / 2-itemOffsets*j, view.getTop(), view.getLeft() - itemOffsets / 2-itemOffsets*j, view.getBottom(), mPaint);
+            }
+
+            c.drawRoundRect(view.getLeft(),view.getTop(),view.getRight(),view.getBottom(),30,30,mPaint);
         }
     }
 
