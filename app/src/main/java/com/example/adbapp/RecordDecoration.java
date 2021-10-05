@@ -16,6 +16,7 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
 
     private float mDividerHeight=2;
     private Paint mPaint;
+    private View view;
 
     RecordDecoration(List<Record> records) {
         this.records=records;
@@ -42,9 +43,8 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setColor(Color.RED);
-
+/*
         for ( int i = 0; i < childCount; i++ ) {
-            View view = parent.getChildAt(i);
 
             int index = parent.getChildAdapterPosition(view);
             // Первый ItemView не нужно рисовать
@@ -58,8 +58,16 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
             float dividerRight = parent.getWidth() - parent.getPaddingRight();
 
             c.drawRect(dividerLeft,dividerTop,dividerRight,dividerBottom,mPaint);
-        }
 
+        }
+*/
+        mPaint.setStyle(Paint.Style.FILL);
+
+        for ( int i = 0; i < childCount; i++ ) {
+
+            view = parent.getChildAt(i);
+            c.drawRoundRect(view.getLeft(),view.getTop(),view.getRight(),view.getBottom(),50,50,mPaint);
+        }
     }
 
 }
