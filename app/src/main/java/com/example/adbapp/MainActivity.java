@@ -1,7 +1,12 @@
 package com.example.adbapp;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.view.View;
 import android.database.Cursor;
@@ -27,6 +32,24 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Long> levels = new ArrayList<>();
     ArrayList<Long> record_id = new ArrayList<>();
 
+    ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<Instrumentation.ActivityResult>() {
+                @Override
+                public void onActivityResult(Instrumentation.ActivityResult result) {
+
+                    TextView textView = (TextView) findViewById(R.id.textView);
+                    if(result.getResultCode() == Activity.RESULT_OK){
+                        Intent intent = result.getData();
+                        String accessMessage = intent.getStringExtra(ACCESS_MESSAGE);
+                        textView.setText(accessMessage);
+                    }
+                    else{
+                        textView.setText("Ошибка доступа");
+                    }
+                }
+            });
+
+
     boolean reqToFillRec;
 
     int cur_level=0, count_rec=0, i,j, curRecId=0;
@@ -49,10 +72,7 @@ public class MainActivity extends AppCompatActivity {
         recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
             public void onRecordClick(Record record, int position) {
-                Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                //intent.putExtra("id", 1);
-                intent.putExtra("id", record.getRecord_id());
-                startActivity(intent);
+                addRecord(record.getRecord_id());
             }
         };
         recordAdapter = new RecordAdapter(this, records, recordClickListener);
@@ -140,10 +160,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void addRecord(int idRec){
+        Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+        intent.putExtra("id", idRec);
+        mStartForResult.launch(intent);
+    }
+
 
     public void addObject(View view){
-        Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-        startActivity(intent);
+        addRecord(-1);
     }
 
     @Override

@@ -187,14 +187,14 @@ public class AddActivity extends AppCompatActivity {
             cv.clear();
         }
 
-        goHome();
+        goHome(false);
     }
 
     public void back(View view){
-        goHome();
+        goHome(true);
     }
 
-    private void goHome(){
+    private void goHome(boolean cancel){
         // закрываем подключение
         db.close();
 
@@ -202,5 +202,14 @@ public class AddActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
+
+        Intent data = new Intent();
+        data.putExtra("id of added record",);
+        if(cancel) {
+            setResult(RESULT_CANCELED,data);
+        }else {
+            setResult(RESULT_OK, data);
+        }
+        finish();
     }
 }
