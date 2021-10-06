@@ -30,7 +30,8 @@ public class AddActivity extends AppCompatActivity {
     SQLiteDatabase db;
     Cursor recordCursor, nameCursor, fieldCursor, objectCursor;
     ArrayAdapter<String> fieldAdapter;
-    long recordId=0, objectId=0, fieldIdForSave=0;
+    long  objectId=0, fieldIdForSave=0;
+    int recordId=0;
     ArrayList<String> fields = new ArrayList<>();
     ArrayList<Long> field_id = new ArrayList<>();
 
@@ -204,7 +205,7 @@ public class AddActivity extends AppCompatActivity {
         startActivity(intent);
 
         Intent data = new Intent();
-        data.putExtra("id of added record",);
+        data.putExtra("id of added record",recordId);
         if(cancel) {
             setResult(RESULT_CANCELED,data);
         }else {

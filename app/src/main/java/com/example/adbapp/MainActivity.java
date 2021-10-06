@@ -1,5 +1,6 @@
 package com.example.adbapp;
 
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -13,6 +14,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
+
 import java.util.ArrayList;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,35 +29,34 @@ public class MainActivity extends AppCompatActivity {
     Cursor objectCursor, recordCursor;
     RecordAdapter recordAdapter;
     RecordAdapter.OnRecordClickListener recordClickListener;
+    HorizontalScrollView HScroll;
 
 
     ArrayList<Record> records = new ArrayList<>();
     ArrayList<Long> levels = new ArrayList<>();
     ArrayList<Long> record_id = new ArrayList<>();
 
-    ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<Instrumentation.ActivityResult>() {
-                @Override
-                public void onActivityResult(Instrumentation.ActivityResult result) {
+    boolean reqToFillRec;
 
-                    TextView textView = (TextView) findViewById(R.id.textView);
+    int cur_level=0, count_rec=0, i,j, curRecId=0, PosRecClick=0;
+    String indent;
+    long count_childRec=0;
+
+
+    ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+
                     if(result.getResultCode() == Activity.RESULT_OK){
-                        Intent intent = result.getData();
-                        String accessMessage = intent.getStringExtra(ACCESS_MESSAGE);
-                        textView.setText(accessMessage);
-                    }
-                    else{
-                        textView.setText("Ошибка доступа");
+                        //Intent intent = result.getData();
+                        //String accessMessage = intent.getStringExtra("");
+                        records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
+                        recordAdapter.notifyItemInserted(PosRecClick);
                     }
                 }
             });
 
-
-    boolean reqToFillRec;
-
-    int cur_level=0, count_rec=0, i,j, curRecId=0;
-    String indent;
-    long count_childRec=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         addButton = (Button) findViewById(R.id.addButton);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
+        HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
         layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -72,7 +75,9 @@ public class MainActivity extends AppCompatActivity {
         recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
             public void onRecordClick(Record record, int position) {
-                addRecord(record.getRecord_id());
+                //PosRecClick = record.getRecord_id();
+                PosRecClick = position;
+                addRecord(PosRecClick);
             }
         };
         recordAdapter = new RecordAdapter(this, records, recordClickListener);
@@ -161,9 +166,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addRecord(int idRec){
-        Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-        intent.putExtra("id", idRec);
-        mStartForResult.launch(intent);
+     //   Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+      //  intent.putExtra("id", idRec);
+      //  mStartForResult.launch(intent);
+
+
+        records.add(PosRecClick+1,new Record(100, "zdoroy", PosRecClick, records.get(PosRecClick).getLevel()+1));
+        recordAdapter.notifyItemInserted(PosRecClick+1);
+        HScroll.computeScroll();
     }
 
 
