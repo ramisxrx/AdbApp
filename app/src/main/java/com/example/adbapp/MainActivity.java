@@ -124,35 +124,18 @@ public class MainActivity extends AppCompatActivity {
 
                 for(i=0;i<recordCursor.getCount();i++){
                     recordCursor.moveToPosition(i);
-                    if(recordCursor.getInt(1) == levels.get(cur_level)) {
+                    if(recordCursor.getInt(1) == levels.get(cur_level) && RecIdMatchesNotFound(records,recordCursor.getInt(0))) {
 
-                        if(!records.isEmpty()) {
+                        levels.add(recordCursor.getLong(0));
+                        cur_level = cur_level + 1;
 
-                            for (j = 0; j < records.size(); j++) {
+                        //records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(3), cur_level-1));
+                        records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), cur_level-1));
+                        curRecId = curRecId + 1;
 
-                                if (records.get(j).getRecord_id() == recordCursor.getInt(0)) {
-                                    break;
-                                }
-                            }
-                        }
-                        if(j==records.size() || records.isEmpty()) {
-                            levels.add(recordCursor.getLong(0));
-                            cur_level = cur_level + 1;
-
-                            //records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(3), cur_level-1));
-                            records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), cur_level-1));
-                            curRecId = curRecId + 1;
-
-                            for (i = 0; i < recordCursor.getCount(); i++) {
-                                recordCursor.moveToPosition(i);
-                                if (recordCursor.getInt(1) == records.get(curRecId).getRecord_id()) {
-                                    records.get(curRecId).setHasChildRec(true);
-                                    break;
-                                }
-                            }
-                            count_rec = count_rec - 1;
-                            break;
-                        }
+                        records.get(curRecId).setHasChildRec(RecHasChildRec(recordCursor,records.get(curRecId).getRecord_id(),1));
+                        count_rec = count_rec - 1;
+                        break;
                     }
                 }
                 if(i==recordCursor.getCount()){
@@ -163,6 +146,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    public boolean RecIdMatchesNotFound (ArrayList<Record> records, int idToCheck){
+        for(int i=0; i<records.size();i++){
+            if (records.get(i).getRecord_id() == idToCheck)
+                return false;
+        }
+        return true;
+    }
+
+    public boolean RecHasChildRec(Cursor cursor, int RecId, int columnIndex){
+        while(cursor.moveToNext()){
+            if(cursor.getInt(columnIndex)==RecId)
+                return true;
+        }
+        return false;
     }
 
     public void addRecord(int idRec){
