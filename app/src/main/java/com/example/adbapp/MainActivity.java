@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     ArrayList<Record> records = new ArrayList<>();
-    ArrayList<Long> levels = new ArrayList<>();
+    ArrayList<Integer> levels = new ArrayList<>();
     ArrayList<Long> record_id = new ArrayList<>();
 
     boolean reqToFillRec;
@@ -118,27 +118,23 @@ public class MainActivity extends AppCompatActivity {
 
             levels.clear();
             cur_level=0;
-            levels.add(Long.valueOf(0));
+            //levels.add(0);
+            levels.add(cur_level, 0);
 
             while (cur_level>-1){
 
-                for(i=0;i<recordCursor.getCount();i++){
-                    recordCursor.moveToPosition(i);
-                    if(recordCursor.getInt(1) == levels.get(cur_level) && RecIdMatchesNotFound(records,recordCursor.getInt(0))) {
+                if(CursorMatchFound_1(recordCursor,1,0,records,levels.get(cur_level))){
+                    //levels.add(recordCursor.getLong(0));
+                    cur_level = cur_level + 1;
+                    levels.add(cur_level,recordCursor.getInt(0));
 
-                        levels.add(recordCursor.getLong(0));
-                        cur_level = cur_level + 1;
+                    //records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(3), cur_level-1));
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), cur_level-1));
+                    curRecId = curRecId + 1;
 
-                        //records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(3), cur_level-1));
-                        records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), cur_level-1));
-                        curRecId = curRecId + 1;
-
-                        records.get(curRecId).setHasChildRec(RecHasChildRec(recordCursor,records.get(curRecId).getRecord_id(),1));
-                        count_rec = count_rec - 1;
-                        break;
-                    }
-                }
-                if(i==recordCursor.getCount()){
+                    records.get(curRecId).setHasChildRec(CursorMatchFound_2(recordCursor,1,records.get(curRecId).getRecord_id()));
+                    count_rec = count_rec - 1;
+                }else{
                     levels.remove(cur_level);
                     cur_level = cur_level-1;
                 }
@@ -148,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public boolean RecIdMatchesNotFound (ArrayList<Record> records, int idToCheck){
+    public boolean RecIdMatchNotFound (ArrayList<Record> records, int idToCheck){
         for(int i=0; i<records.size();i++){
             if (records.get(i).getRecord_id() == idToCheck)
                 return false;
@@ -156,9 +152,18 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public boolean RecHasChildRec(Cursor cursor, int RecId, int columnIndex){
+    public boolean CursorMatchFound_1(Cursor cursor,int columnIndex_1,int columnIndex_2,ArrayList<Record> records,int valToCheck){
+        for(i=0;i<cursor.getCount();i++){
+            cursor.moveToPosition(i);
+            if(cursor.getInt(columnIndex_1)==valToCheck && RecIdMatchNotFound(records,cursor.getInt(columnIndex_2)))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean CursorMatchFound_2(Cursor cursor, int columnIndex, int valToCheck){
         while(cursor.moveToNext()){
-            if(cursor.getInt(columnIndex)==RecId)
+            if(cursor.getInt(columnIndex)==valToCheck)
                 return true;
         }
         return false;
