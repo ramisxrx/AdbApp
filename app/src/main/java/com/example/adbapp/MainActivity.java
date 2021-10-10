@@ -144,6 +144,32 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void UncoverBranch(Cursor cursor,int curRecListId,boolean directionOfUncover){
+        ArrayList<Integer> levels = new ArrayList<>();
+        int cur_level=0;
+
+        while (cur_level>-1){
+
+            if(CursorMatchFound_1(recordCursor,1,0,records,levels.get(cur_level))){
+                //levels.add(recordCursor.getLong(0));
+                cur_level = cur_level + 1;
+                levels.add(cur_level,recordCursor.getInt(0));
+
+                //records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(3), cur_level-1));
+                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), cur_level-1));
+                curRecListId = curRecListId + 1;
+
+                records.get(curRecListId).setHasChildRec(CursorMatchFound_2(recordCursor,1,records.get(curRecListId).getRecord_id()));
+                count_rec = count_rec - 1;
+            }else{
+                levels.remove(cur_level);
+                cur_level = cur_level-1;
+            }
+
+        }
+
+    }
+
     public boolean RecIdMatchNotFound (ArrayList<Record> records, int idToCheck){
         for(int i=0; i<records.size();i++){
             if (records.get(i).getRecord_id() == idToCheck)
