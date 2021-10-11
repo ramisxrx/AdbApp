@@ -105,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
         // открываем подключение
         db = databaseHelper.getReadableDatabase();
 
+        curRecId=-1;
+
         objectCursor = db.rawQuery("select _id FROM list_objects", null);
         while(objectCursor.moveToNext()) {
             recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
@@ -112,54 +114,28 @@ public class MainActivity extends AppCompatActivity {
                     "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                     "WHERE object_id=?", new String[]{objectCursor.getString(0)});
 
-            count_rec = recordCursor.getCount();
-
-            curRecId = -1;
-
-            levels.clear();
-            cur_level=0;
-            //levels.add(0);
-            levels.add(cur_level, 0);
-
-            while (cur_level>-1){
-
-                if(CursorMatchFound_1(recordCursor,1,0,records,levels.get(cur_level))){
-                    //levels.add(recordCursor.getLong(0));
-                    cur_level = cur_level + 1;
-                    levels.add(cur_level,recordCursor.getInt(0));
-
-                    //records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(3), cur_level-1));
-                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), cur_level-1));
-                    curRecId = curRecId + 1;
-
-                    records.get(curRecId).setHasChildRec(CursorMatchFound_2(recordCursor,1,records.get(curRecId).getRecord_id()));
-                    count_rec = count_rec - 1;
-                }else{
-                    levels.remove(cur_level);
-                    cur_level = cur_level-1;
-                }
-
-            }
+            curRecId=UncoverBranch(recordCursor,curRecId,0);
         }
 
     }
 
-    public void UncoverBranch(Cursor cursor,int curRecListId,boolean directionOfUncover){
+    public int UncoverBranch(Cursor cursor,int curRecListId,int parentRecId){
         ArrayList<Integer> levels = new ArrayList<>();
         int cur_level=0;
+        levels.add(cur_level, parentRecId);
 
         while (cur_level>-1){
 
-            if(CursorMatchFound_1(recordCursor,1,0,records,levels.get(cur_level))){
+            if(CursorMatchFound_1(cursor,1,0,records,levels.get(cur_level))){
                 //levels.add(recordCursor.getLong(0));
                 cur_level = cur_level + 1;
-                levels.add(cur_level,recordCursor.getInt(0));
+                levels.add(cur_level,cursor.getInt(0));
 
                 //records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(3), cur_level-1));
-                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), cur_level-1));
+                records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level-1));
                 curRecListId = curRecListId + 1;
 
-                records.get(curRecListId).setHasChildRec(CursorMatchFound_2(recordCursor,1,records.get(curRecListId).getRecord_id()));
+                records.get(curRecListId).setHasChildRec(CursorMatchFound_2(cursor,1,records.get(curRecListId).getRecord_id()));
                 count_rec = count_rec - 1;
             }else{
                 levels.remove(cur_level);
@@ -167,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-
+    return curRecListId;
     }
 
     public boolean RecIdMatchNotFound (ArrayList<Record> records, int idToCheck){
