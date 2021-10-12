@@ -67,23 +67,23 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
         HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
 
-        LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
-        layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);
-
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
         recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
             public void onRecordClick(Record record, int position) {
-                //PosRecClick = record.getRecord_id();
-                PosRecClick = position;
+                PosRecClick = record.getRecord_id();
+               // PosRecClick = position;
                 addRecord(PosRecClick);
             }
         };
         recordAdapter = new RecordAdapter(this, records, recordClickListener);
         recordList.setAdapter(recordAdapter);
 
+        LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
+        layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);
         recordList.setLayoutManager(layoutmanager);
+
         recordList.addItemDecoration(new RecordDecoration(records));
 
         reqToFillRec = true;
@@ -126,16 +126,15 @@ public class MainActivity extends AppCompatActivity {
 
         while (cur_level>-1){
 
-            if(CursorMatchFound_1(cursor,1,0,records,levels.get(cur_level))){
-                //levels.add(recordCursor.getLong(0));
+            if(Record.CursorMatchFound_1(cursor,1,0,records,levels.get(cur_level))){
+
+                records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level));
+                curRecListId = curRecListId + 1;
+
                 cur_level = cur_level + 1;
                 levels.add(cur_level,cursor.getInt(0));
 
-                //records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(3), cur_level-1));
-                records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level-1));
-                curRecListId = curRecListId + 1;
-
-                records.get(curRecListId).setHasChildRec(CursorMatchFound_2(cursor,1,records.get(curRecListId).getRecord_id()));
+                records.get(curRecListId).setHasChildRec(Record.CursorMatchFound_2(cursor,1,records.get(curRecListId).getRecord_id()));
                 count_rec = count_rec - 1;
             }else{
                 levels.remove(cur_level);
@@ -146,40 +145,15 @@ public class MainActivity extends AppCompatActivity {
     return curRecListId;
     }
 
-    public boolean RecIdMatchNotFound (ArrayList<Record> records, int idToCheck){
-        for(int i=0; i<records.size();i++){
-            if (records.get(i).getRecord_id() == idToCheck)
-                return false;
-        }
-        return true;
-    }
-
-    public boolean CursorMatchFound_1(Cursor cursor,int columnIndex_1,int columnIndex_2,ArrayList<Record> records,int valToCheck){
-        for(i=0;i<cursor.getCount();i++){
-            cursor.moveToPosition(i);
-            if(cursor.getInt(columnIndex_1)==valToCheck && RecIdMatchNotFound(records,cursor.getInt(columnIndex_2)))
-                return true;
-        }
-        return false;
-    }
-
-    public boolean CursorMatchFound_2(Cursor cursor, int columnIndex, int valToCheck){
-        while(cursor.moveToNext()){
-            if(cursor.getInt(columnIndex)==valToCheck)
-                return true;
-        }
-        return false;
-    }
-
     public void addRecord(int idRec){
-     //   Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-      //  intent.putExtra("id", idRec);
-      //  mStartForResult.launch(intent);
+        Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+        intent.putExtra("id", idRec);
+        mStartForResult.launch(intent);
 
 
-        records.add(PosRecClick+1,new Record(100, "zdoroy", PosRecClick, records.get(PosRecClick).getLevel()+1));
-        recordAdapter.notifyItemInserted(PosRecClick+1);
-        HScroll.computeScroll();
+       // records.add(PosRecClick+1,new Record(100, "zdoroy", PosRecClick, records.get(PosRecClick).getLevel()+1));
+       // recordAdapter.notifyItemInserted(PosRecClick+1);
+       // HScroll.computeScroll();
     }
 
 

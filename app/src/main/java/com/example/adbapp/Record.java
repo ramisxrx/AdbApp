@@ -1,5 +1,8 @@
 package com.example.adbapp;
 
+import android.database.Cursor;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Record {
@@ -57,4 +60,31 @@ public class Record {
     public void setHasChildRec(boolean hasChildRec){
         this.hasChildRec = hasChildRec;
     }
+
+
+    public static boolean CursorMatchFound_1(Cursor cursor, int columnIndex_1, int columnIndex_2, ArrayList<Record> records, int valToCheck){
+        for(int i=0;i<cursor.getCount();i++){
+            cursor.moveToPosition(i);
+            if(cursor.getInt(columnIndex_1)==valToCheck && RecIdMatchNotFound(records,cursor.getInt(columnIndex_2)))
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean RecIdMatchNotFound (ArrayList<Record> records, int idToCheck){
+        for(int i=0; i<records.size();i++){
+            if (records.get(i).getRecord_id() == idToCheck)
+                return false;
+        }
+        return true;
+    }
+
+    public static boolean CursorMatchFound_2(Cursor cursor, int columnIndex, int valToCheck){
+        while(cursor.moveToNext()){
+            if(cursor.getInt(columnIndex)==valToCheck)
+                return true;
+        }
+        return false;
+    }
+
 }

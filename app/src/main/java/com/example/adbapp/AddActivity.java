@@ -1,6 +1,8 @@
 package com.example.adbapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -27,14 +29,18 @@ public class AddActivity extends AppCompatActivity {
     Button saveButton;
     ListView fieldList;
 
+    RecordAdapter recordAdapter;
+    RecordAdapter.OnRecordClickListener recordClickListener;
+
     DatabaseHelper sqlHelper;
     SQLiteDatabase db;
     Cursor recordCursor, nameCursor, fieldCursor, objectCursor;
     ArrayAdapter<String> fieldAdapter;
     long  objectId=0, fieldIdForSave=0;
     int recordId=0;
-    ArrayList<String> fields = new ArrayList<>();
+    //ArrayList<String> fields = new ArrayList<>();
     ArrayList<Long> field_id = new ArrayList<>();
+    ArrayList<Record> records = new ArrayList<>();
 
 
     @Override
@@ -46,9 +52,28 @@ public class AddActivity extends AppCompatActivity {
         nameBox = (EditText) findViewById(R.id.name);
         fieldList = (ListView) findViewById(R.id.fieldList);
         saveButton = (Button) findViewById(R.id.saveButton);
+        RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
 
-        fieldAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,fields);
+        //fieldAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,fields);
         fieldList.setAdapter(fieldAdapter);
+
+
+        recordClickListener = new RecordAdapter.OnRecordClickListener() {
+            @Override
+            public void onRecordClick(Record record, int position) {
+                fieldIdForSave = 0;
+
+                fieldIdForSave = field_id.get(position);
+            }
+        };
+        recordAdapter = new RecordAdapter(this, records, recordClickListener);
+        recordList.setAdapter(recordAdapter);
+
+        LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
+        layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);
+        recordList.setLayoutManager(layoutmanager);
+        recordList.addItemDecoration(new RecordDecoration(records));
+
     }
 
     @Override
@@ -100,7 +125,7 @@ public class AddActivity extends AppCompatActivity {
             // при изменении текста выполняем фильтрацию
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                fields.clear();
+                records.clear();
                 field_id.clear();
 
                 recordCursor = db.rawQuery("select record_clusters._id, parent_id, field_id, _type, _name, _time FROM " +
@@ -109,27 +134,16 @@ public class AddActivity extends AppCompatActivity {
                         "WHERE _name like ?", new String[]{"%" + s.toString() + "%"});
 
                 while(recordCursor.moveToNext()){
-                    fields.add(recordCursor.getString(4));
+
+                    records.add(new Record(recordCursor.getInt(0),recordCursor.getString(4),recordCursor.getInt(5),0));
+
                     field_id.add(recordCursor.getLong(2));
                 }
 
-                fieldAdapter.notifyDataSetChanged();
+                recordAdapter.notifyDataSetChanged();
                 recordCursor.close();
             }
         });
-
-        fieldList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                fieldIdForSave = 0;
-
-                fieldIdForSave = field_id.get(position);
-
-            }
-        });
-
-
 
     }
 
