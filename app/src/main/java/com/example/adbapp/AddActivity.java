@@ -40,6 +40,7 @@ public class AddActivity extends AppCompatActivity {
     int recordId=0;
     //ArrayList<String> fields = new ArrayList<>();
     ArrayList<Long> field_id = new ArrayList<>();
+    ArrayList<Integer> recIdList = new ArrayList<>();
     ArrayList<Record> records = new ArrayList<>();
 
 
@@ -111,12 +112,6 @@ public class AddActivity extends AppCompatActivity {
             objectCursor.close();
         }
 
-        // если в текстовом поле есть текст, выполняем фильтрацию
-        // данная проверка нужна при переходе от одной ориентации экрана к другой
-//        if(!nameBox.getText().toString().isEmpty())
-//            fieldAdapter.getFilter().filter(nameBox.getText().toString());
-
-        // установка слушателя изменения текста
         nameBox.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) { }
@@ -128,6 +123,8 @@ public class AddActivity extends AppCompatActivity {
                 records.clear();
                 field_id.clear();
 
+                recIdList.clear();
+
                 recordCursor = db.rawQuery("select record_clusters._id, parent_id, field_id, _type, _name, _time FROM " +
                         "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                         "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
@@ -137,14 +134,57 @@ public class AddActivity extends AppCompatActivity {
 
                     records.add(new Record(recordCursor.getInt(0),recordCursor.getString(4),recordCursor.getInt(5),0));
 
+                    records.get(records.size()-1).setParent_id(recordCursor.getInt(1));
+
+                    recIdList.add(recordCursor.getInt(0));
+
+
                     field_id.add(recordCursor.getLong(2));
                 }
+
+
+                recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                        "WHERE object_id=?", new String[]{objectCursor.getString(0)});
 
                 recordAdapter.notifyDataSetChanged();
                 recordCursor.close();
             }
         });
 
+    }
+
+    public void UncoverForEachBranch(){
+        for(int i=0;i<recIdList.size();i++){
+
+            UncoverBranchUp(recordCursor,recIdList.get(i),)
+
+        }
+    }
+
+    public void UncoverBranchUp(Cursor cursor,int curRecListId){
+        ArrayList<Integer> levels = new ArrayList<>();
+        int cur_level=0;
+        levels.add(cur_level, parentRecId);
+
+        while (records.get(curRecListId).getParent_id()>0){
+
+            if(Record.CursorMatchFound_1(cursor,1,0,records,levels.get(cur_level))){
+
+                records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level));
+                curRecListId = curRecListId + 1;
+
+                cur_level = cur_level + 1;
+                levels.add(cur_level,cursor.getInt(0));
+
+                records.get(curRecListId).setHasChildRec(Record.CursorMatchFound_2(cursor,1,records.get(curRecListId).getRecord_id()));
+            }else{
+                levels.remove(cur_level);
+                cur_level = cur_level-1;
+            }
+
+        }
     }
 
     public void save(View view){

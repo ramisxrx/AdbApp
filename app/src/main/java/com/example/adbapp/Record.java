@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class Record {
 
-    private int record_id,_time, level;
+    private int record_id,_time, level, parent_id=0;
     private String _name;
     private boolean hasChildRec=false;
 
@@ -51,6 +51,14 @@ public class Record {
 
     public void setLevel(int level){
         this.level = level;
+    }
+
+    public int getParent_id(){
+        return this.parent_id;
+    }
+
+    public void setParent_id(int parent_id){
+        this.parent_id = parent_id;
     }
 
     public boolean getHasChildRec(){

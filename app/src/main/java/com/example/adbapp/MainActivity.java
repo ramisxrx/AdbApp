@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
                         records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
                         recordAdapter.notifyItemInserted(PosRecClick);
                     }
+                    records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
+                    recordAdapter.notifyItemInserted(PosRecClick);
                 }
             });
 
