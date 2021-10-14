@@ -41,6 +41,7 @@ public class AddActivity extends AppCompatActivity {
     //ArrayList<String> fields = new ArrayList<>();
     ArrayList<Long> field_id = new ArrayList<>();
     ArrayList<Integer> recIdList = new ArrayList<>();
+    ArrayList<Integer> recObjIdList = new ArrayList<>();
     ArrayList<Record> records = new ArrayList<>();
 
 
@@ -124,8 +125,9 @@ public class AddActivity extends AppCompatActivity {
                 field_id.clear();
 
                 recIdList.clear();
+                recObjIdList.clear();
 
-                recordCursor = db.rawQuery("select record_clusters._id, parent_id, field_id, _type, _name, _time FROM " +
+                recordCursor = db.rawQuery("select record_clusters._id,parent_id,field_id,_type,_name,_time,object_id FROM " +
                         "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                         "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                         "WHERE _name like ?", new String[]{"%" + s.toString() + "%"});
@@ -137,53 +139,58 @@ public class AddActivity extends AppCompatActivity {
                     records.get(records.size()-1).setParent_id(recordCursor.getInt(1));
 
                     recIdList.add(recordCursor.getInt(0));
-
+                    recObjIdList.add(recordCursor.getInt(6));
 
                     field_id.add(recordCursor.getLong(2));
                 }
 
-
-                recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
-                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                        "WHERE object_id=?", new String[]{objectCursor.getString(0)});
-
                 recordAdapter.notifyDataSetChanged();
                 recordCursor.close();
+
+                UncoverForEachBranch();
             }
         });
 
     }
 
     public void UncoverForEachBranch(){
-        for(int i=0;i<recIdList.size();i++){
+        boolean makeReq;
 
-            UncoverBranchUp(recordCursor,recIdList.get(i),)
+        for(int i=0;i<recIdList.size();i++){
+            if(i==0)
+                makeReq=true;
+            else{
+                if(recObjIdList.get(i)==recObjIdList.get(i-1))
+                    makeReq=false;
+                else
+                    makeReq=true;
+            }
+
+            if(makeReq){
+                recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                        "WHERE object_id=?", new String[]{String.valueOf(recObjIdList.get(i))});
+            }
+
+            UncoverBranchUp(recordCursor,Record.posInListById(records,recIdList.get(i)));
 
         }
     }
 
-    public void UncoverBranchUp(Cursor cursor,int curRecListId){
+    public void UncoverBranchUp(Cursor cursor,int curRecListPos){
         ArrayList<Integer> levels = new ArrayList<>();
-        int cur_level=0;
-        levels.add(cur_level, parentRecId);
 
-        while (records.get(curRecListId).getParent_id()>0){
+        while (records.get(curRecListPos).getParent_id()>0){
 
-            if(Record.CursorMatchFound_1(cursor,1,0,records,levels.get(cur_level))){
+            if(Record.CursorMatchFound_2(cursor,0,records.get(curRecListPos).getParent_id())) {
 
-                records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level));
-                curRecListId = curRecListId + 1;
+                records.add(curRecListPos, new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1),0));
 
-                cur_level = cur_level + 1;
-                levels.add(cur_level,cursor.getInt(0));
+                records.get(curRecListPos).setHasChildRec(Record.CursorMatchFound_2(cursor, 1, records.get(curRecListPos).getRecord_id()));
 
-                records.get(curRecListId).setHasChildRec(Record.CursorMatchFound_2(cursor,1,records.get(curRecListId).getRecord_id()));
-            }else{
-                levels.remove(cur_level);
-                cur_level = cur_level-1;
+                recordAdapter.notifyItemInserted(curRecListPos);
             }
-
         }
     }
 

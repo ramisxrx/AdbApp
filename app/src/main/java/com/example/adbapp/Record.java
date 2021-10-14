@@ -88,11 +88,20 @@ public class Record {
     }
 
     public static boolean CursorMatchFound_2(Cursor cursor, int columnIndex, int valToCheck){
-        while(cursor.moveToNext()){
+        for(int i=0;i<cursor.getCount();i++){
+            cursor.moveToPosition(i);
             if(cursor.getInt(columnIndex)==valToCheck)
                 return true;
         }
         return false;
+    }
+
+    public static int posInListById(ArrayList<Record> records, int _id){
+        for(int i=0; i<records.size();i++) {
+            if(records.get(i).getRecord_id()==_id)
+                return i;
+        }
+        return -1;
     }
 
 }
