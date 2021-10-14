@@ -51,11 +51,11 @@ public class MainActivity extends AppCompatActivity {
                     if(result.getResultCode() == Activity.RESULT_OK){
                         //Intent intent = result.getData();
                         //String accessMessage = intent.getStringExtra("");
-                        records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
-                        recordAdapter.notifyItemInserted(PosRecClick);
+                        //records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
+                        //recordAdapter.notifyItemInserted(PosRecClick);
                     }
-                    records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
-                    recordAdapter.notifyItemInserted(PosRecClick);
+                    //records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
+                    //recordAdapter.notifyItemInserted(PosRecClick);
                 }
             });
 

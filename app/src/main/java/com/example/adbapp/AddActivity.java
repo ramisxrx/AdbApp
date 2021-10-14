@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class AddActivity extends AppCompatActivity {
 
     RecordAdapter recordAdapter;
     RecordAdapter.OnRecordClickListener recordClickListener;
+    HorizontalScrollView HScroll;
 
     DatabaseHelper sqlHelper;
     SQLiteDatabase db;
@@ -52,12 +54,9 @@ public class AddActivity extends AppCompatActivity {
 
         parentRec = (TextView) findViewById(R.id.parentRec);
         nameBox = (EditText) findViewById(R.id.name);
-        fieldList = (ListView) findViewById(R.id.fieldList);
         saveButton = (Button) findViewById(R.id.saveButton);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
-
-        //fieldAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,fields);
-        fieldList.setAdapter(fieldAdapter);
+        HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
 
 
         recordClickListener = new RecordAdapter.OnRecordClickListener() {
@@ -132,7 +131,7 @@ public class AddActivity extends AppCompatActivity {
                         "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                         "WHERE _name like ?", new String[]{"%" + s.toString() + "%"});
 
-                while(recordCursor.moveToNext()){
+                while(recordCursor.moveToNext() && s.length()>0){
 
                     records.add(new Record(recordCursor.getInt(0),recordCursor.getString(4),recordCursor.getInt(5),0));
 
@@ -186,10 +185,11 @@ public class AddActivity extends AppCompatActivity {
             if(Record.CursorMatchFound_2(cursor,0,records.get(curRecListPos).getParent_id())) {
 
                 records.add(curRecListPos, new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1),0));
-
+                records.get(curRecListPos).setParent_id(cursor.getInt(1));
                 records.get(curRecListPos).setHasChildRec(Record.CursorMatchFound_2(cursor, 1, records.get(curRecListPos).getRecord_id()));
 
                 recordAdapter.notifyItemInserted(curRecListPos);
+                //HScroll.computeScroll();
             }
         }
     }
