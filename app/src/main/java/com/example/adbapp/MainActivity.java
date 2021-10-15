@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
             fillingOfRecords();
             reqToFillRec = false;
         }
+
+        HScroll.computeScroll();
     }
 
     public void fillingOfRecords(){
@@ -118,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
 
             curRecId=UncoverBranch(recordCursor,curRecId,0);
         }
-
     }
 
     public int UncoverBranch(Cursor cursor,int curRecListId,int parentRecId){
@@ -132,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
 
                 records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level));
                 curRecListId = curRecListId + 1;
+
+                recordAdapter.notifyItemInserted(curRecListId);
 
                 cur_level = cur_level + 1;
                 levels.add(cur_level,cursor.getInt(0));
@@ -160,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void addObject(View view){
-        addRecord(-1);
+        addRecord(0);
     }
 
     @Override

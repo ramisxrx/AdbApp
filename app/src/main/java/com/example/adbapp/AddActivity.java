@@ -133,7 +133,7 @@ public class AddActivity extends AppCompatActivity {
 
                 while(recordCursor.moveToNext() && s.length()>0){
 
-                    records.add(new Record(recordCursor.getInt(0),recordCursor.getString(4),recordCursor.getInt(5),0));
+                    records.add(new Record(recordCursor.getInt(0),recordCursor.getString(4),recordCursor.getInt(1),0));
 
                     records.get(records.size()-1).setParent_id(recordCursor.getInt(1));
 
@@ -150,6 +150,7 @@ public class AddActivity extends AppCompatActivity {
             }
         });
 
+        HScroll.computeScroll();
     }
 
     public void UncoverForEachBranch(){
@@ -199,7 +200,10 @@ public class AddActivity extends AppCompatActivity {
         do{
             records.get(curRecListPos).setLevel(records.get(curRecListPos).getLevel()+1);
             recordAdapter.notifyItemChanged(curRecListPos);
-            curRecListPos++;
+            if(curRecListPos<records.size()-1)
+                curRecListPos++;
+            else
+                break;
         }while (records.get(curRecListPos).getParent_id()==records.get(curRecListPos-1).getRecord_id());
     }
 
