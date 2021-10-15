@@ -104,4 +104,12 @@ public class Record {
         return -1;
     }
 
+    public static int posInListByParentId(ArrayList<Record> records, int parent_id){
+        for(int i=0; i<records.size();i++) {
+            if(records.get(i).getParent_id()==parent_id)
+                return i;
+        }
+        return -1;
+    }
+
 }

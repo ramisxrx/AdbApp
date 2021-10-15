@@ -184,6 +184,7 @@ public class AddActivity extends AppCompatActivity {
 
             if(Record.CursorMatchFound_2(cursor,0,records.get(curRecListPos).getParent_id())) {
 
+                RecLevelShift(curRecListPos);
                 records.add(curRecListPos, new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1),0));
                 records.get(curRecListPos).setParent_id(cursor.getInt(1));
                 records.get(curRecListPos).setHasChildRec(Record.CursorMatchFound_2(cursor, 1, records.get(curRecListPos).getRecord_id()));
@@ -192,6 +193,14 @@ public class AddActivity extends AppCompatActivity {
                 //HScroll.computeScroll();
             }
         }
+    }
+
+    public void RecLevelShift(int curRecListPos){
+        do{
+            records.get(curRecListPos).setLevel(records.get(curRecListPos).getLevel()+1);
+            recordAdapter.notifyItemChanged(curRecListPos);
+            curRecListPos++;
+        }while (records.get(curRecListPos).getParent_id()==records.get(curRecListPos-1).getRecord_id());
     }
 
     public void save(View view){
