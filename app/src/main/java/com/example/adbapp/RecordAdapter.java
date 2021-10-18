@@ -27,6 +27,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         this.onClickListener = onClickListener;
         this.records = records;
         this.inflater = LayoutInflater.from(context);
+
     }
 
     @Override

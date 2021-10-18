@@ -76,7 +76,9 @@ public class MainActivity extends AppCompatActivity {
             public void onRecordClick(Record record, int position) {
                 PosRecClick = record.getRecord_id();
                // PosRecClick = position;
-                addRecord(PosRecClick);
+                //addRecord(PosRecClick);
+                recordAdapter.notifyItemChanged(position);
+                //HScroll.computeScroll();
             }
         };
         recordAdapter = new RecordAdapter(this, records, recordClickListener);
@@ -98,10 +100,10 @@ public class MainActivity extends AppCompatActivity {
 
         if(reqToFillRec) {
             fillingOfRecords();
-            reqToFillRec = false;
+            //reqToFillRec = false;
         }
 
-        HScroll.computeScroll();
+        //HScroll.computeScroll();
     }
 
     public void fillingOfRecords(){
@@ -163,7 +165,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void addObject(View view){
-        addRecord(0);
+    //    addRecord(0);
+       // HScroll.computeScroll();
     }
 
     @Override

@@ -32,7 +32,7 @@ public class AddActivity extends AppCompatActivity {
 
     RecordAdapter recordAdapter;
     RecordAdapter.OnRecordClickListener recordClickListener;
-    HorizontalScrollView HScroll;
+    //HorizontalScrollView HScroll;
 
     DatabaseHelper sqlHelper;
     SQLiteDatabase db;
@@ -56,7 +56,7 @@ public class AddActivity extends AppCompatActivity {
         nameBox = (EditText) findViewById(R.id.name);
         saveButton = (Button) findViewById(R.id.saveButton);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
-        HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
+        //HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
 
 
         recordClickListener = new RecordAdapter.OnRecordClickListener() {
@@ -150,7 +150,7 @@ public class AddActivity extends AppCompatActivity {
             }
         });
 
-        HScroll.computeScroll();
+        //HScroll.computeScroll();
     }
 
     public void UncoverForEachBranch(){
