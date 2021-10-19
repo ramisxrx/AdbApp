@@ -67,7 +67,15 @@ public class AddActivity extends AppCompatActivity {
                 fieldIdForSave = field_id.get(position);
             }
         };
-        recordAdapter = new RecordAdapter(this, records, recordClickListener);
+
+        RecordAdapter.OnRecordCBindListener recordBindListener = new RecordAdapter.OnRecordCBindListener(){
+            @Override
+            public void onRecordBind(int position){
+                recordAdapter.notifyItemChanged(position);
+            }
+        };
+
+        recordAdapter = new RecordAdapter(this, records, recordClickListener,recordBindListener);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);

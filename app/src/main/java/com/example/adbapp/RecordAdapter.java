@@ -17,17 +17,22 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         void onRecordClick(Record record, int position);
     }
 
+    interface OnRecordCBindListener{
+        void onRecordBind(int position);
+    }
+
     private final OnRecordClickListener onClickListener;
+    private final OnRecordCBindListener onBindListener;
 
     private final LayoutInflater inflater;
     private final List<Record> records;
 
 
-    RecordAdapter(Context context, List<Record> records, OnRecordClickListener onClickListener) {
+    RecordAdapter(Context context, List<Record> records, OnRecordClickListener onClickListener,OnRecordCBindListener onBindListener) {
         this.onClickListener = onClickListener;
         this.records = records;
         this.inflater = LayoutInflater.from(context);
-
+        this.onBindListener=onBindListener;
     }
 
     @Override
@@ -55,6 +60,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                 onClickListener.onRecordClick(record, holder.getAdapterPosition());
             }
         });
+
+        onBindListener.onRecordBind(holder.getAdapterPosition());
 
     }
 

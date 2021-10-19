@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db;
     Cursor objectCursor, recordCursor;
     RecordAdapter recordAdapter;
-    RecordAdapter.OnRecordClickListener recordClickListener;
     HorizontalScrollView HScroll;
 
 
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
-        recordClickListener = new RecordAdapter.OnRecordClickListener() {
+        RecordAdapter.OnRecordClickListener recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
             public void onRecordClick(Record record, int position) {
                 PosRecClick = record.getRecord_id();
@@ -81,7 +80,15 @@ public class MainActivity extends AppCompatActivity {
                 //HScroll.computeScroll();
             }
         };
-        recordAdapter = new RecordAdapter(this, records, recordClickListener);
+
+        RecordAdapter.OnRecordCBindListener recordBindListener = new RecordAdapter.OnRecordCBindListener(){
+            @Override
+            public void onRecordBind(int position){
+               //recordAdapter.notifyItemChanged(position-1);
+            }
+        };
+
+        recordAdapter = new RecordAdapter(this, records, recordClickListener,recordBindListener);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
