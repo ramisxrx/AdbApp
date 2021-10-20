@@ -15,7 +15,7 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
     private final List<Record> records;
 
     private float mDividerHeight=2;
-    private int itemOffsets=10;
+    private int itemOffsets=150;
     private Paint mPaint;
     private View view;
 
@@ -33,7 +33,7 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
             // Здесь прямо прописан в 1px
             outRect.top = 10;
         }else
-            outRect.right = 1000;
+            outRect.right = 2000;
     }
 
     @Override

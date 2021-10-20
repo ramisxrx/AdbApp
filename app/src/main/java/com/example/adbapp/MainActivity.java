@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     ArrayList<Record> records = new ArrayList<>();
-    ArrayList<Integer> levels = new ArrayList<>();
+    ArrayList<Integer> objLinkRecList = new ArrayList<>();
     ArrayList<Long> record_id = new ArrayList<>();
 
     boolean reqToFillRec;
@@ -99,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
 
         reqToFillRec = true;
 
+        // открываем подключение
+        db = databaseHelper.getReadableDatabase();
+
     }
 
     @Override
@@ -106,28 +109,35 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         if(reqToFillRec) {
-            fillingOfRecords();
+            fillingOfRecords(true);
             //reqToFillRec = false;
         }
 
         //HScroll.computeScroll();
     }
 
-    public void fillingOfRecords(){
-
-        // открываем подключение
-        db = databaseHelper.getReadableDatabase();
+    public void fillingOfRecords(boolean objectsLevel, int recListId){
 
         curRecId=-1;
 
-        objectCursor = db.rawQuery("select _id FROM list_objects", null);
-        while(objectCursor.moveToNext()) {
+        if(objectsLevel) {
+            objectCursor = db.rawQuery("select _id FROM list_objects", null);
+            while (objectCursor.moveToNext()) {
+                recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                        "WHERE object_id=?", new String[]{objectCursor.getString(0)});
+
+                curRecId = UncoverBranch(recordCursor, curRecId, 0);
+            }
+        }else{
+
             recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
                     "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                     "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                     "WHERE object_id=?", new String[]{objectCursor.getString(0)});
 
-            curRecId=UncoverBranch(recordCursor,curRecId,0);
+            curRecId = UncoverBranch(recordCursor, curRecId, 0);
         }
     }
 
@@ -145,8 +155,10 @@ public class MainActivity extends AppCompatActivity {
 
                 recordAdapter.notifyItemInserted(curRecListId);
 
-                cur_level = cur_level + 1;
-                levels.add(cur_level,cursor.getInt(0));
+                if(cur_level<1) {
+                    cur_level = cur_level + 1;
+                    levels.add(cur_level, cursor.getInt(0));
+                }
 
                 records.get(curRecListId).setHasChildRec(Record.CursorMatchFound_2(cursor,1,records.get(curRecListId).getRecord_id()));
                 count_rec = count_rec - 1;
