@@ -7,7 +7,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.content.Intent;
 import android.view.View;
 import android.database.Cursor;
@@ -76,8 +75,16 @@ public class MainActivity extends AppCompatActivity {
                 PosRecClick = record.getRecord_id();
                // PosRecClick = position;
                 //addRecord(PosRecClick);
-                recordAdapter.notifyItemChanged(position);
-                //HScroll.computeScroll();
+
+                if(records.get(position).getHasChildRec()) {
+                    records.clear();
+
+                    if (!objLinkRecList.isEmpty()) {
+                        fillingOfRecords(objLinkRecList.get(position));
+                    }
+
+                    UncoverBranch(recordCursor, 0, records.get(position).getRecord_id());
+                }
             }
         };
 
@@ -109,18 +116,16 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         if(reqToFillRec) {
-            fillingOfRecords(true);
+            fillingOfRecords(0);
             //reqToFillRec = false;
         }
 
         //HScroll.computeScroll();
     }
 
-    public void fillingOfRecords(boolean objectsLevel, int recListId){
+    public void fillingOfRecords(int idOfSelectedObj){
 
-        curRecId=-1;
-
-        if(objectsLevel) {
+        if(idOfSelectedObj==0) {
             objectCursor = db.rawQuery("select _id FROM list_objects", null);
             while (objectCursor.moveToNext()) {
                 recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
@@ -128,22 +133,25 @@ public class MainActivity extends AppCompatActivity {
                         "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                         "WHERE object_id=?", new String[]{objectCursor.getString(0)});
 
-                curRecId = UncoverBranch(recordCursor, curRecId, 0);
+                UncoverBranch(recordCursor, objectCursor.getInt(0), 0);
             }
+            objectCursor.close();
+            recordCursor.close();
         }else{
+            if(recordCursor.isClosed()) {
+                recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                        "WHERE object_id=?", new String[]{String.valueOf(idOfSelectedObj)});
 
-            recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
-                    "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                    "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                    "WHERE object_id=?", new String[]{objectCursor.getString(0)});
-
-            curRecId = UncoverBranch(recordCursor, curRecId, 0);
+                objLinkRecList.clear();
+            }
         }
     }
 
-    public int UncoverBranch(Cursor cursor,int curRecListId,int parentRecId){
+    public int UncoverBranch(Cursor cursor,int objIdCurRec,int parentRecId){
         ArrayList<Integer> levels = new ArrayList<>();
-        int cur_level=0;
+        int cur_level=0,curRecListId=-1;
         levels.add(cur_level, parentRecId);
 
         while (cur_level>-1){
@@ -153,7 +161,8 @@ public class MainActivity extends AppCompatActivity {
                 records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level));
                 curRecListId = curRecListId + 1;
 
-                recordAdapter.notifyItemInserted(curRecListId);
+                if(objIdCurRec>0)
+                    objLinkRecList.add(objIdCurRec);
 
                 if(cur_level<1) {
                     cur_level = cur_level + 1;
