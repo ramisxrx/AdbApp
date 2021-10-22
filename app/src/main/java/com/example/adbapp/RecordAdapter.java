@@ -25,7 +25,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     private final OnRecordCBindListener onBindListener;
 
     private final LayoutInflater inflater;
-    private final List<Record> records;
+    private List<Record> records;
 
 
     RecordAdapter(Context context, List<Record> records, OnRecordClickListener onClickListener,OnRecordCBindListener onBindListener) {
@@ -63,6 +63,14 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
         onBindListener.onRecordBind(holder.getAdapterPosition());
 
+    }
+
+    public List<Record> getData(){
+        return this.records;
+    }
+
+    public void setData(List<Record> records){
+        this.records = records;
     }
 
 

@@ -17,6 +17,7 @@ import android.widget.HorizontalScrollView;
 
 import java.util.ArrayList;
 
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -84,6 +85,12 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     UncoverBranch(recordCursor, 0, records.get(position).getRecord_id());
+
+                    RecordDiffUtilCallback recordDiffUtilCallback = new RecordDiffUtilCallback(recordAdapter.getData(),records);
+                    DiffUtil.DiffResult recordDiffResult = DiffUtil.calculateDiff(recordDiffUtilCallback);
+
+                    recordAdapter.setData(records);
+                    recordDiffResult.dispatchUpdatesTo(recordAdapter);
                 }
             }
         };
