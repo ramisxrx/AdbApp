@@ -15,7 +15,7 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
     private final List<Record> records;
 
     private float mDividerHeight=2;
-    private int itemOffsets=150;
+    private int itemOffsets=50;
     private Paint mPaint;
     private View view;
 
@@ -27,13 +27,13 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
 
+        //outRect.left=records.get(parent.getChildViewHolder(view).getAdapterPosition()).getLevel()*itemOffsets;
         outRect.left=records.get(parent.getChildViewHolder(view).getAdapterPosition()).getLevel()*itemOffsets;
 // // Если это не первый, установить значение top.
         if (parent.getChildAdapterPosition(view) != 0){
             // Здесь прямо прописан в 1px
             outRect.top = 10;
-        }else
-            outRect.right = 2000;
+        }
     }
 
     @Override

@@ -70,6 +70,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     }
 
     public void setData(List<Record> records){
+        this.records.clear();
         this.records = records;
     }
 

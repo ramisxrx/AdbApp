@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     ArrayList<Record> records = new ArrayList<>();
+    ArrayList<Record> records_2 = new ArrayList<>();
     ArrayList<Integer> objLinkRecList = new ArrayList<>();
     ArrayList<Long> record_id = new ArrayList<>();
 
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         addButton = (Button) findViewById(R.id.addButton);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
-        HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
+        //HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
 
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
@@ -77,21 +78,38 @@ public class MainActivity extends AppCompatActivity {
                // PosRecClick = position;
                 //addRecord(PosRecClick);
 
-                if(records.get(position).getHasChildRec()) {
+                if(position==0 && record.getParent_id()!=0){
                     records.clear();
 
-                    if (!objLinkRecList.isEmpty()) {
-                        fillingOfRecords(objLinkRecList.get(position));
+                    if(record.getParent_id()==0){
+                        fillingOfRecords(0);
+                    }else
+                        UncoverBranch(recordCursor,0, 0, record.getParent_id());
+                }else {
+
+                    if (record.getHasChildRec()) {
+                        if (!objLinkRecList.isEmpty()) {
+                            fillingOfRecords(objLinkRecList.get(position));
+                        }
+
+                        int parentIdRec = records.get(position).getRecord_id();
+
+                        //records_2 = records;
+
+                        records.clear();
+
+                        UncoverBranch(recordCursor, 0, 0, parentIdRec);
+
+                        //RecordDiffUtilCallback recordDiffUtilCallback = new RecordDiffUtilCallback(records_2,records);
+                        //DiffUtil.DiffResult recordDiffResult = DiffUtil.calculateDiff(recordDiffUtilCallback);
+
+                        //recordAdapter.setData(records);
+                        //recordDiffResult.dispatchUpdatesTo(recordAdapter);
+
                     }
-
-                    UncoverBranch(recordCursor, 0, records.get(position).getRecord_id());
-
-                    RecordDiffUtilCallback recordDiffUtilCallback = new RecordDiffUtilCallback(recordAdapter.getData(),records);
-                    DiffUtil.DiffResult recordDiffResult = DiffUtil.calculateDiff(recordDiffUtilCallback);
-
-                    recordAdapter.setData(records);
-                    recordDiffResult.dispatchUpdatesTo(recordAdapter);
                 }
+
+                recordAdapter.notifyDataSetChanged();
             }
         };
 
@@ -132,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void fillingOfRecords(int idOfSelectedObj){
 
+        int curRecListId=0;
+
         if(idOfSelectedObj==0) {
             objectCursor = db.rawQuery("select _id FROM list_objects", null);
             while (objectCursor.moveToNext()) {
@@ -140,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                         "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                         "WHERE object_id=?", new String[]{objectCursor.getString(0)});
 
-                UncoverBranch(recordCursor, objectCursor.getInt(0), 0);
+                curRecListId = UncoverBranch(recordCursor,curRecListId, objectCursor.getInt(0), 0);
             }
             objectCursor.close();
             recordCursor.close();
@@ -156,17 +176,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public int UncoverBranch(Cursor cursor,int objIdCurRec,int parentRecId){
+    public int UncoverBranch(Cursor cursor,int curRecListId,int objIdCurRec,int parentRecId){
+
         ArrayList<Integer> levels = new ArrayList<>();
-        int cur_level=0,curRecListId=-1;
+        int cur_level=0, indent=0;
         levels.add(cur_level, parentRecId);
+
+        if(parentRecId!=0){
+
+            Record.CursorMatchFound_2(cursor,0,parentRecId);
+            records.add(curRecListId,new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1),0));
+            records.get(curRecListId).setParent_id(cursor.getInt(1));
+            curRecListId = curRecListId + 1;
+
+            indent=1;
+        }
 
         while (cur_level>-1){
 
             if(Record.CursorMatchFound_1(cursor,1,0,records,levels.get(cur_level))){
 
-                records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level));
-                curRecListId = curRecListId + 1;
+                //records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level));
+                records.add(curRecListId,new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level+indent));
 
                 if(objIdCurRec>0)
                     objLinkRecList.add(objIdCurRec);
@@ -177,7 +208,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 records.get(curRecListId).setHasChildRec(Record.CursorMatchFound_2(cursor,1,records.get(curRecListId).getRecord_id()));
-                count_rec = count_rec - 1;
+                records.get(curRecListId).setParent_id(parentRecId);
+
+                curRecListId = curRecListId + 1;
+
             }else{
                 levels.remove(cur_level);
                 cur_level = cur_level-1;

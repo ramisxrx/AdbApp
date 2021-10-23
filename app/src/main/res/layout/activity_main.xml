@@ -19,23 +19,15 @@
         app:layout_constraintRight_toRightOf="parent"
         />
 
-       <HorizontalScrollView
-        android:id="@+id/hscroll"
-        android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+
+        app:layout_constraintTop_toBottomOf="@id/addButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addButton">
+        app:layout_constraintRight_toRightOf="parent"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list"
-                android:layout_width="10000mm"
-                android:layout_height="fill_parent"
-
-                app:layout_constraintTop_toBottomOf="@id/addButton"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"/>
-
-        </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
