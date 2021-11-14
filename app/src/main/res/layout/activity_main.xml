@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray">
@@ -27,6 +28,15 @@
         app:layout_constraintTop_toBottomOf="@id/addButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <Button
+        android:id="@+id/buttonLevelUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="На уровень выше"
+        android:onClick="LevelUp"
+        app:layout_constraintTop_toBottomOf="@id/list"
         app:layout_constraintRight_toRightOf="parent"/>
 
 

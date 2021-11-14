@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean reqToFillRec;
 
-    int cur_level=0, count_rec=0, i,j, curRecId=0, PosRecClick=0;
+    int cur_level=0, count_rec=0, i,j, curRecId=0, PosRecClick=0, selObjId=0;
     String indent;
     long count_childRec=0;
 
@@ -74,10 +74,11 @@ public class MainActivity extends AppCompatActivity {
         RecordAdapter.OnRecordClickListener recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
             public void onRecordClick(Record record, int position) {
-                PosRecClick = record.getRecord_id();
+
+                //PosRecClick = record.getRecord_id();
                // PosRecClick = position;
                 //addRecord(PosRecClick);
-
+                /*
                 if(position==0 && record.getParent_id()!=0){
                     records.clear();
 
@@ -108,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 }
+
+                 */
+                if(selObjId)
+
+                FillingOfRec(record.getRecord_id());
 
                 recordAdapter.notifyDataSetChanged();
             }
@@ -141,11 +147,59 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         if(reqToFillRec) {
-            fillingOfRecords(0);
-            //reqToFillRec = false;
+            //fillingOfRecords(0);
+
+            FillingOfRec(0);
+            reqToFillRec = false;
         }
 
         //HScroll.computeScroll();
+    }
+
+    public void FillingFirstLevel(){
+
+        int i=0;
+
+        objectCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+            "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+            "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+            "WHERE parent_id=?", new String[]{String.valueOf(0});
+
+
+        records.clear();
+
+        while (objectCursor.moveToNext()) {
+            records.add(new Record(objectCursor.getInt(0), objectCursor.getString(2), objectCursor.getInt(1),0));
+            records.get(i).setParent_id(0);
+            i++;
+        }
+
+        objectCursor.close();
+    }
+
+    public void FillingOtherLevel(int parentId){
+
+        int k=0;
+
+        if(recordCursor.isClosed()) {
+            recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                    "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                    "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                    "WHERE parent_id=?", new String[]{String.valueOf(parentId)});
+        }
+
+        records.clear();
+
+        for(int i=0;i<recordCursor.getCount();i++){
+
+            recordCursor.moveToPosition(i);
+
+            if(recordCursor.getInt(1)==parentId)
+                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1),0));
+                records.get(k).setParent_id(parentId);
+                k++;
+        }
+
     }
 
     public void fillingOfRecords(int idOfSelectedObj){
@@ -236,6 +290,16 @@ public class MainActivity extends AppCompatActivity {
     public void addObject(View view){
     //    addRecord(0);
        // HScroll.computeScroll();
+    }
+
+    public void LevelUp(View view){
+
+        if(records.get(0).getParent_id()-1>=0) {
+
+            FillingOfRec(records.get(0).getParent_id() - 1);
+
+            recordAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
