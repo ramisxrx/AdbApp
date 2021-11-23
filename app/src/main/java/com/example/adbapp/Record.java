@@ -112,4 +112,12 @@ public class Record {
         return -1;
     }
 
+    public static int ParentIdByRecId(ArrayList<Record> records, int _id){
+        for(int i=0; i<records.size();i++) {
+            if(records.get(i).getRecord_id()==_id)
+                return records.get(i).getParent_id();
+        }
+        return -1;
+    }
+
 }
