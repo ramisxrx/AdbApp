@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,17 +25,21 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MainActivity extends AppCompatActivity {
 
     Button addButton;
+    Button buttonLevelUp;
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
     Cursor objectCursor, recordCursor;
     RecordAdapter recordAdapter;
     HorizontalScrollView HScroll;
 
+    private static final String TAG = "**MainActivity**";
 
     ArrayList<Record> records = new ArrayList<>();
     ArrayList<Record> records_2 = new ArrayList<>();
     ArrayList<Integer> objLinkRecList = new ArrayList<>();
     ArrayList<Long> record_id = new ArrayList<>();
+    ArrayList<Integer> objIdList = new ArrayList<>();
+    ArrayList<Integer> parentIdByLevels = new ArrayList<>();
 
     boolean reqToFillRec;
 
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         addButton = (Button) findViewById(R.id.addButton);
+        buttonLevelUp = findViewById(R.id.buttonLevelUp);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
         //HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
 
@@ -75,45 +81,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRecordClick(Record record, int position) {
 
-                //PosRecClick = record.getRecord_id();
-               // PosRecClick = position;
-                //addRecord(PosRecClick);
-                /*
-                if(position==0 && record.getParent_id()!=0){
-                    records.clear();
+                if(selObjId==0){
+                    selObjId = objIdList.get(position);
 
-                    if(record.getParent_id()==0){
-                        fillingOfRecords(0);
-                    }else
-                        UncoverBranch(recordCursor,0, 0, record.getParent_id());
-                }else {
-
-                    if (record.getHasChildRec()) {
-                        if (!objLinkRecList.isEmpty()) {
-                            fillingOfRecords(objLinkRecList.get(position));
-                        }
-
-                        int parentIdRec = records.get(position).getRecord_id();
-
-                        //records_2 = records;
-
-                        records.clear();
-
-                        UncoverBranch(recordCursor, 0, 0, parentIdRec);
-
-                        //RecordDiffUtilCallback recordDiffUtilCallback = new RecordDiffUtilCallback(records_2,records);
-                        //DiffUtil.DiffResult recordDiffResult = DiffUtil.calculateDiff(recordDiffUtilCallback);
-
-                        //recordAdapter.setData(records);
-                        //recordDiffResult.dispatchUpdatesTo(recordAdapter);
-
-                    }
+                    recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                            "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                            "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                            "WHERE object_id=?", new String[]{String.valueOf(selObjId)});
                 }
 
-                 */
-                if(selObjId)
+                cur_level++;
+                parentIdByLevels.add(cur_level,record.getRecord_id());
 
-                FillingOfRec(record.getRecord_id());
+                FillingOtherLevel(record.getRecord_id());
 
                 recordAdapter.notifyDataSetChanged();
             }
@@ -148,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(reqToFillRec) {
             //fillingOfRecords(0);
-
-            FillingOfRec(0);
+            parentIdByLevels.add(0,0);
+            FillingFirstLevel();
             reqToFillRec = false;
         }
 
@@ -160,33 +140,36 @@ public class MainActivity extends AppCompatActivity {
 
         int i=0;
 
-        objectCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+        objectCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,object_id FROM " +
             "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
             "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-            "WHERE parent_id=?", new String[]{String.valueOf(0});
+            "WHERE parent_id=?", new String[]{String.valueOf(0)});
 
+        selObjId = 0;
 
         records.clear();
+        objIdList.clear();
 
         while (objectCursor.moveToNext()) {
             records.add(new Record(objectCursor.getInt(0), objectCursor.getString(2), objectCursor.getInt(1),0));
             records.get(i).setParent_id(0);
             i++;
+
+            objIdList.add(objectCursor.getInt(4));
         }
 
+        Log.d(TAG, "FillingFirstLevel: cur_level="+String.valueOf(cur_level));
+        
         objectCursor.close();
+
+        buttonLevelUp.setVisibility(View.GONE);
     }
 
     public void FillingOtherLevel(int parentId){
 
         int k=0;
 
-        if(recordCursor.isClosed()) {
-            recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
-                    "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                    "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                    "WHERE parent_id=?", new String[]{String.valueOf(parentId)});
-        }
+        Log.d(TAG, "FillingOtherLevel: parent_id="+String.valueOf(parentIdByLevels.get(cur_level)));
 
         records.clear();
 
@@ -194,12 +177,16 @@ public class MainActivity extends AppCompatActivity {
 
             recordCursor.moveToPosition(i);
 
-            if(recordCursor.getInt(1)==parentId)
-                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1),0));
+            if(recordCursor.getInt(1)==parentId) {
+                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
                 records.get(k).setParent_id(parentId);
                 k++;
+            }
         }
 
+        Log.d(TAG, "FillingOtherLevel: cur_level="+String.valueOf(cur_level));
+
+        buttonLevelUp.setVisibility(View.VISIBLE);
     }
 
     public void fillingOfRecords(int idOfSelectedObj){
@@ -280,10 +267,6 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("id", idRec);
         mStartForResult.launch(intent);
 
-
-       // records.add(PosRecClick+1,new Record(100, "zdoroy", PosRecClick, records.get(PosRecClick).getLevel()+1));
-       // recordAdapter.notifyItemInserted(PosRecClick+1);
-       // HScroll.computeScroll();
     }
 
 
@@ -294,12 +277,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void LevelUp(View view){
 
-        if(records.get(0).getParent_id()-1>=0) {
+        Log.d(TAG, "LevelUp: cur_level="+String.valueOf(cur_level));
 
-            FillingOfRec(records.get(0).getParent_id() - 1);
+        if(cur_level>0) {
+
+            parentIdByLevels.remove(cur_level);
+            cur_level--;
+
+            Log.d(TAG, "LevelUp: cur_level="+String.valueOf(cur_level));
+
+            if (cur_level == 0)
+                FillingFirstLevel();
+            else
+                FillingOtherLevel(parentIdByLevels.get(cur_level));
+
 
             recordAdapter.notifyDataSetChanged();
         }
+
     }
 
     @Override
