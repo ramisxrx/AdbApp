@@ -19,8 +19,11 @@ import android.widget.HorizontalScrollView;
 import java.util.ArrayList;
 
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -114,6 +117,11 @@ public class MainActivity extends AppCompatActivity {
         recordList.setLayoutManager(layoutmanager);
 
         recordList.addItemDecoration(new RecordDecoration(records));
+
+
+        //ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(recordAdapter,);
+        //ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        //touchHelper.attachToRecyclerView(recordList);
 
         reqToFillRec = true;
 

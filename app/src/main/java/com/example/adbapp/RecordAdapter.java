@@ -9,9 +9,11 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
+
 import java.util.List;
 
-public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder> {
+public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder> implements ItemTouchHelperAdapter {
 
     interface OnRecordClickListener{
         void onRecordClick(Record record, int position);
@@ -32,7 +34,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         this.onClickListener = onClickListener;
         this.records = records;
         this.inflater = LayoutInflater.from(context);
-        this.onBindListener=onBindListener;
+        this.onBindListener = onBindListener;
     }
 
     @Override
@@ -74,6 +76,27 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         this.records = records;
     }
 
+    @Override
+    public void onItemDismiss(int position) {
+        mItems.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition){
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(mItems, i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(mItems, i, i - 1);
+                }
+            }
+            notifyItemMoved(fromPosition, toPosition);
+            return true;
+    }
+
 
     @Override
     public int getItemCount() {
@@ -90,4 +113,5 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
             blockView = (ConstraintLayout) view.findViewById(R.id.block_field);
         }
     }
+
 }
