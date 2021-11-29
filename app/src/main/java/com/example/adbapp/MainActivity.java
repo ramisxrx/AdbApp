@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
 import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     Cursor objectCursor, recordCursor;
     RecordAdapter recordAdapter;
     HorizontalScrollView HScroll;
+    SimpleItemTouchHelperCallback simpleItemTouchHelperCallback;
 
     private static final String TAG = "**MainActivity**";
 
@@ -84,21 +87,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRecordClick(Record record, int position) {
 
-                if(selObjId==0){
-                    selObjId = objIdList.get(position);
-
-                    recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
-                            "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                            "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                            "WHERE object_id=?", new String[]{String.valueOf(selObjId)});
-                }
-
-                cur_level++;
-                parentIdByLevels.add(cur_level,record.getRecord_id());
-
-                FillingOtherLevel(record.getRecord_id());
-
-                recordAdapter.notifyDataSetChanged();
             }
         };
 
@@ -118,6 +106,38 @@ public class MainActivity extends AppCompatActivity {
 
         recordList.addItemDecoration(new RecordDecoration(records));
 
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Log.d(TAG, "onSwiped: ");
+
+                if(selObjId==0){
+                    selObjId = objIdList.get(viewHolder.getAdapterPosition());
+
+                    recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                            "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                            "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                            "WHERE object_id=?", new String[]{String.valueOf(selObjId)});
+                }
+
+                cur_level++;
+                parentIdByLevels.add(cur_level,records.get(viewHolder.getAdapterPosition()).getRecord_id());
+
+                FillingOtherLevel(records.get(viewHolder.getAdapterPosition()).getRecord_id());
+
+                recordAdapter.notifyDataSetChanged();
+            }
+        };
+
+        ItemTouchHelper touchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        touchHelper.attachToRecyclerView(recordList);
 
         //ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(recordAdapter,);
         //ItemTouchHelper touchHelper = new ItemTouchHelper(callback);

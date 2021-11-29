@@ -9,7 +9,7 @@
         android:id="@+id/block_field"
         android:layout_width="347dp"
         android:layout_height="59dp"
-
+        android:background="@drawable/layout_bg"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

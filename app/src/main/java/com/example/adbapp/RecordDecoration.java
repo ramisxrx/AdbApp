@@ -39,30 +39,13 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
         super.onDraw(c, parent, state);
-
+/*
         int childCount = parent.getChildCount();
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setColor(Color.RED);
-/*
-        for ( int i = 0; i < childCount; i++ ) {
 
-            int index = parent.getChildAdapterPosition(view);
-            // Первый ItemView не нужно рисовать
-            if ( index == 0 ) {
-                continue;
-            }
-
-            float dividerTop = view.getTop() - mDividerHeight;
-            float dividerLeft = parent.getPaddingLeft();
-            float dividerBottom = view.getTop();
-            float dividerRight = parent.getWidth() - parent.getPaddingRight();
-
-            c.drawRect(dividerLeft,dividerTop,dividerRight,dividerBottom,mPaint);
-
-        }
-*/
         int levels;
 
         mPaint.setStyle(Paint.Style.FILL);
@@ -83,6 +66,8 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
 
             c.drawRoundRect(view.getLeft(),view.getTop(),view.getRight(),view.getBottom(),30,30,mPaint);
         }
+
+ */
     }
 
 }
