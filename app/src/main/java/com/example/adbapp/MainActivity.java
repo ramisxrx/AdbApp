@@ -86,18 +86,11 @@ public class MainActivity extends AppCompatActivity {
         RecordAdapter.OnRecordClickListener recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
             public void onRecordClick(Record record, int position) {
-
+                addRecord(record.getRecord_id());
             }
         };
 
-        RecordAdapter.OnRecordCBindListener recordBindListener = new RecordAdapter.OnRecordCBindListener(){
-            @Override
-            public void onRecordBind(int position){
-               //recordAdapter.notifyItemChanged(position-1);
-            }
-        };
-
-        recordAdapter = new RecordAdapter(this, records, recordClickListener,recordBindListener);
+        recordAdapter = new RecordAdapter(this, records, recordClickListener);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);

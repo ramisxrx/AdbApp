@@ -1,6 +1,8 @@
 package com.example.adbapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,17 +37,21 @@ public class AddActivity extends AppCompatActivity {
     RecordAdapter.OnRecordClickListener recordClickListener;
     //HorizontalScrollView HScroll;
 
+    private static final String TAG = "**AddActivity**";
+
     DatabaseHelper sqlHelper;
     SQLiteDatabase db;
     Cursor recordCursor, nameCursor, fieldCursor, objectCursor;
     ArrayAdapter<String> fieldAdapter;
     long  objectId=0, fieldIdForSave=0;
-    int recordId=0;
+    int recordId=0, selObjId=0, cur_level=0;
     //ArrayList<String> fields = new ArrayList<>();
     ArrayList<Long> field_id = new ArrayList<>();
     ArrayList<Integer> recIdList = new ArrayList<>();
-    ArrayList<Integer> recObjIdList = new ArrayList<>();
+    ArrayList<Integer> objIdList = new ArrayList<>();
     ArrayList<Record> records = new ArrayList<>();
+    ArrayList<Record> foundRecords = new ArrayList<>();
+    ArrayList<Integer> parentIdByLevels = new ArrayList<>();
 
 
     @Override
@@ -68,14 +75,7 @@ public class AddActivity extends AppCompatActivity {
             }
         };
 
-        RecordAdapter.OnRecordCBindListener recordBindListener = new RecordAdapter.OnRecordCBindListener(){
-            @Override
-            public void onRecordBind(int position){
-                recordAdapter.notifyItemChanged(position);
-            }
-        };
-
-        recordAdapter = new RecordAdapter(this, records, recordClickListener,recordBindListener);
+        recordAdapter = new RecordAdapter(this, records, recordClickListener);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
@@ -83,6 +83,44 @@ public class AddActivity extends AppCompatActivity {
         recordList.setLayoutManager(layoutmanager);
         recordList.addItemDecoration(new RecordDecoration(records));
 
+
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Log.d(TAG, "onSwiped: ");
+
+                if (direction == 4) {
+                    if(selObjId==0){
+                        selObjId = objIdList.get(viewHolder.getAdapterPosition());
+
+                        recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                                "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                                "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                                "WHERE object_id=?", new String[]{String.valueOf(selObjId)});
+                    }
+
+                    cur_level++;
+                    parentIdByLevels.add(cur_level,records.get(viewHolder.getAdapterPosition()).getRecord_id());
+
+                    FillingOtherLevel(records.get(viewHolder.getAdapterPosition()).getRecord_id());
+
+                    recordAdapter.notifyDataSetChanged();
+                }
+
+            }
+        };
+
+        ItemTouchHelper touchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        touchHelper.attachToRecyclerView(recordList);
+
+        parentIdByLevels.add(0,0);
     }
 
     @Override
@@ -128,11 +166,13 @@ public class AddActivity extends AppCompatActivity {
             // при изменении текста выполняем фильтрацию
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                records.clear();
+                foundRecords.clear();
                 field_id.clear();
 
                 recIdList.clear();
-                recObjIdList.clear();
+                objIdList.clear();
+                selObjId=0;
+                cur_level=0;
 
                 recordCursor = db.rawQuery("select record_clusters._id,parent_id,field_id,_type,_name,_time,object_id FROM " +
                         "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
@@ -141,24 +181,80 @@ public class AddActivity extends AppCompatActivity {
 
                 while(recordCursor.moveToNext() && s.length()>0){
 
-                    records.add(new Record(recordCursor.getInt(0),recordCursor.getString(4),recordCursor.getInt(1),0));
+                    foundRecords.add(new Record(recordCursor.getInt(0),recordCursor.getString(4),recordCursor.getInt(1),0));
 
-                    records.get(records.size()-1).setParent_id(recordCursor.getInt(1));
+                    foundRecords.get(foundRecords.size()-1).setParent_id(recordCursor.getInt(1));
 
                     recIdList.add(recordCursor.getInt(0));
-                    recObjIdList.add(recordCursor.getInt(6));
+                    objIdList.add(recordCursor.getInt(6));
 
                     field_id.add(recordCursor.getLong(2));
                 }
 
+                records.clear();
+                for(int i=0;i<foundRecords.size();i++)
+                    records.add(i,foundRecords.get(i));
+
+
                 recordAdapter.notifyDataSetChanged();
                 recordCursor.close();
 
-                UncoverForEachBranch();
+                //UncoverForEachBranch();
             }
         });
 
         //HScroll.computeScroll();
+    }
+
+    public void FillingOtherLevel(int parentId){
+
+        int k=0;
+
+        Log.d(TAG, "FillingOtherLevel: parent_id="+String.valueOf(parentIdByLevels.get(cur_level)));
+
+        records.clear();
+
+        for(int i=0;i<recordCursor.getCount();i++){
+
+            recordCursor.moveToPosition(i);
+
+            if(recordCursor.getInt(1)==parentId) {
+                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                records.get(k).setParent_id(parentId);
+                k++;
+            }
+        }
+
+        Log.d(TAG, "FillingOtherLevel: cur_level="+String.valueOf(cur_level));
+
+    }
+
+    public void LevelUp(View view){
+
+        Log.d(TAG, "LevelUp: cur_level="+String.valueOf(cur_level));
+
+        if(cur_level>0) {
+
+            parentIdByLevels.remove(cur_level);
+            cur_level--;
+
+            Log.d(TAG, "LevelUp: cur_level="+String.valueOf(cur_level));
+
+            if (cur_level == 0) {
+                selObjId = 0;
+
+                records.clear();
+                for (int i = 0; i < foundRecords.size(); i++)
+                    records.add(i, foundRecords.get(i));
+                recordAdapter.notifyDataSetChanged();
+            }
+            else
+                FillingOtherLevel(parentIdByLevels.get(cur_level));
+
+
+            recordAdapter.notifyDataSetChanged();
+        }
+
     }
 
     public void UncoverForEachBranch(){
@@ -168,7 +264,7 @@ public class AddActivity extends AppCompatActivity {
             if(i==0)
                 makeReq=true;
             else{
-                if(recObjIdList.get(i)==recObjIdList.get(i-1))
+                if(objIdList.get(i)==objIdList.get(i-1))
                     makeReq=false;
                 else
                     makeReq=true;
@@ -178,7 +274,7 @@ public class AddActivity extends AppCompatActivity {
                 recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
                         "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                         "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                        "WHERE object_id=?", new String[]{String.valueOf(recObjIdList.get(i))});
+                        "WHERE object_id=?", new String[]{String.valueOf(objIdList.get(i))});
             }
 
             UncoverBranchUp(recordCursor,Record.posInListById(records,recIdList.get(i)));
