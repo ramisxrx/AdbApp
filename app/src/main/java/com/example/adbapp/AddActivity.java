@@ -45,6 +45,7 @@ public class AddActivity extends AppCompatActivity {
     ArrayAdapter<String> fieldAdapter;
     long  objectId=0, fieldIdForSave=0;
     int recordId=0, selObjId=0, cur_level=0, selFieldId=0;
+    boolean selDirection=false;
     //ArrayList<String> fields = new ArrayList<>();
     ArrayList<Integer> field_id = new ArrayList<>();
     ArrayList<Integer> recIdList = new ArrayList<>();
@@ -96,12 +97,17 @@ public class AddActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Log.d(TAG, "onSwiped: ");
 
-                if (direction == 4) {
 
-                    if(selFieldId==0) {
-                        selFieldId = field_id.get(viewHolder.getAdapterPosition());
-                        FillingZeroLevel(selFieldId, false);
-                    }else {
+
+                if(selFieldId==0) {
+                    selFieldId = field_id.get(viewHolder.getAdapterPosition());
+                    if (direction == 4)
+                        selDirection = false;
+                    else
+                        selDirection = true;
+
+                    FillingZeroLevel(selFieldId, selDirection);
+                }else {
 
                         if (selObjId == 0) {
                             selObjId = objIdList.get(viewHolder.getAdapterPosition());
@@ -113,13 +119,20 @@ public class AddActivity extends AppCompatActivity {
                         }
 
                         cur_level++;
+
+                    if (direction == 4) {
                         parentIdByLevels.add(cur_level, records.get(viewHolder.getAdapterPosition()).getRecord_id());
 
-                        FillingOtherLevel(records.get(viewHolder.getAdapterPosition()).getRecord_id());
-                    }
+                        FillingOtherLevel(records.get(viewHolder.getAdapterPosition()).getRecord_id(),selDirection);
+                    }else{
+                        parentIdByLevels.add(cur_level, records.get(viewHolder.getAdapterPosition()).getParent_id());
 
-                    recordAdapter.notifyDataSetChanged();
+                        FillingOtherLevel(records.get(viewHolder.getAdapterPosition()).getParent_id(),selDirection);
+                    }
                 }
+
+                recordAdapter.notifyDataSetChanged();
+
 
             }
         };
@@ -227,24 +240,43 @@ public class AddActivity extends AppCompatActivity {
         records.clear();
         objIdList.clear();
 
-        while (fieldCursor.moveToNext()) {
+        if(direction){
+            while (fieldCursor.moveToNext()) {
 
-            recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,object_id FROM " +
-                    "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                    "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                    "WHERE parent_id=?", new String[]{fieldCursor.getString(1)});
+                recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,object_id FROM " +
+                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                        "WHERE record_clusters._id=?", new String[]{fieldCursor.getString(1)});
 
-            while(recordCursor.moveToNext()) {
+                while (recordCursor.moveToNext()) {
 
-                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
-                records.get(i).setParent_id(0);
-                i++;
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                    records.get(i).setParent_id(0);
+                    i++;
 
-                objIdList.add(recordCursor.getInt(4));
+                    objIdList.add(recordCursor.getInt(4));
+                }
+            }
+        }else {
+            while (fieldCursor.moveToNext()) {
+
+                recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,object_id FROM " +
+                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                        "WHERE parent_id=?", new String[]{fieldCursor.getString(0)});
+
+                while (recordCursor.moveToNext()) {
+
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                    records.get(i).setParent_id(0);
+                    i++;
+
+                    objIdList.add(recordCursor.getInt(4));
+                }
             }
         }
 
-        Log.d(TAG, "FillingFirstLevel: cur_level="+String.valueOf(cur_level));
+        Log.d(TAG, "FillingZeroLevel: cur_level="+String.valueOf(cur_level));
 
         recordCursor.close();
         fieldCursor.close();
@@ -252,7 +284,9 @@ public class AddActivity extends AppCompatActivity {
     }
 
 
-    public void FillingOtherLevel(int parentId){
+    public void FillingOtherLevel(int parentId,boolean direction){
+
+        /* direction: False - Up, True - Down */
 
         int k=0;
 
@@ -264,10 +298,18 @@ public class AddActivity extends AppCompatActivity {
 
             recordCursor.moveToPosition(i);
 
-            if(recordCursor.getInt(1)==parentId) {
-                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
-                records.get(k).setParent_id(parentId);
-                k++;
+            if(direction) {
+                if (recordCursor.getInt(1) == parentId) {
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                    records.get(k).setParent_id(parentId);
+                    k++;
+                }
+            }else{
+                if (recordCursor.getInt(0) == parentId) {
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                    //records.get(k).setParent_id(parentId);
+                    k++;
+                }
             }
         }
 
@@ -288,11 +330,12 @@ public class AddActivity extends AppCompatActivity {
 
             if (cur_level == 0) {
                 selObjId = 0;
-                FillingZeroLevel(selFieldId, false);
+                FillingZeroLevel(selFieldId, selDirection);
             }
             else
-                FillingOtherLevel(parentIdByLevels.get(cur_level));
+                FillingOtherLevel(parentIdByLevels.get(cur_level),selDirection);
         }else{
+            selFieldId=0;
             records.clear();
             for (int i = 0; i < fields.size(); i++)
                 records.add(i, fields.get(i));

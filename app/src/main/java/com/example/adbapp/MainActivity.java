@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             objIdList.add(objectCursor.getInt(4));
         }
 
-        Log.d(TAG, "FillingFirstLevel: cur_level="+String.valueOf(cur_level));
+        Log.d(TAG, "FillingZeroLevel: cur_level="+String.valueOf(cur_level));
         
         objectCursor.close();
 
