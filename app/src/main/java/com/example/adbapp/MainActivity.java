@@ -150,14 +150,14 @@ public class MainActivity extends AppCompatActivity {
         if(reqToFillRec) {
             //fillingOfRecords(0);
             parentIdByLevels.add(0,0);
-            FillingFirstLevel();
+            FillingZeroLevel();
             reqToFillRec = false;
         }
 
         //HScroll.computeScroll();
     }
 
-    public void FillingFirstLevel(){
+    public void FillingZeroLevel(){
 
         int i=0;
 
@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "LevelUp: cur_level="+String.valueOf(cur_level));
 
             if (cur_level == 0)
-                FillingFirstLevel();
+                FillingZeroLevel();
             else
                 FillingOtherLevel(parentIdByLevels.get(cur_level));
 

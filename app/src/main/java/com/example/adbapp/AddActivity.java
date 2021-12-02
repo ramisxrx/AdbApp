@@ -44,13 +44,13 @@ public class AddActivity extends AppCompatActivity {
     Cursor recordCursor, nameCursor, fieldCursor, objectCursor;
     ArrayAdapter<String> fieldAdapter;
     long  objectId=0, fieldIdForSave=0;
-    int recordId=0, selObjId=0, cur_level=0;
+    int recordId=0, selObjId=0, cur_level=0, selFieldId=0;
     //ArrayList<String> fields = new ArrayList<>();
-    ArrayList<Long> field_id = new ArrayList<>();
+    ArrayList<Integer> field_id = new ArrayList<>();
     ArrayList<Integer> recIdList = new ArrayList<>();
     ArrayList<Integer> objIdList = new ArrayList<>();
     ArrayList<Record> records = new ArrayList<>();
-    ArrayList<Record> foundRecords = new ArrayList<>();
+    ArrayList<Record> fields = new ArrayList<>();
     ArrayList<Integer> parentIdByLevels = new ArrayList<>();
 
 
@@ -97,19 +97,26 @@ public class AddActivity extends AppCompatActivity {
                 Log.d(TAG, "onSwiped: ");
 
                 if (direction == 4) {
-                    if(selObjId==0){
-                        selObjId = objIdList.get(viewHolder.getAdapterPosition());
 
-                        recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
-                                "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                                "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                                "WHERE object_id=?", new String[]{String.valueOf(selObjId)});
+                    if(selFieldId==0) {
+                        selFieldId = field_id.get(viewHolder.getAdapterPosition());
+                        FillingZeroLevel(selFieldId, false);
+                    }else {
+
+                        if (selObjId == 0) {
+                            selObjId = objIdList.get(viewHolder.getAdapterPosition());
+
+                            recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                                    "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                                    "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                                    "WHERE object_id=?", new String[]{String.valueOf(selObjId)});
+                        }
+
+                        cur_level++;
+                        parentIdByLevels.add(cur_level, records.get(viewHolder.getAdapterPosition()).getRecord_id());
+
+                        FillingOtherLevel(records.get(viewHolder.getAdapterPosition()).getRecord_id());
                     }
-
-                    cur_level++;
-                    parentIdByLevels.add(cur_level,records.get(viewHolder.getAdapterPosition()).getRecord_id());
-
-                    FillingOtherLevel(records.get(viewHolder.getAdapterPosition()).getRecord_id());
 
                     recordAdapter.notifyDataSetChanged();
                 }
@@ -166,34 +173,31 @@ public class AddActivity extends AppCompatActivity {
             // при изменении текста выполняем фильтрацию
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                foundRecords.clear();
+                fields.clear();
                 field_id.clear();
 
                 recIdList.clear();
                 objIdList.clear();
+                selFieldId=0;
                 selObjId=0;
                 cur_level=0;
 
-                recordCursor = db.rawQuery("select record_clusters._id,parent_id,field_id,_type,_name,_time,object_id FROM " +
-                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                recordCursor = db.rawQuery("select field_clusters._id,_name FROM " +
+                        "field_clusters INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                         "WHERE _name like ?", new String[]{"%" + s.toString() + "%"});
 
                 while(recordCursor.moveToNext() && s.length()>0){
 
-                    foundRecords.add(new Record(recordCursor.getInt(0),recordCursor.getString(4),recordCursor.getInt(1),0));
+                    fields.add(new Record(0,recordCursor.getString(1),0,0));
 
-                    foundRecords.get(foundRecords.size()-1).setParent_id(recordCursor.getInt(1));
+                    //recIdList.add(recordCursor.getInt(0));
 
-                    recIdList.add(recordCursor.getInt(0));
-                    objIdList.add(recordCursor.getInt(6));
-
-                    field_id.add(recordCursor.getLong(2));
+                    field_id.add(recordCursor.getInt(0));
                 }
 
                 records.clear();
-                for(int i=0;i<foundRecords.size();i++)
-                    records.add(i,foundRecords.get(i));
+                for(int i=0;i<fields.size();i++)
+                    records.add(i,fields.get(i));
 
 
                 recordAdapter.notifyDataSetChanged();
@@ -205,6 +209,48 @@ public class AddActivity extends AppCompatActivity {
 
         //HScroll.computeScroll();
     }
+
+    public void FillingZeroLevel(int fieldId, boolean direction){
+
+        /* direction: False - Up, True - Down */
+
+        int i=0;
+
+        fieldCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,object_id FROM " +
+                "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                "WHERE field_id=?", new String[]{String.valueOf(fieldId)});
+
+
+        selObjId = 0;
+
+        records.clear();
+        objIdList.clear();
+
+        while (fieldCursor.moveToNext()) {
+
+            recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,object_id FROM " +
+                    "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                    "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                    "WHERE parent_id=?", new String[]{fieldCursor.getString(1)});
+
+            while(recordCursor.moveToNext()) {
+
+                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                records.get(i).setParent_id(0);
+                i++;
+
+                objIdList.add(recordCursor.getInt(4));
+            }
+        }
+
+        Log.d(TAG, "FillingFirstLevel: cur_level="+String.valueOf(cur_level));
+
+        recordCursor.close();
+        fieldCursor.close();
+
+    }
+
 
     public void FillingOtherLevel(int parentId){
 
@@ -242,18 +288,17 @@ public class AddActivity extends AppCompatActivity {
 
             if (cur_level == 0) {
                 selObjId = 0;
-
-                records.clear();
-                for (int i = 0; i < foundRecords.size(); i++)
-                    records.add(i, foundRecords.get(i));
-                recordAdapter.notifyDataSetChanged();
+                FillingZeroLevel(selFieldId, false);
             }
             else
                 FillingOtherLevel(parentIdByLevels.get(cur_level));
-
-
-            recordAdapter.notifyDataSetChanged();
+        }else{
+            records.clear();
+            for (int i = 0; i < fields.size(); i++)
+                records.add(i, fields.get(i));
         }
+
+        recordAdapter.notifyDataSetChanged();
 
     }
 
