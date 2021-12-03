@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         RecordAdapter.OnRecordClickListener recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
             public void onRecordClick(Record record, int position) {
-                addRecord(record.getRecord_id());
+                //addRecord(record.getRecord_id());
             }
         };
 
@@ -292,8 +292,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void addObject(View view){
-    //    addRecord(0);
-       // HScroll.computeScroll();
+        addRecord(parentIdByLevels.get(cur_level));
     }
 
     public void LevelUp(View view){

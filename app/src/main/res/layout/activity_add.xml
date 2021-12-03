@@ -36,13 +36,18 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
 
         android:layout_marginTop="12dp"
 
+        app:layout_constraintBottom_toTopOf="@id/buttonLevelUp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/saveButton"
@@ -61,26 +66,26 @@
         android:id="@+id/buttonLevelUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
 
+        android:layout_marginBottom="12dp"
         android:onClick="LevelUp"
         android:text="На предыдущий уровень"
+        app:layout_constraintBottom_toTopOf="@id/backButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/list" />
+        app:layout_constraintRight_toRightOf="parent" />
 
     <Button
         android:id="@+id/backButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="16dp"
         android:onClick="back"
         android:text="Назад"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonLevelUp" />
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
