@@ -122,6 +122,8 @@ public class AddActivity extends AppCompatActivity {
                     selFieldId = field_id.get(viewHolder.getAdapterPosition());
                     fieldIdForSave = selFieldId;
 
+                    Log.d(TAG, "onSwiped: fieldIdForSave="+String.valueOf(fieldIdForSave));
+
                     if (direction == 4) // Down
                         selDirection = false;
                     else                // Up
@@ -223,7 +225,7 @@ public class AddActivity extends AppCompatActivity {
 
                 while(recordCursor.moveToNext() && s.length()>0){
 
-                    fields.add(new Record(0,recordCursor.getString(1),0,0));
+                    fields.add(new Record(0,recordCursor.getString(1),recordCursor.getInt(0),0));
 
                     //recIdList.add(recordCursor.getInt(0));
 
@@ -248,6 +250,8 @@ public class AddActivity extends AppCompatActivity {
     public void FillingZeroLevel(int fieldId, boolean direction){
 
         /* direction: false - Down, true - Up */
+
+        Log.d(TAG, "FillingZeroLevel: fieldId="+String.valueOf(fieldId));
 
         int i=0;
 
@@ -433,6 +437,8 @@ public class AddActivity extends AppCompatActivity {
 
         if(fieldIdForSave>0){
 
+            Log.d(TAG, "save: fieldIdForSave="+String.valueOf(fieldIdForSave));
+
             cv.clear();
             cv.put(DatabaseHelper.COLUMN_OBJECT_ID, String.valueOf(objectId));
             cv.put(DatabaseHelper.COLUMN_PARENT_ID, String.valueOf(recordId));
@@ -464,7 +470,7 @@ public class AddActivity extends AppCompatActivity {
             fieldCursor = db.rawQuery("select _id FROM field_clusters " +
                     "WHERE  name_id = ?", new String[]{nameCursor.getString(0)});
 
-            fieldCursor.moveToFirst();
+            fieldCursor.moveToLast();
 
             cv.clear();
             cv.put(DatabaseHelper.COLUMN_OBJECT_ID, String.valueOf(objectId));

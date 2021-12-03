@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 if(selObjId==0){
                     selObjId = objIdList.get(viewHolder.getAdapterPosition());
 
-                    recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
+                    recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,field_id FROM " +
                             "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                             "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                             "WHERE object_id=?", new String[]{String.valueOf(selObjId)});
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
         int i=0;
 
-        objectCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,object_id FROM " +
+        objectCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,object_id,field_id FROM " +
             "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
             "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
             "WHERE parent_id=?", new String[]{String.valueOf(0)});
@@ -177,6 +177,9 @@ public class MainActivity extends AppCompatActivity {
             i++;
 
             objIdList.add(objectCursor.getInt(4));
+
+            Log.d(TAG, "FillingZeroLevel: record_id="+objectCursor.getString(0));
+            Log.d(TAG, "FillingZeroLevel: field_id="+objectCursor.getString(5));
         }
 
         Log.d(TAG, "FillingZeroLevel: cur_level="+String.valueOf(cur_level));
@@ -202,6 +205,9 @@ public class MainActivity extends AppCompatActivity {
                 records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
                 records.get(k).setParent_id(parentId);
                 k++;
+
+                Log.d(TAG, "FillingOtherLevel: record_id="+recordCursor.getString(0));
+                Log.d(TAG, "FillingOtherLevel: field_id="+recordCursor.getString(4));
             }
         }
 
