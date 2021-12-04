@@ -44,7 +44,7 @@ public class AddActivity extends AppCompatActivity {
     Cursor recordCursor, nameCursor, fieldCursor, objectCursor;
     ArrayAdapter<String> fieldAdapter;
     long  objectId=0, fieldIdForSave=0;
-    int recordId=0, selObjId=0, cur_level=0, selFieldId=0;
+    int recordId=0, selObjId=0, cur_level=0, selFieldId=0, typeViewHolder=0;
     boolean selDirection=false;
     //ArrayList<String> fields = new ArrayList<>();
     ArrayList<Integer> field_id = new ArrayList<>();
@@ -76,7 +76,7 @@ public class AddActivity extends AppCompatActivity {
             }
         };
 
-        recordAdapter = new RecordAdapter(this, records, recordClickListener);
+        recordAdapter = new RecordAdapter(this, records,typeViewHolder, recordClickListener);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
@@ -236,6 +236,7 @@ public class AddActivity extends AppCompatActivity {
                 for(int i=0;i<fields.size();i++)
                     records.add(i,fields.get(i));
 
+                typeViewHolder = 0;
 
                 recordAdapter.notifyDataSetChanged();
                 recordCursor.close();
@@ -301,6 +302,8 @@ public class AddActivity extends AppCompatActivity {
                 }
             }
         }
+
+        typeViewHolder = 1;
 
         Log.d(TAG, "FillingZeroLevel: cur_level="+String.valueOf(cur_level));
 

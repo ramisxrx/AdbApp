@@ -1,6 +1,7 @@
 package com.example.adbapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,11 @@ import java.util.List;
 
 public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder> implements ItemTouchHelperAdapter {
 
+    private static final String TAG = "**RecordAdapter**";
+
+    private final int TYPE_VIEW_0 = 0; // для показа fields
+    private final int TYPE_VIEW_1 = 1; // для показа текстовых records
+
     interface OnRecordClickListener{
         void onRecordClick(Record record, int position);
     }
@@ -24,28 +30,56 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     private final LayoutInflater inflater;
     private List<Record> records;
+    private int typeView;
 
 
-    RecordAdapter(Context context, List<Record> records, OnRecordClickListener onClickListener) {
+    RecordAdapter(Context context, List<Record> records,int typeView, OnRecordClickListener onClickListener) {
         this.onClickListener = onClickListener;
         this.records = records;
+        this.typeView = typeView;
         this.inflater = LayoutInflater.from(context);
     }
 
     @Override
     public RecordAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = inflater.inflate(R.layout.record_item, parent, false);
+        View view;
+
+        switch(viewType){
+            case TYPE_VIEW_0:
+                view = inflater.inflate(R.layout.field_item, parent, false);
+                Log.d(TAG, "onCreateViewHolder: field_item");
+                break;
+            //case TYPE_VIEW_1:
+            //    view = inflater.inflate(R.layout.record_item, parent, false);
+            //    break;
+
+            default:
+                view = inflater.inflate(R.layout.record_item, parent, false);
+                Log.d(TAG, "onCreateViewHolder: record_item");
+                break;
+        }
+
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecordAdapter.ViewHolder holder, int position) {
         Record record = records.get(position);
-        holder.nameView.setText(record.getName());
-        holder.timeView.setText(String.valueOf(record.getTime()));
 
     //    holder.blockView.setPadding(records.get(position).getLevel()*80,0,0,0);
+
+        switch (records.get(0).getRecord_id()){
+            case TYPE_VIEW_0:
+                holder.nameView.setText(record.getName());
+                Log.d(TAG, "onBindViewHolder: field");
+                break;
+            default:
+                holder.nameView.setText(record.getName());
+                holder.timeView.setText(String.valueOf(record.getTime()));
+                Log.d(TAG, "onBindViewHolder: record");
+                break;
+        }
 
 
         // обработка нажатия
@@ -57,8 +91,17 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                 onClickListener.onRecordClick(record, holder.getAdapterPosition());
             }
         });
+    }
 
-
+    @Override
+    public int getItemViewType(int position) {
+        // условие для определения айтем какого типа выводить в конкретной позиции
+        switch (records.get(0).getRecord_id()) {
+            case TYPE_VIEW_0:
+                return TYPE_VIEW_0;
+            default:
+                return TYPE_VIEW_1;
+        }
     }
 
     @Override

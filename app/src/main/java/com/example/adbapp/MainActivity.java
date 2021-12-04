@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        recordAdapter = new RecordAdapter(this, records, recordClickListener);
+        recordAdapter = new RecordAdapter(this, records,1, recordClickListener);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
