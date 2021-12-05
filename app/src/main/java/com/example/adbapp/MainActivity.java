@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Button buttonLevelUp;
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
-    Cursor objectCursor, recordCursor;
+    Cursor objectCursor, recordCursor, recordCursor2;
     RecordAdapter recordAdapter;
     HorizontalScrollView HScroll;
     SimpleItemTouchHelperCallback simpleItemTouchHelperCallback;
@@ -64,6 +64,19 @@ public class MainActivity extends AppCompatActivity {
                         //String accessMessage = intent.getStringExtra("");
                         //records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
                         //recordAdapter.notifyItemInserted(PosRecClick);
+
+                        recordCursor2 = db.rawQuery("select record_clusters._id, parent_id, _name, _time,field_id FROM " +
+                                "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
+                                "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
+                                "WHERE parent_id=?", new String[]{String.valueOf(parentIdByLevels.get(cur_level))});
+
+                        recordCursor2.moveToLast();
+
+                        records.add(new Record(recordCursor2.getInt(0), recordCursor2.getString(2), recordCursor2.getInt(1), 0));
+
+                        recordAdapter.notifyItemInserted(records.size());
+
+                        recordCursor2.close();
                     }
                     //records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
                     //recordAdapter.notifyItemInserted(PosRecClick);
