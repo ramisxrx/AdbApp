@@ -70,9 +70,27 @@ public class AddActivity extends AppCompatActivity {
         recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
             public void onRecordClick(Record record, int position) {
-                //fieldIdForSave = 0;
 
-                //fieldIdForSave = field_id.get(position);
+                int oldPosSelItem;
+
+                if(recordAdapter.posSelItem>=0){
+                    if(recordAdapter.posSelItem==position) {
+                        recordAdapter.posSelItem = -1;
+                        recordAdapter.notifyItemChanged(position);
+                        fieldIdForSave = 0;
+                    }else{
+                        oldPosSelItem = recordAdapter.posSelItem;
+                        recordAdapter.posSelItem = position;
+                        recordAdapter.notifyItemChanged(oldPosSelItem);
+                        fieldIdForSave = field_id.get(position);
+                        recordAdapter.notifyItemChanged(position);
+                    }
+                }else{
+                    recordAdapter.posSelItem = position;
+                    fieldIdForSave = field_id.get(position);
+                    recordAdapter.notifyItemChanged(position);
+                }
+
             }
         };
 
@@ -113,11 +131,25 @@ public class AddActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+                int oldPosSelItem;
+
                 Log.d(TAG, "onSwiped: ");
 
 
 
                 if(selFieldId==0) {
+
+                    if(recordAdapter.posSelItem>=0){
+                        oldPosSelItem = recordAdapter.posSelItem;
+                        recordAdapter.notifyItemChanged(oldPosSelItem);
+                        }
+                    }else{
+
+                    }
+
+                    recordAdapter.posSelItem = viewHolder.getAdapterPosition();
+                    recordAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
 
                     selFieldId = field_id.get(viewHolder.getAdapterPosition());
                     fieldIdForSave = selFieldId;

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -31,6 +32,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     private final LayoutInflater inflater;
     private List<Record> records;
     private int typeView;
+    public int posSelItem=-1;
 
 
     RecordAdapter(Context context, List<Record> records,int typeView, OnRecordClickListener onClickListener) {
@@ -72,6 +74,16 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         switch (records.get(0).getRecord_id()){
             case TYPE_VIEW_0:
                 holder.nameView.setText(record.getName());
+
+                if(position==posSelItem) {
+                    holder.radioButton.setChecked(true);
+                    holder.itemView.setSelected(true);
+                }
+                else {
+                    holder.radioButton.setChecked(false);
+                    holder.itemView.setSelected(false);
+                }
+
                 Log.d(TAG, "onBindViewHolder: field");
                 break;
             default:
@@ -123,11 +135,13 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView nameView, timeView;
+        final RadioButton radioButton;
         final ConstraintLayout blockView;
         ViewHolder(View view){
             super(view);
             nameView = (TextView) view.findViewById(R.id.name);
             timeView = (TextView) view.findViewById(R.id.time);
+            radioButton = (RadioButton) view.findViewById(R.id.radioButton);
             blockView = (ConstraintLayout) view.findViewById(R.id.block_field);
         }
     }
