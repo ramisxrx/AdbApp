@@ -76,21 +76,25 @@ public class AddActivity extends AppCompatActivity {
                 if(recordAdapter.posSelItem>=0){
                     if(recordAdapter.posSelItem==position) {
                         recordAdapter.posSelItem = -1;
-                        recordAdapter.notifyItemChanged(position);
                         fieldIdForSave = 0;
                     }else{
                         oldPosSelItem = recordAdapter.posSelItem;
                         recordAdapter.posSelItem = position;
                         recordAdapter.notifyItemChanged(oldPosSelItem);
                         fieldIdForSave = field_id.get(position);
-                        recordAdapter.notifyItemChanged(position);
                     }
                 }else{
                     recordAdapter.posSelItem = position;
                     fieldIdForSave = field_id.get(position);
-                    recordAdapter.notifyItemChanged(position);
+
                 }
 
+                if(fieldIdForSave==0)
+                    saveButton.setText("Добавить новый запись");
+                else
+                    saveButton.setText("Добавить ассоциацию");
+
+                recordAdapter.notifyItemChanged(position);
             }
         };
 
@@ -142,14 +146,18 @@ public class AddActivity extends AppCompatActivity {
 
                     if(recordAdapter.posSelItem>=0){
                         oldPosSelItem = recordAdapter.posSelItem;
+                        recordAdapter.posSelItem = viewHolder.getAdapterPosition();
                         recordAdapter.notifyItemChanged(oldPosSelItem);
-                        }
-                    }else{
+                    }else
+                        recordAdapter.posSelItem = viewHolder.getAdapterPosition();
 
-                    }
-
-                    recordAdapter.posSelItem = viewHolder.getAdapterPosition();
                     recordAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+
+                    if(fieldIdForSave==0)
+                        saveButton.setText("Добавить новый запись");
+                    else
+                        saveButton.setText("Добавить ассоциацию");
+
 
                     selFieldId = field_id.get(viewHolder.getAdapterPosition());
                     fieldIdForSave = selFieldId;
