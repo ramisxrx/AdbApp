@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
 import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db;
     Cursor objectCursor, recordCursor, recordCursor2;
     RecordAdapter recordAdapter;
+    FloatingActionButton buttonFAB;
     HorizontalScrollView HScroll;
     SimpleItemTouchHelperCallback simpleItemTouchHelperCallback;
 
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         //records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
                         //recordAdapter.notifyItemInserted(PosRecClick);
 
-                        recordCursor2 = db.rawQuery("select record_clusters._id, parent_id, _name, _time,field_id FROM " +
+                        recordCursor2 = db.rawQuery("select record_clusters._id, parent_id, _name, _time,field_id,object_id FROM " +
                                 "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                                 "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
                                 "WHERE parent_id=?", new String[]{String.valueOf(parentIdByLevels.get(cur_level))});
@@ -73,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
                         recordCursor2.moveToLast();
 
                         records.add(new Record(recordCursor2.getInt(0), recordCursor2.getString(2), recordCursor2.getInt(1), 0));
+
+                        if(cur_level==0)
+                            objIdList.add(recordCursor2.getInt(5));
 
                         recordAdapter.notifyItemInserted(records.size());
 
@@ -89,12 +94,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        addButton = (Button) findViewById(R.id.addButton);
+        buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         buttonLevelUp = findViewById(R.id.buttonLevelUp);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
         //HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
 
         databaseHelper = new DatabaseHelper(getApplicationContext());
+
+        buttonFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addRecord(parentIdByLevels.get(cur_level));
+            }
+        });
 
         RecordAdapter.OnRecordClickListener recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
@@ -309,10 +321,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    public void addObject(View view){
-        addRecord(parentIdByLevels.get(cur_level));
-    }
 
     public void LevelUp(View view){
 

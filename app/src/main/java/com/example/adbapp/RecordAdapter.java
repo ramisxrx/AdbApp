@@ -20,7 +20,14 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     private static final String TAG = "**RecordAdapter**";
 
     private final int TYPE_VIEW_0 = 0; // для показа fields
-    private final int TYPE_VIEW_1 = 1; // для показа текстовых records
+    private final int TYPE_VIEW_1 = 1; // для записей
+    private final int TYPE_VIEW_2 = 2; // для мнострочного текста
+    private final int TYPE_VIEW_3 = 3; // для даты
+    private final int TYPE_VIEW_4 = 4; // для времени
+    private final int TYPE_VIEW_5 = 5; // для даты и времени
+    private final int TYPE_VIEW_6 = 6; // для номера телефона
+    private final int TYPE_VIEW_7 = 7; // для фото
+
 
     interface OnRecordClickListener{
         void onRecordClick(Record record, int position);
@@ -69,18 +76,14 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public void onBindViewHolder(RecordAdapter.ViewHolder holder, int position) {
         Record record = records.get(position);
 
-    //    holder.blockView.setPadding(records.get(position).getLevel()*80,0,0,0);
-
         switch (records.get(0).getRecord_id()){
             case TYPE_VIEW_0:
                 holder.nameView.setText(record.getName());
 
                 if(position==posSelItem) {
-                    holder.radioButton.setChecked(true);
                     holder.itemView.setSelected(true);
                 }
                 else {
-                    holder.radioButton.setChecked(false);
                     holder.itemView.setSelected(false);
                 }
 
@@ -135,14 +138,11 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView nameView, timeView;
-        final RadioButton radioButton;
-        final ConstraintLayout blockView;
         ViewHolder(View view){
             super(view);
             nameView = (TextView) view.findViewById(R.id.name);
             timeView = (TextView) view.findViewById(R.id.time);
-            radioButton = (RadioButton) view.findViewById(R.id.radioButton);
-            blockView = (ConstraintLayout) view.findViewById(R.id.block_field);
+
         }
     }
 

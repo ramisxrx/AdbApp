@@ -153,14 +153,14 @@ public class AddActivity extends AppCompatActivity {
 
                     recordAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
 
+
+                    selFieldId = field_id.get(viewHolder.getAdapterPosition());
+                    fieldIdForSave = selFieldId;
+
                     if(fieldIdForSave==0)
                         saveButton.setText("Добавить новый запись");
                     else
                         saveButton.setText("Добавить ассоциацию");
-
-
-                    selFieldId = field_id.get(viewHolder.getAdapterPosition());
-                    fieldIdForSave = selFieldId;
 
                     Log.d(TAG, "onSwiped: fieldIdForSave="+String.valueOf(fieldIdForSave));
 
