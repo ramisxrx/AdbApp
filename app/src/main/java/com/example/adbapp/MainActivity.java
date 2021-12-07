@@ -241,78 +241,6 @@ public class MainActivity extends AppCompatActivity {
         buttonLevelUp.setVisibility(View.VISIBLE);
     }
 
-    public void fillingOfRecords(int idOfSelectedObj){
-
-        int curRecListId=0;
-
-        if(idOfSelectedObj==0) {
-            objectCursor = db.rawQuery("select _id FROM list_objects", null);
-            while (objectCursor.moveToNext()) {
-                recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
-                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                        "WHERE object_id=?", new String[]{objectCursor.getString(0)});
-
-                curRecListId = UncoverBranch(recordCursor,curRecListId, objectCursor.getInt(0), 0);
-            }
-            objectCursor.close();
-            recordCursor.close();
-        }else{
-            if(recordCursor.isClosed()) {
-                recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
-                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                        "WHERE object_id=?", new String[]{String.valueOf(idOfSelectedObj)});
-
-                objLinkRecList.clear();
-            }
-        }
-    }
-
-    public int UncoverBranch(Cursor cursor,int curRecListId,int objIdCurRec,int parentRecId){
-
-        ArrayList<Integer> levels = new ArrayList<>();
-        int cur_level=0, indent=0;
-        levels.add(cur_level, parentRecId);
-
-        if(parentRecId!=0){
-
-            Record.CursorMatchFound_2(cursor,0,parentRecId);
-            records.add(curRecListId,new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1),0));
-            records.get(curRecListId).setParent_id(cursor.getInt(1));
-            curRecListId = curRecListId + 1;
-
-            indent=1;
-        }
-
-        while (cur_level>-1){
-
-            if(Record.CursorMatchFound_1(cursor,1,0,records,levels.get(cur_level))){
-
-                //records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level));
-                records.add(curRecListId,new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1), cur_level+indent));
-
-                if(objIdCurRec>0)
-                    objLinkRecList.add(objIdCurRec);
-
-                if(cur_level<1) {
-                    cur_level = cur_level + 1;
-                    levels.add(cur_level, cursor.getInt(0));
-                }
-
-                records.get(curRecListId).setHasChildRec(Record.CursorMatchFound_2(cursor,1,records.get(curRecListId).getRecord_id()));
-                records.get(curRecListId).setParent_id(parentRecId);
-
-                curRecListId = curRecListId + 1;
-
-            }else{
-                levels.remove(cur_level);
-                cur_level = cur_level-1;
-            }
-
-        }
-    return curRecListId;
-    }
 
     public void addRecord(int idRec){
         Intent intent = new Intent(getApplicationContext(), AddActivity.class);
@@ -321,17 +249,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void PreviousLevel(){
 
-    public void LevelUp(View view){
-
-        Log.d(TAG, "LevelUp: cur_level="+String.valueOf(cur_level));
+        Log.d(TAG, "PreviousLevel: cur_level="+String.valueOf(cur_level));
 
         if(cur_level>0) {
 
             parentIdByLevels.remove(cur_level);
             cur_level--;
 
-            Log.d(TAG, "LevelUp: cur_level="+String.valueOf(cur_level));
+            Log.d(TAG, "PreviousLevel: cur_level="+String.valueOf(cur_level));
 
             if (cur_level == 0)
                 FillingZeroLevel();
@@ -342,6 +269,20 @@ public class MainActivity extends AppCompatActivity {
             recordAdapter.notifyDataSetChanged();
         }
 
+
+    }
+
+    public void LevelUp(View view){
+        PreviousLevel();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+        if(cur_level==0){
+            finish();
+        }else
+            PreviousLevel();
     }
 
     @Override
