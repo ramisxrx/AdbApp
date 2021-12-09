@@ -1,5 +1,6 @@
 package com.example.adbapp;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.Context;
@@ -21,8 +22,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PARENT_ID = "parent_id";
     public static final String COLUMN_OBJECT_ID = "object_id";
 
+    SQLiteDatabase db;
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
+        db = this.getReadableDatabase();
     }
 
     @Override
@@ -78,6 +82,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_RECORDS);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_OBJECTS);
         onCreate(db);
+    }
+
+    public Cursor getRecords(int parent_id){
+
+        return db.rawQuery("SELECT "    +TABLE_RECORDS+"."+COLUMN_ID+   ","     +COLUMN_PARENT_ID+  ","     +COLUMN_NAME+   ","     +COLUMN_TIME+   " FROM "+
+                TABLE_RECORDS+" INNER JOIN "+TABLE_FIELDS+" ON "+TABLE_RECORDS+"."+COLUMN_FIELD_ID+"="+TABLE_FIELDS+"."+COLUMN_ID+
+                "INNER JOIN "+TABLE_NAMES+" ON "+TABLE_FIELDS+"."+COLUMN_NAME_ID+"="+TABLE_NAMES+"."+COLUMN_ID+
+                " WHERE "+COLUMN_PARENT_ID+"=?", new String[]{String.valueOf(parent_id)});
     }
 
 }

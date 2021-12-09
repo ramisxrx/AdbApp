@@ -7,17 +7,16 @@ import java.util.Date;
 
 public class Record {
 
-    private int record_id,_time, level, parent_id=0;
+    private int record_id,_time, parent_id=0;
     private String _name;
     private boolean hasChildRec=false;
 
 
-    public Record(int record_id, String _name, int _time,int level) {
+    public Record(int record_id, String _name, int _time) {
 
         this.record_id =record_id;
         this._name = _name;
         this._time = _time;
-        this.level = level;
     }
 
     public int getRecord_id(){
@@ -27,7 +26,6 @@ public class Record {
     public void setRecord_id(int record_id){
         this.record_id = record_id;
     }
-
 
     public String getName(){
         return this._name;
@@ -43,14 +41,6 @@ public class Record {
 
     public void setTime(int _time){
         this._time = _time;
-    }
-
-    public int getLevel(){
-        return this.level;
-    }
-
-    public void setLevel(int level){
-        this.level = level;
     }
 
     public int getParent_id(){

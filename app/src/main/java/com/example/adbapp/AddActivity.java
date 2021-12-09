@@ -265,7 +265,7 @@ public class AddActivity extends AppCompatActivity {
 
                 while(recordCursor.moveToNext() && s.length()>0){
 
-                    fields.add(new Record(0,recordCursor.getString(1),recordCursor.getInt(0),0));
+                    fields.add(new Record(0,recordCursor.getString(1),recordCursor.getInt(0)));
 
                     //recIdList.add(recordCursor.getInt(0));
 
@@ -317,7 +317,7 @@ public class AddActivity extends AppCompatActivity {
 
                 while (recordCursor.moveToNext()) {
 
-                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1)));
                     records.get(i).setParent_id(recordCursor.getInt(1));
                     i++;
 
@@ -334,7 +334,7 @@ public class AddActivity extends AppCompatActivity {
 
                 while (recordCursor.moveToNext()) {
 
-                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1)));
                     records.get(i).setParent_id(recordCursor.getInt(1));
                     i++;
 
@@ -370,13 +370,13 @@ public class AddActivity extends AppCompatActivity {
 
             if(direction) {     // Up
                 if (recordCursor.getInt(0) == parentId) {
-                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1)));
                     records.get(k).setParent_id(recordCursor.getInt(1));
                     k++;
                 }
             }else{              // Down
                 if (recordCursor.getInt(1) == parentId) {
-                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1)));
                     records.get(k).setParent_id(parentId);
                     k++;
                 }
@@ -415,59 +415,6 @@ public class AddActivity extends AppCompatActivity {
 
     }
 
-    public void UncoverForEachBranch(){
-        boolean makeReq;
-
-        for(int i=0;i<recIdList.size();i++){
-            if(i==0)
-                makeReq=true;
-            else{
-                if(objIdList.get(i)==objIdList.get(i-1))
-                    makeReq=false;
-                else
-                    makeReq=true;
-            }
-
-            if(makeReq){
-                recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time FROM " +
-                        "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                        "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                        "WHERE object_id=?", new String[]{String.valueOf(objIdList.get(i))});
-            }
-
-            UncoverBranchUp(recordCursor,Record.posInListById(records,recIdList.get(i)));
-
-        }
-    }
-
-    public void UncoverBranchUp(Cursor cursor,int curRecListPos){
-        ArrayList<Integer> levels = new ArrayList<>();
-
-        while (records.get(curRecListPos).getParent_id()>0){
-
-            if(Record.CursorMatchFound_2(cursor,0,records.get(curRecListPos).getParent_id())) {
-
-                RecLevelShift(curRecListPos);
-                records.add(curRecListPos, new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1),0));
-                records.get(curRecListPos).setParent_id(cursor.getInt(1));
-                records.get(curRecListPos).setHasChildRec(Record.CursorMatchFound_2(cursor, 1, records.get(curRecListPos).getRecord_id()));
-
-                recordAdapter.notifyItemInserted(curRecListPos);
-                //HScroll.computeScroll();
-            }
-        }
-    }
-
-    public void RecLevelShift(int curRecListPos){
-        do{
-            records.get(curRecListPos).setLevel(records.get(curRecListPos).getLevel()+1);
-            recordAdapter.notifyItemChanged(curRecListPos);
-            if(curRecListPos<records.size()-1)
-                curRecListPos++;
-            else
-                break;
-        }while (records.get(curRecListPos).getParent_id()==records.get(curRecListPos-1).getRecord_id());
-    }
 
     public void save(View view){
 

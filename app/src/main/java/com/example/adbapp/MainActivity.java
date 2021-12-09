@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
                         recordCursor2.moveToLast();
 
-                        records.add(new Record(recordCursor2.getInt(0), recordCursor2.getString(2), recordCursor2.getInt(1), 0));
+                        records.add(new Record(recordCursor2.getInt(0), recordCursor2.getString(2), recordCursor2.getInt(1)));
 
                         if(cur_level==0)
                             objIdList.add(recordCursor2.getInt(5));
@@ -184,32 +184,29 @@ public class MainActivity extends AppCompatActivity {
 
     public void FillingZeroLevel(){
 
-        int i=0;
+        Cursor cursor = databaseHelper.getRecords(0);
 
-        objectCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,object_id,field_id FROM " +
-            "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-            "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-            "WHERE parent_id=?", new String[]{String.valueOf(0)});
+        int i=0;
 
         selObjId = 0;
 
         records.clear();
         objIdList.clear();
 
-        while (objectCursor.moveToNext()) {
-            records.add(new Record(objectCursor.getInt(0), objectCursor.getString(2), objectCursor.getInt(1),0));
+        while (cursor.moveToNext()) {
+            records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1)));
             records.get(i).setParent_id(0);
             i++;
 
-            objIdList.add(objectCursor.getInt(4));
+            objIdList.add(cursor.getInt(4));
 
-            Log.d(TAG, "FillingZeroLevel: record_id="+objectCursor.getString(0));
-            Log.d(TAG, "FillingZeroLevel: field_id="+objectCursor.getString(5));
+            Log.d(TAG, "FillingZeroLevel: record_id="+cursor.getString(0));
+            Log.d(TAG, "FillingZeroLevel: field_id="+cursor.getString(5));
         }
 
         Log.d(TAG, "FillingZeroLevel: cur_level="+String.valueOf(cur_level));
-        
-        objectCursor.close();
+
+        cursor.close();
 
         buttonLevelUp.setVisibility(View.GONE);
     }
@@ -227,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             recordCursor.moveToPosition(i);
 
             if(recordCursor.getInt(1)==parentId) {
-                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1), 0));
+                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1)));
                 records.get(k).setParent_id(parentId);
                 k++;
 
