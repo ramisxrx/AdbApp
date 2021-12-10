@@ -28,7 +28,7 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
         super.getItemOffsets(outRect, view, parent, state);
 
         //outRect.left=records.get(parent.getChildViewHolder(view).getAdapterPosition()).getLevel()*itemOffsets;
-        outRect.left=records.get(parent.getChildViewHolder(view).getAdapterPosition()).getLevel()*itemOffsets;
+        //outRect.left=records.get(parent.getChildViewHolder(view).getAdapterPosition()).getLevel()*itemOffsets;
 // // Если это не первый, установить значение top.
         if (parent.getChildAdapterPosition(view) != 0){
             // Здесь прямо прописан в 1px

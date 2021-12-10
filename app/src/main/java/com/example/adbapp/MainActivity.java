@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.adbapp.FillingOfList.ListFilling;
 import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
 import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton buttonFAB;
     HorizontalScrollView HScroll;
     SimpleItemTouchHelperCallback simpleItemTouchHelperCallback;
+
+    ListFilling listFilling;
 
     private static final String TAG = "**MainActivity**";
 
@@ -85,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     //records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
                     //recordAdapter.notifyItemInserted(PosRecClick);
+
+
                 }
             });
 
@@ -93,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         buttonLevelUp = findViewById(R.id.buttonLevelUp);

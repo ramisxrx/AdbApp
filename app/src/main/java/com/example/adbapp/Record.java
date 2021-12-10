@@ -7,16 +7,17 @@ import java.util.Date;
 
 public class Record {
 
-    private int record_id,_time, parent_id=0;
+    private int record_id,_time, parent_id=0,field_type=1;
     private String _name;
     private boolean hasChildRec=false;
 
 
-    public Record(int record_id, String _name, int _time) {
+    public Record(int record_id, String _name, int _time, int field_type) {
 
         this.record_id =record_id;
         this._name = _name;
         this._time = _time;
+        this.field_type = field_type;
     }
 
     public int getRecord_id(){
@@ -41,6 +42,14 @@ public class Record {
 
     public void setTime(int _time){
         this._time = _time;
+    }
+
+    public int getField_type(){
+        return this.field_type;
+    }
+
+    public void setField_type(int field_type){
+        this.field_type = field_type;
     }
 
     public int getParent_id(){
