@@ -32,7 +32,7 @@ public class RecordDiffUtilCallback extends DiffUtil.Callback{
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
         return oldList.get(oldItemPosition).getName().equals(newList.get(newItemPosition).getName())
-                && oldList.get(oldItemPosition).getTime()==newList.get(newItemPosition).getTime()
-                && oldList.get(oldItemPosition).getLevel()==newList.get(newItemPosition).getLevel();
+                && oldList.get(oldItemPosition).getTime()==newList.get(newItemPosition).getTime();
+                //&& oldList.get(oldItemPosition).getLevel()==newList.get(newItemPosition).getLevel();
     }
 }

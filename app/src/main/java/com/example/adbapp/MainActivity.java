@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adbapp.FillingOfList.ListFilling;
+import com.example.adbapp.FillingOfList.OverviewListFilling;
 import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
 import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     HorizontalScrollView HScroll;
     SimpleItemTouchHelperCallback simpleItemTouchHelperCallback;
 
-    ListFilling listFilling;
+    OverviewListFilling overviewList;
 
     private static final String TAG = "**MainActivity**";
 
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                         //String accessMessage = intent.getStringExtra("");
                         //records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
                         //recordAdapter.notifyItemInserted(PosRecClick);
-
+                        /*
                         recordCursor2 = db.rawQuery("select record_clusters._id, parent_id, _name, _time,field_id,object_id FROM " +
                                 "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
                                 "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
@@ -81,10 +82,12 @@ public class MainActivity extends AppCompatActivity {
 
                         if(cur_level==0)
                             objIdList.add(recordCursor2.getInt(5));
+                        */
+
+                        overviewList.UpdateAfterAddNewRecords();
 
                         recordAdapter.notifyItemInserted(records.size());
 
-                        recordCursor2.close();
                     }
                     //records.add(PosRecClick,new Record(100, "zdoroy", PosRecClick, 0));
                     //recordAdapter.notifyItemInserted(PosRecClick);
@@ -110,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         buttonFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addRecord(parentIdByLevels.get(cur_level));
+                addRecord(overviewList.get_ParentIdOfCurrentLevel());
             }
         });
 
@@ -121,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        overviewList = new OverviewListFilling(getApplicationContext());
+
+        records = overviewList.records;
+
         recordAdapter = new RecordAdapter(this, records,1, recordClickListener);
         recordList.setAdapter(recordAdapter);
 
@@ -128,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);
         recordList.setLayoutManager(layoutmanager);
 
-        recordList.addItemDecoration(new RecordDecoration(records));
+        recordList.addItemDecoration(new RecordDecoration(overviewList.records));
 
 
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -142,21 +149,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Log.d(TAG, "onSwiped: ");
 
-                if(selObjId==0){
-                    selObjId = objIdList.get(viewHolder.getAdapterPosition());
-
-                    recordCursor = db.rawQuery("select record_clusters._id, parent_id, _name, _time,field_id FROM " +
-                            "record_clusters INNER JOIN field_clusters ON record_clusters.field_id=field_clusters._id " +
-                            "INNER JOIN name_clusters ON field_clusters.name_id=name_clusters._id " +
-                            "WHERE object_id=?", new String[]{String.valueOf(selObjId)});
-                }
-
-                cur_level++;
-                parentIdByLevels.add(cur_level,records.get(viewHolder.getAdapterPosition()).getRecord_id());
-
-                //FillingOtherLevel(records.get(viewHolder.getAdapterPosition()).getRecord_id());
-
-                listFilling.ActionDown();
+                overviewList.ActionDown(viewHolder.getAdapterPosition());
 
                 recordAdapter.notifyDataSetChanged();
             }
@@ -173,8 +166,6 @@ public class MainActivity extends AppCompatActivity {
 
         // открываем подключение
         db = databaseHelper.getReadableDatabase();
-
-        listFilling = new ListFilling(getApplicationContext());
     }
 
     @Override
@@ -188,64 +179,6 @@ public class MainActivity extends AppCompatActivity {
             reqToFillRec = false;
         }
 
-        //HScroll.computeScroll();
-        records = listFilling.records;
-    }
-
-    public void FillingZeroLevel(){
-
-        Cursor cursor = databaseHelper.getRecords(0);
-
-        int i=0;
-
-        selObjId = 0;
-
-        records.clear();
-        objIdList.clear();
-
-        while (cursor.moveToNext()) {
-            records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1),0));
-            records.get(i).setParent_id(0);
-            i++;
-
-            objIdList.add(cursor.getInt(4));
-
-            Log.d(TAG, "FillingZeroLevel: record_id="+cursor.getString(0));
-            Log.d(TAG, "FillingZeroLevel: field_id="+cursor.getString(5));
-        }
-
-        Log.d(TAG, "FillingZeroLevel: cur_level="+String.valueOf(cur_level));
-
-        cursor.close();
-
-        buttonLevelUp.setVisibility(View.GONE);
-    }
-
-    public void FillingOtherLevel(int parentId){
-
-        int k=0;
-
-        Log.d(TAG, "FillingOtherLevel: parent_id="+String.valueOf(parentIdByLevels.get(cur_level)));
-
-        records.clear();
-
-        for(int i=0;i<recordCursor.getCount();i++){
-
-            recordCursor.moveToPosition(i);
-
-            if(recordCursor.getInt(1)==parentId) {
-                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1),0));
-                records.get(k).setParent_id(parentId);
-                k++;
-
-                Log.d(TAG, "FillingOtherLevel: record_id="+recordCursor.getString(0));
-                Log.d(TAG, "FillingOtherLevel: field_id="+recordCursor.getString(4));
-            }
-        }
-
-        Log.d(TAG, "FillingOtherLevel: cur_level="+String.valueOf(cur_level));
-
-        buttonLevelUp.setVisibility(View.VISIBLE);
     }
 
 
@@ -256,41 +189,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void PreviousLevel(){
-
-        Log.d(TAG, "PreviousLevel: cur_level="+String.valueOf(cur_level));
-
-        if(cur_level>0) {
-
-            parentIdByLevels.remove(cur_level);
-            cur_level--;
-
-            Log.d(TAG, "PreviousLevel: cur_level="+String.valueOf(cur_level));
-
-            if (cur_level == 0)
-                FillingZeroLevel();
-            else
-                FillingOtherLevel(parentIdByLevels.get(cur_level));
-
-
-            recordAdapter.notifyDataSetChanged();
-        }
-
-
-    }
-
     public void LevelUp(View view){
-        //PreviousLevel();
-        listFilling.ToPreviousLevel();
+        overviewList.ToPreviousLevel();
+        recordAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onBackPressed() {
         // super.onBackPressed();
-        //if(cur_level==0){
-        //    finish();
-        //}else
-        //    PreviousLevel();
+        if(overviewList.cur_level==0){
+            finish();
+        }else
+            overviewList.ToPreviousLevel();
     }
 
     @Override
@@ -300,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
         db.close();
         recordCursor.close();
         objectCursor.close();
+        overviewList.records.clear();
 
     }
 
