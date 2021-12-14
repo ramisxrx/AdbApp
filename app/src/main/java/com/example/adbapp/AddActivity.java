@@ -265,7 +265,7 @@ public class AddActivity extends AppCompatActivity {
 
                 while(recordCursor.moveToNext() && s.length()>0){
 
-                    fields.add(new Record(0,recordCursor.getString(1),recordCursor.getInt(0)));
+                    fields.add(new Record(0,recordCursor.getString(1),recordCursor.getInt(0),0));
 
                     //recIdList.add(recordCursor.getInt(0));
 
@@ -317,7 +317,7 @@ public class AddActivity extends AppCompatActivity {
 
                 while (recordCursor.moveToNext()) {
 
-                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1)));
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1),0));
                     records.get(i).setParent_id(recordCursor.getInt(1));
                     i++;
 
@@ -334,7 +334,7 @@ public class AddActivity extends AppCompatActivity {
 
                 while (recordCursor.moveToNext()) {
 
-                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1)));
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1),0));
                     records.get(i).setParent_id(recordCursor.getInt(1));
                     i++;
 
@@ -370,13 +370,13 @@ public class AddActivity extends AppCompatActivity {
 
             if(direction) {     // Up
                 if (recordCursor.getInt(0) == parentId) {
-                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1)));
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1),0));
                     records.get(k).setParent_id(recordCursor.getInt(1));
                     k++;
                 }
             }else{              // Down
                 if (recordCursor.getInt(1) == parentId) {
-                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1)));
+                    records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1),0));
                     records.get(k).setParent_id(parentId);
                     k++;
                 }

@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
                         recordCursor2.moveToLast();
 
-                        records.add(new Record(recordCursor2.getInt(0), recordCursor2.getString(2), recordCursor2.getInt(1)));
+                        records.add(new Record(recordCursor2.getInt(0), recordCursor2.getString(2), recordCursor2.getInt(1),0));
 
                         if(cur_level==0)
                             objIdList.add(recordCursor2.getInt(5));
@@ -154,7 +154,9 @@ public class MainActivity extends AppCompatActivity {
                 cur_level++;
                 parentIdByLevels.add(cur_level,records.get(viewHolder.getAdapterPosition()).getRecord_id());
 
-                FillingOtherLevel(records.get(viewHolder.getAdapterPosition()).getRecord_id());
+                //FillingOtherLevel(records.get(viewHolder.getAdapterPosition()).getRecord_id());
+
+                listFilling.ActionDown();
 
                 recordAdapter.notifyDataSetChanged();
             }
@@ -172,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
         // открываем подключение
         db = databaseHelper.getReadableDatabase();
 
+        listFilling = new ListFilling(getApplicationContext());
     }
 
     @Override
@@ -181,11 +184,12 @@ public class MainActivity extends AppCompatActivity {
         if(reqToFillRec) {
             //fillingOfRecords(0);
             parentIdByLevels.add(0,0);
-            FillingZeroLevel();
+            //FillingZeroLevel();
             reqToFillRec = false;
         }
 
         //HScroll.computeScroll();
+        records = listFilling.records;
     }
 
     public void FillingZeroLevel(){
@@ -200,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
         objIdList.clear();
 
         while (cursor.moveToNext()) {
-            records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1)));
+            records.add(new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(1),0));
             records.get(i).setParent_id(0);
             i++;
 
@@ -230,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             recordCursor.moveToPosition(i);
 
             if(recordCursor.getInt(1)==parentId) {
-                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1)));
+                records.add(new Record(recordCursor.getInt(0), recordCursor.getString(2), recordCursor.getInt(1),0));
                 records.get(k).setParent_id(parentId);
                 k++;
 
@@ -276,16 +280,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void LevelUp(View view){
-        PreviousLevel();
+        //PreviousLevel();
+        listFilling.ToPreviousLevel();
     }
 
     @Override
     public void onBackPressed() {
         // super.onBackPressed();
-        if(cur_level==0){
-            finish();
-        }else
-            PreviousLevel();
+        //if(cur_level==0){
+        //    finish();
+        //}else
+        //    PreviousLevel();
     }
 
     @Override
