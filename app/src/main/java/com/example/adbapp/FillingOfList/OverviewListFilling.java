@@ -2,9 +2,14 @@ package com.example.adbapp.FillingOfList;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.MainThread;
+
 import com.example.adbapp.DatabaseHelper;
+import com.example.adbapp.Threads.ThreadOfFilling;
 
 import java.util.ArrayList;
 
@@ -13,6 +18,8 @@ public class OverviewListFilling extends ListFilling{
 
     private String TAG = OverviewListFilling.class.getCanonicalName();
 
+    public ThreadOfFilling workThread;
+
     protected Cursor cursorInit;
 
     protected boolean cmd_cursorInit;
@@ -20,8 +27,39 @@ public class OverviewListFilling extends ListFilling{
     public OverviewListFilling(Context context){
         super(context);
 
+        workThread = new ThreadOfFilling();
+
         cmd_cursorInit = true;
-        FillingInitialList();
+
+        workThread.start();
+        /*
+        workThread.handler.post(new Runnable() {
+            @Override
+            public void run() {
+                FillingInitialList();
+            }
+        });
+        */
+
+
+
+        Handler handler = new Handler(workThread.looperOfThread);
+        /*
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                FillingInitialList();
+            }
+        });
+        /*
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FillingInitialList();
+            }
+        }).start();
+        */
+        //FillingInitialList();
     }
 
     @Override
