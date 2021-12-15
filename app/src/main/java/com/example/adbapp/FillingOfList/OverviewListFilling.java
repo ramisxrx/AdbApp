@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.annotation.MainThread;
 
 import com.example.adbapp.DatabaseHelper;
+import com.example.adbapp.RecordAdapter;
 import com.example.adbapp.Threads.ThreadOfFilling;
 
 import java.util.ArrayList;
@@ -18,20 +19,23 @@ public class OverviewListFilling extends ListFilling{
 
     private String TAG = OverviewListFilling.class.getCanonicalName();
 
-    public ThreadOfFilling workThread;
+    //public ThreadOfFilling workThread;
+
+    public RecordAdapter recordAdapter;
 
     protected Cursor cursorInit;
 
     protected boolean cmd_cursorInit;
 
-    public OverviewListFilling(Context context){
+    public OverviewListFilling(Context context, RecordAdapter recordAdapter){
         super(context);
+        this.recordAdapter = recordAdapter;
 
-        workThread = new ThreadOfFilling();
+        //workThread = new ThreadOfFilling();
 
         cmd_cursorInit = true;
 
-        workThread.start();
+        //workThread.start();
         /*
         workThread.handler.post(new Runnable() {
             @Override
@@ -40,11 +44,11 @@ public class OverviewListFilling extends ListFilling{
             }
         });
         */
-
+         /*
 
 
         Handler handler = new Handler(workThread.looperOfThread);
-        /*
+
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -59,7 +63,7 @@ public class OverviewListFilling extends ListFilling{
             }
         }).start();
         */
-        //FillingInitialList();
+        FillingInitialList();
     }
 
     @Override
@@ -86,43 +90,84 @@ public class OverviewListFilling extends ListFilling{
 
     public void FillingOfListDown(int parent_id){
 
-        Log.d(TAG, "FillingOfListDown: run");
+        ThreadOfFilling.Operations operations = new ThreadOfFilling.Operations(){
 
-        ClearRecords();
+            @Override
+            public void BG_Operations() {
 
-        for(int i=0;i<cursor.getCount();i++){
-            cursor.moveToPosition(i);
+                Log.d(TAG, "FillingOfListDown: BG_Operations: Current thread="+Thread.currentThread());
 
-            if(cursor.getInt(1)==parent_id) {
-                AddNewItemInRecords(cursor.getInt(0), cursor.getString(2), cursor.getInt(3), cursor.getInt(4));
+                ClearRecords();
 
-                Log.d(TAG, "FillingOfListDown: Record_id:"+cursor.getString(0)+" Parent_id:"+cursor.getString(1));
+                for(int i=0;i<cursor.getCount();i++){
+                    cursor.moveToPosition(i);
+
+                    if(cursor.getInt(1)==parent_id) {
+                        AddNewItemInRecords(cursor.getInt(0), cursor.getString(2), cursor.getInt(3), cursor.getInt(4));
+
+                        Log.d(TAG, "FillingOfListDown: Record_id:"+cursor.getString(0)+" Parent_id:"+cursor.getString(1));
+                    }
+                }
+
             }
-        }
+
+            @Override
+            public void UI_Operations() {
+
+                Log.d(TAG, "FillingOfListDown: UI_Operations: Current thread="+Thread.currentThread());
+                
+                recordAdapter.notifyDataSetChanged();
+
+            }
+        };
+
+        ThreadOfFilling workThread = new ThreadOfFilling(operations);
+
+        workThread.start();
 
     }
 
     public void FillingInitialList(){
 
-        Log.d(TAG, "FillingInitialList: run");
+        ThreadOfFilling.Operations operations = new ThreadOfFilling.Operations() {
+            @Override
+            public void BG_Operations() {
 
-        ClearRecords();
-        objIdList.clear();
+                Log.d(TAG, "FillingInitialList: BG_Operations: Current thread="+Thread.currentThread());
 
-        if(cmd_cursorInit) {
-            cursorInit = databaseHelper.getRecords_2(0);
-            cmd_cursorInit = false;
-            Log.d(TAG, "FillingInitialList: cmd_cursorInit");
-        }
+                ClearRecords();
+                objIdList.clear();
 
-        for (int i=0;i<cursorInit.getCount();i++){
-            cursorInit.moveToPosition(i);
+                if(cmd_cursorInit) {
+                    cursorInit = databaseHelper.getRecords_2(0);
+                    cmd_cursorInit = false;
+                    Log.d(TAG, "FillingInitialList: cmd_cursorInit");
+                }
 
-            AddNewItemInRecords(cursorInit.getInt(0),cursorInit.getString(2),cursorInit.getInt(3),cursorInit.getInt(4));
-            objIdList.add(cursorInit.getInt(5));
+                for (int i=0;i<cursorInit.getCount();i++){
+                    cursorInit.moveToPosition(i);
 
-            Log.d(TAG, "FillingInitialList: Record_id:"+cursorInit.getString(0)+" Parent_id:"+cursorInit.getString(1));
-        }
+                    AddNewItemInRecords(cursorInit.getInt(0),cursorInit.getString(2),cursorInit.getInt(3),cursorInit.getInt(4));
+                    objIdList.add(cursorInit.getInt(5));
+
+                    Log.d(TAG, "FillingInitialList: Record_id:"+cursorInit.getString(0)+" Parent_id:"+cursorInit.getString(1));
+                }
+
+            }
+
+            @Override
+            public void UI_Operations() {
+
+                Log.d(TAG, "FillingInitialList: UI_Operations: Current thread="+Thread.currentThread());
+
+                recordAdapter.notifyDataSetChanged();
+
+            }
+        };
+
+        ThreadOfFilling workThread = new ThreadOfFilling(operations);
+
+        workThread.start();
     }
 
     public void UpdateAfterAddNewRecords(){

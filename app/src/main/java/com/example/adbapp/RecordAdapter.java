@@ -37,7 +37,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     private final OnRecordClickListener onClickListener;
 
     private final LayoutInflater inflater;
-    private List<Record> records;
+    public List<Record> records;
     private int typeView;
     public int posSelItem=-1;
 

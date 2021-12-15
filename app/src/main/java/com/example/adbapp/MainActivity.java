@@ -124,12 +124,14 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        overviewList = new OverviewListFilling(getApplicationContext());
+        recordAdapter = new RecordAdapter(this, records,1, recordClickListener);
+        recordList.setAdapter(recordAdapter);
+
+        overviewList = new OverviewListFilling(getApplicationContext(),recordAdapter);
 
         records = overviewList.records;
 
-        recordAdapter = new RecordAdapter(this, records,1, recordClickListener);
-        recordList.setAdapter(recordAdapter);
+        recordAdapter.records = overviewList.records;
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
         layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);
