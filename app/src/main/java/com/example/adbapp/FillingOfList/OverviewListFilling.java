@@ -32,38 +32,10 @@ public class OverviewListFilling extends ListFilling{
         super(context);
         this.recordAdapter = recordAdapter;
 
-        workThread = new HandlerThreadOfFilling();
+        workThread = new HandlerThreadOfFilling("OverviewListFilling");
 
         cmd_cursorInit = true;
 
-        //workThread.start();
-        /*
-        workThread.handler.post(new Runnable() {
-            @Override
-            public void run() {
-                FillingInitialList();
-            }
-        });
-        */
-         /*
-
-
-        Handler handler = new Handler(workThread.looperOfThread);
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                FillingInitialList();
-            }
-        });
-        /*
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                FillingInitialList();
-            }
-        }).start();
-        */
         FillingInitialList();
     }
 

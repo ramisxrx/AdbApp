@@ -9,10 +9,10 @@ public class HandlerThreadOfFilling extends HandlerThread {
 
     private static final String TAG = "HandlerThreadOfFilling";
 
-    private Handler BG_handler, UI_handler;
+    final Handler BG_handler, UI_handler;
 
-    public HandlerThreadOfFilling() {
-        super(TAG);
+    public HandlerThreadOfFilling(String name) {
+        super(name);
         start();
 
         BG_handler = new Handler(getLooper());
