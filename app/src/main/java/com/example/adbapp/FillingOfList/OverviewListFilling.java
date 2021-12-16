@@ -10,6 +10,7 @@ import androidx.annotation.MainThread;
 
 import com.example.adbapp.DatabaseHelper;
 import com.example.adbapp.RecordAdapter;
+import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.example.adbapp.Threads.ThreadOfFilling;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class OverviewListFilling extends ListFilling{
 
     private String TAG = OverviewListFilling.class.getCanonicalName();
 
-    //public ThreadOfFilling workThread;
+    public HandlerThreadOfFilling workThread;
 
     public RecordAdapter recordAdapter;
 
@@ -31,7 +32,7 @@ public class OverviewListFilling extends ListFilling{
         super(context);
         this.recordAdapter = recordAdapter;
 
-        //workThread = new ThreadOfFilling();
+        workThread = new HandlerThreadOfFilling();
 
         cmd_cursorInit = true;
 
@@ -90,11 +91,9 @@ public class OverviewListFilling extends ListFilling{
 
     public void FillingOfListDown(int parent_id){
 
-        ThreadOfFilling.Operations operations = new ThreadOfFilling.Operations(){
-
+        workThread.execute(new Runnable() {
             @Override
-            public void BG_Operations() {
-
+            public void run() {
                 Log.d(TAG, "FillingOfListDown: BG_Operations: Current thread="+Thread.currentThread());
 
                 ClearRecords();
@@ -108,32 +107,28 @@ public class OverviewListFilling extends ListFilling{
                         Log.d(TAG, "FillingOfListDown: Record_id:"+cursor.getString(0)+" Parent_id:"+cursor.getString(1));
                     }
                 }
-
             }
+        });
 
+        workThread.show(new Runnable() {
             @Override
-            public void UI_Operations() {
-
+            public void run() {
                 Log.d(TAG, "FillingOfListDown: UI_Operations: Current thread="+Thread.currentThread());
-                
-                recordAdapter.notifyDataSetChanged();
 
+                recordAdapter.notifyDataSetChanged();
             }
+        });
+
         };
 
-        ThreadOfFilling workThread = new ThreadOfFilling(operations);
 
-        workThread.start();
-
-    }
 
     public void FillingInitialList(){
 
-        ThreadOfFilling.Operations operations = new ThreadOfFilling.Operations() {
+        workThread.execute(new Runnable() {
             @Override
-            public void BG_Operations() {
-
-                Log.d(TAG, "FillingInitialList: BG_Operations: Current thread="+Thread.currentThread());
+            public void run() {
+                Log.d(TAG, "FillingInitialList: BG_Operations: Current thread=" + Thread.currentThread());
 
                 ClearRecords();
                 objIdList.clear();
@@ -152,23 +147,20 @@ public class OverviewListFilling extends ListFilling{
 
                     Log.d(TAG, "FillingInitialList: Record_id:"+cursorInit.getString(0)+" Parent_id:"+cursorInit.getString(1));
                 }
-
             }
+        });
 
+        workThread.show(new Runnable() {
             @Override
-            public void UI_Operations() {
-
+            public void run() {
                 Log.d(TAG, "FillingInitialList: UI_Operations: Current thread="+Thread.currentThread());
 
                 recordAdapter.notifyDataSetChanged();
-
             }
+        });
+
         };
 
-        ThreadOfFilling workThread = new ThreadOfFilling(operations);
-
-        workThread.start();
-    }
 
     public void UpdateAfterAddNewRecords(){
 
