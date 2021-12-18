@@ -19,12 +19,12 @@ public class HandlerThreadOfFilling extends HandlerThread {
         UI_handler = new Handler(Looper.getMainLooper());
     }
 
-    public HandlerThreadOfFilling execute(Runnable task){
+    public HandlerThreadOfFilling bg_operations(Runnable task){
         BG_handler.post(task);
         return this;
     }
 
-    public HandlerThreadOfFilling show(Runnable task){
+    public HandlerThreadOfFilling ui_operations(Runnable task){
         UI_handler.post(task);
         return this;
     }

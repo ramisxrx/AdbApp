@@ -219,6 +219,8 @@ public class AddActivity extends AppCompatActivity {
             recordId = extras.getInt("id");
         }
 
+        Log.d(TAG, "onResume: recordId="+String.valueOf(recordId));
+
         if (recordId > 0) {
             // получаем элемент по id из бд
             recordCursor = db.rawQuery("select object_id, _name FROM " +
@@ -419,6 +421,8 @@ public class AddActivity extends AppCompatActivity {
     public void save(View view){
 
         ContentValues cv = new ContentValues();
+
+        Log.d(TAG, "save: parentIdForSave="+String.valueOf(recordId));
 
         if (recordId == 0) {
             cv.put(DatabaseHelper.COLUMN_ID, objectId);
