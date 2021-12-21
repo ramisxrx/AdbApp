@@ -2,19 +2,9 @@ package com.example.adbapp.FillingOfList;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
-import androidx.annotation.MainThread;
-
-import com.example.adbapp.DatabaseHelper;
-import com.example.adbapp.RecordAdapter;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
-import com.example.adbapp.Threads.ThreadOfFilling;
-
-import java.util.ArrayList;
-
 
 public class OverviewListFilling extends ListFilling{
 
@@ -27,7 +17,6 @@ public class OverviewListFilling extends ListFilling{
     }
 
     private final NotifyViews_after notifyViews_after;
-    public HandlerThreadOfFilling workThread;
 
     protected Cursor cursorInit;
 
@@ -79,47 +68,34 @@ public class OverviewListFilling extends ListFilling{
         });
     }
 
+    @Override
+    public void ToPreviousLevel(){
 
-    public void FillingOfListDown(int parent_id){
+        Log.d(TAG, "ToPreviousLevel: cur_level="+String.valueOf(cur_level));
 
-                Log.d(TAG, "FillingOfListDown: BG_Operations: Current thread="+Thread.currentThread());
+        if(cur_level>0){
 
-                ClearRecords();
+            workThread.bg_operations(new Runnable() {
+                @Override
+                public void run() {
+                    parentIdByLevels.remove(cur_level);
+                    cur_level--;
 
-                for(int i=0;i<cursor.getCount();i++){
-                    cursor.moveToPosition(i);
-
-                    if(cursor.getInt(1)==parent_id) {
-                        AddNewItemInRecords(cursor.getInt(0), cursor.getString(2), cursor.getInt(3), cursor.getInt(4));
-
-                        Log.d(TAG, "FillingOfListDown: Record_id:"+cursor.getString(0)+" Parent_id:"+cursor.getString(1));
-                    }
+                    if(cur_level==0)
+                        FillingInitialList();
+                    else
+                        FillingOfListDown(parentIdByLevels.get(cur_level));
                 }
-    };
+            });
 
-    public void FillingInitialList(){
-
-                Log.d(TAG, "FillingInitialList: BG_Operations: Current thread=" + Thread.currentThread());
-
-                ClearRecords();
-                objIdList.clear();
-
-                if(cmd_cursorInit) {
-                    cursorInit = databaseHelper.getRecords_2(0);
-                    cmd_cursorInit = false;
-                    Log.d(TAG, "FillingInitialList: cmd_cursorInit");
+            workThread.ui_operations(new Runnable() {
+                @Override
+                public void run() {
+                    notifyViews_after.ToPreviousLevel();
                 }
-
-                for (int i=0;i<cursorInit.getCount();i++){
-                    cursorInit.moveToPosition(i);
-
-                    AddNewItemInRecords(cursorInit.getInt(0),cursorInit.getString(2),cursorInit.getInt(3),cursorInit.getInt(4));
-                    objIdList.add(cursorInit.getInt(5));
-
-                    Log.d(TAG, "FillingInitialList: Record_id:"+cursorInit.getString(0)+" Parent_id:"+cursorInit.getString(1));
-                }
-    };
-
+            });
+        }
+    }
 
     public void UpdateAfterAddNewRecords(){
 
@@ -152,33 +128,46 @@ public class OverviewListFilling extends ListFilling{
 
     }
 
-    public void ToPreviousLevel(){
 
-        Log.d(TAG, "ToPreviousLevel: cur_level="+String.valueOf(cur_level));
 
-        if(cur_level>0){
+    private void FillingOfListDown(int parent_id){
+        Log.d(TAG, "FillingOfListDown: BG_Operations: Current thread="+Thread.currentThread());
 
-            workThread.bg_operations(new Runnable() {
-                @Override
-                public void run() {
-                    parentIdByLevels.remove(cur_level);
-                    cur_level--;
+        ClearRecords();
 
-                    if(cur_level==0)
-                        FillingInitialList();
-                    else
-                        FillingOfListDown(parentIdByLevels.get(cur_level));
-                }
-            });
+        for(int i=0;i<cursor.getCount();i++){
+            cursor.moveToPosition(i);
 
-            workThread.ui_operations(new Runnable() {
-                @Override
-                public void run() {
-                    notifyViews_after.ToPreviousLevel();
-                }
-            });
+            if(cursor.getInt(1)==parent_id) {
+                AddNewItemInRecords(cursor.getInt(0), cursor.getString(2), cursor.getInt(3), cursor.getInt(4));
+
+                Log.d(TAG, "FillingOfListDown: Record_id:"+cursor.getString(0)+" Parent_id:"+cursor.getString(1));
+            }
         }
-    }
+    };
+
+    private void FillingInitialList(){
+
+        Log.d(TAG, "FillingInitialList: BG_Operations: Current thread=" + Thread.currentThread());
+
+        ClearRecords();
+        objIdList.clear();
+
+        if(cmd_cursorInit) {
+            cursorInit = databaseHelper.getRecords_2(0);
+            cmd_cursorInit = false;
+            Log.d(TAG, "FillingInitialList: cmd_cursorInit");
+        }
+
+        for (int i=0;i<cursorInit.getCount();i++){
+            cursorInit.moveToPosition(i);
+
+            AddNewItemInRecords(cursorInit.getInt(0),cursorInit.getString(2),cursorInit.getInt(3),cursorInit.getInt(4));
+            objIdList.add(cursorInit.getInt(5));
+
+            Log.d(TAG, "FillingInitialList: Record_id:"+cursorInit.getString(0)+" Parent_id:"+cursorInit.getString(1));
+        }
+    };
 
     public void Destroy(){
         records.clear();

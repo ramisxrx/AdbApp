@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.adbapp.DatabaseHelper;
 import com.example.adbapp.Record;
+import com.example.adbapp.Threads.HandlerThreadOfFilling;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,8 @@ public class ListFilling extends RecordList{
 
     protected ArrayList<Integer> objIdList = new ArrayList<>();
     protected ArrayList<Integer> parentIdByLevels = new ArrayList<>();
+
+    protected HandlerThreadOfFilling workThread;
 
     protected int selObjId=0,selItemPos=0;
     protected boolean selDirection;
@@ -38,6 +41,10 @@ public class ListFilling extends RecordList{
     }
 
     public void ActionUp(int position){
+
+    }
+
+    public void ToPreviousLevel(){
 
     }
 
