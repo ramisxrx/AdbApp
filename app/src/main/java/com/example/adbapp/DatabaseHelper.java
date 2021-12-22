@@ -95,7 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                 +COLUMN_PARENT_ID+","
                                 +COLUMN_NAME+","
                                 +COLUMN_TIME+","
-                                +COLUMN_FIELD_ID+
+                                +COLUMN_TYPE+
                 " FROM "+
                 TABLE_RECORDS+" INNER JOIN "+TABLE_FIELDS+" ON "+TABLE_RECORDS+"."+COLUMN_FIELD_ID+"="+TABLE_FIELDS+"."+COLUMN_ID+
                 " INNER JOIN "+TABLE_NAMES+" ON "+TABLE_FIELDS+"."+COLUMN_NAME_ID+"="+TABLE_NAMES+"."+COLUMN_ID+
@@ -112,7 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                 +COLUMN_PARENT_ID+","
                                 +COLUMN_NAME+","
                                 +COLUMN_TIME+","
-                                +COLUMN_FIELD_ID+","
+                                +COLUMN_TYPE+","
                                 +COLUMN_OBJECT_ID+
                 " FROM "+
                 TABLE_RECORDS+" INNER JOIN "+TABLE_FIELDS+" ON "+TABLE_RECORDS+"."+COLUMN_FIELD_ID+"="+TABLE_FIELDS+"."+COLUMN_ID+
@@ -120,6 +120,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 " WHERE "+COLUMN_PARENT_ID+"=?", new String[]{String.valueOf(parent_id)});
 
         return cursor;
+    }
+
+    public Cursor getFields(String _name){
+        return db.rawQuery("SELECT "
+                +TABLE_FIELDS+"."+COLUMN_ID+","
+                +COLUMN_NAME+","
+                +COLUMN_TYPE+
+                " FROM "+
+                TABLE_FIELDS+" INNER JOIN "+TABLE_NAMES+" ON "+TABLE_FIELDS+"."+COLUMN_NAME_ID+"="+TABLE_NAMES+"."+COLUMN_ID+
+                " WHERE "+COLUMN_NAME+"=?", new String[]{_name});
     }
 
     public void Destroy(){

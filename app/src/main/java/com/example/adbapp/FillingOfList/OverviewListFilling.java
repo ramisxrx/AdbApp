@@ -17,10 +17,8 @@ public class OverviewListFilling extends ListFilling{
     }
 
     private final NotifyViews_after notifyViews_after;
-
-    protected Cursor cursorInit;
-
-    protected boolean cmd_cursorInit;
+    private Cursor cursorInit;
+    private boolean cmd_cursorInit;
 
     public OverviewListFilling(Context context, NotifyViews_after notifyViews_after){
         super(context);
