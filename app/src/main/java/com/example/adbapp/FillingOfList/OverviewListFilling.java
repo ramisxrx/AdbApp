@@ -17,7 +17,7 @@ public class OverviewListFilling extends ListFilling{
     }
 
     private final NotifyViews_after notifyViews_after;
-    private Cursor cursorInit;
+    private Cursor cursorInit, cursorTEST;
     private boolean cmd_cursorInit;
 
     public OverviewListFilling(Context context, NotifyViews_after notifyViews_after){
@@ -43,11 +43,7 @@ public class OverviewListFilling extends ListFilling{
         workThread.bg_operations(new Runnable() {
             @Override
             public void run() {
-                if(selObjId==0){
-                    cursor = readRequests.getRecords(objIdList.get(position));
-                    selObjId = objIdList.get(position);
-                }
-
+                CheckSelectionOfObjId(position);
                 cur_level++;
 
                 parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
@@ -103,17 +99,20 @@ public class OverviewListFilling extends ListFilling{
 
                 Log.d(TAG, "UpdateAfterAddNewRecords: parentIdByLevels="+String.valueOf(parentIdByLevels.get(cur_level)));
 
-                cursorInit = readRequests.getRecords_2(parentIdByLevels.get(cur_level));
+                //selObjId = 0;
+                //cursorInit = readRequests.getRecords_2(parentIdByLevels.get(cur_level));
 
-                cursorInit.moveToLast();
+                //cursorInit.moveToLast();
 
                 if(cur_level==0){
-                    cmd_cursorInit=false;
-                    objIdList.add(cursorInit.getInt(5));
-                }else
                     cmd_cursorInit=true;
+                    FillingInitialList();
+                }else {
+                    cursor = readRequests.getRecords(selObjId);
+                    FillingOfListDown(parentIdByLevels.get(cur_level));
+                }
 
-                AddNewItemInRecords(cursorInit.getInt(0),cursorInit.getString(2),cursorInit.getInt(3),cursorInit.getInt(4));
+                //AddNewItemInRecords(cursorInit.getInt(0),cursorInit.getString(2),cursorInit.getInt(3),cursorInit.getInt(4));
             }
         });
 
@@ -167,11 +166,25 @@ public class OverviewListFilling extends ListFilling{
         }
     };
 
+    private void CheckSelectionOfObjId(int position){
+        if(selObjId==0 || selObjId!=objIdList.get(position)){
+            selObjId = objIdList.get(position);
+            cursor = readRequests.getRecords(selObjId);
+        }
+    }
+
     public void Destroy(){
         records.clear();
         cursor.close();
         cursorInit.close();
         readRequests.Destroy();
         workThread.stop();
+    }
+
+    public void bdView(){
+        cursorTEST = readRequests.getRecordsTEST();
+        while (cursorTEST.moveToNext()){
+            Log.d(TAG, "record_id:"+cursorTEST.getString(0)+"object_id:"+cursorTEST.getString(1)+"parent_id:"+cursorTEST.getString(2)+"name:"+cursorTEST.getString(3));
+        }
     }
 }

@@ -1,12 +1,16 @@
 package com.example.adbapp.FillingOfList;
 
+import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.example.adbapp.DataBase.ReadRequests;
 import com.example.adbapp.DataBase.WriteRequests;
 
 public class AddingNewRecord {
 
+    private String TAG = AddingNewRecord.class.getCanonicalName();
+    
     private WriteRequests writeRequests;
     private ReadRequests readRequests;
     private int parent_id, object_id, _time, name_id, _type;
@@ -16,10 +20,12 @@ public class AddingNewRecord {
     public String parentName;
     public int parentType,field_id;
 
-    AddingNewRecord(int parent_id, String _name, int _type){
+    public AddingNewRecord(Context context, int parent_id, String _name, int _type){
         this.parent_id=parent_id;
         this._name=_name;
         this._type=_type;
+        readRequests = new ReadRequests(context);
+        writeRequests = new WriteRequests(context);
 
         DefinitionsInit();
     }
@@ -28,8 +34,10 @@ public class AddingNewRecord {
         if(parent_id==0)
             AddNewObject();
 
-        if(field_id>0)
-            writeRequests.AddRecord(object_id,parent_id,field_id,_time);
+        if(field_id>0) {
+            Log.d(TAG, "Save: writeRequests.AddRecord");
+            writeRequests.AddRecord(object_id, parent_id, field_id, _time);
+        }
         else{
             if(_name.length()>0){
                 DefinitionNameId();
@@ -42,9 +50,11 @@ public class AddingNewRecord {
     private void DefinitionsInit(){
         if(parent_id>0){
             cursor = readRequests.getObjectNameType(parent_id);
-            object_id = cursor.getInt(0);
-            parentName = cursor.getString(1);
-            parentType = cursor.getInt(2);
+            if(cursor.moveToFirst()) {
+                object_id = cursor.getInt(0);
+                parentName = cursor.getString(1);
+                parentType = cursor.getInt(2);
+            }
         }
     }
 

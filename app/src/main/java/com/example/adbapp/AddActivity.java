@@ -75,11 +75,46 @@ public class AddActivity extends AppCompatActivity {
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
         //HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
 
-        FoundListFilling
+        Bundle extras = getIntent().getExtras();
+        if (extras != null)
+            recordId = extras.getInt("id");
+        else
+            recordId = 0;
 
-        foundList = new FoundListFilling(getApplicationContext());
+        addingNewRecord = new AddingNewRecord(getApplicationContext(),recordId,nameBox.getText().toString(),1);
 
+        parentRec.setText(addingNewRecord.parentName);
 
+        FoundListFilling.NotifyViews_after notifyViews_after = new FoundListFilling.NotifyViews_after() {
+            @Override
+            public void ActionOfSearch() {
+                recordAdapter.typeView = 0;
+                recordAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void ActionDown() {
+                //recordAdapter.typeView = 1;
+                recordAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void ActionUp() {
+                //recordAdapter.typeView = 1;
+                recordAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void ToPreviousLevel() {
+                if(foundList.cur_level==-1)
+                    recordAdapter.typeView = 0;
+                recordAdapter.notifyDataSetChanged();
+            }
+        };
+
+        foundList = new FoundListFilling(getApplicationContext(),notifyViews_after);
+
+        records = foundList.records;
         nameBox.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {}
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -99,20 +134,20 @@ public class AddActivity extends AppCompatActivity {
                 if(recordAdapter.posSelItem>=0){
                     if(recordAdapter.posSelItem==position) {
                         recordAdapter.posSelItem = -1;
-                        fieldIdForSave = 0;
+                        addingNewRecord.field_id = 0;
                     }else{
                         oldPosSelItem = recordAdapter.posSelItem;
                         recordAdapter.posSelItem = position;
                         recordAdapter.notifyItemChanged(oldPosSelItem);
-                        fieldIdForSave = field_id.get(position);
+                        addingNewRecord.field_id = foundList.records.get(position).getRecord_id();
                     }
                 }else{
                     recordAdapter.posSelItem = position;
-                    fieldIdForSave = field_id.get(position);
+                    addingNewRecord.field_id = foundList.records.get(position).getRecord_id();
 
                 }
 
-                if(fieldIdForSave==0)
+                if(addingNewRecord.field_id==0)
                     saveButton.setText("Добавить новый запись");
                 else
                     saveButton.setText("Добавить ассоциацию");
@@ -121,7 +156,7 @@ public class AddActivity extends AppCompatActivity {
             }
         };
 
-        recordAdapter = new RecordAdapter(this, records,typeViewHolder, recordClickListener);
+        recordAdapter = new RecordAdapter(this, records,1, recordClickListener);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
@@ -140,7 +175,7 @@ public class AddActivity extends AppCompatActivity {
 
                 swipeFlags = ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT;
 
-                if(foundList.selFieldId>0){
+                if(foundList.cur_level>-1){
                     if(foundList.selDirection)
                         swipeFlags = ItemTouchHelper.RIGHT;
                     else
@@ -158,7 +193,7 @@ public class AddActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
+                /*
                 int oldPosSelItem;
 
                 if(foundList.cur_level==-1) {
@@ -174,11 +209,13 @@ public class AddActivity extends AppCompatActivity {
 
                     recordAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                 }
-
+                */
                 if(direction==4)
                     foundList.ActionDown(viewHolder.getAdapterPosition());
                 else
                     foundList.ActionUp(viewHolder.getAdapterPosition());
+
+
 
 
                 /*
@@ -255,7 +292,7 @@ public class AddActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-
+        /*
         sqlHelper = new DataBaseHelper(this);
         db = sqlHelper.getWritableDatabase();
 
@@ -287,7 +324,7 @@ public class AddActivity extends AppCompatActivity {
             objectCursor.close();
         }
 
-        /*
+
         nameBox.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) { }
@@ -439,6 +476,9 @@ public class AddActivity extends AppCompatActivity {
 
         Log.d(TAG, "LevelUp: cur_level="+String.valueOf(cur_level));
 
+        foundList.ToPreviousLevel();
+
+        /*
         if(cur_level>0) {
 
             parentIdByLevels.remove(cur_level);
@@ -460,12 +500,15 @@ public class AddActivity extends AppCompatActivity {
         }
 
         recordAdapter.notifyDataSetChanged();
-
+        */
     }
 
 
     public void save(View view){
 
+        addingNewRecord.Save();
+
+        /*
         ContentValues cv = new ContentValues();
 
         Log.d(TAG, "save: parentIdForSave="+String.valueOf(recordId));
@@ -523,7 +566,7 @@ public class AddActivity extends AppCompatActivity {
             fieldCursor.close();
             cv.clear();
         }
-
+        */
         goHome(false);
     }
 
@@ -533,7 +576,7 @@ public class AddActivity extends AppCompatActivity {
 
     private void goHome(boolean cancel){
         // закрываем подключение
-        db.close();
+        //db.close();
 
         // переход к главной activity
         //Intent intent = new Intent(this, MainActivity.class);

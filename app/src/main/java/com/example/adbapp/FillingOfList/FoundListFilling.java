@@ -2,6 +2,7 @@ package com.example.adbapp.FillingOfList;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
@@ -9,6 +10,8 @@ import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import java.util.ArrayList;
 
 public class FoundListFilling extends ListFilling{
+
+    private String TAG = FoundListFilling.class.getCanonicalName();
 
     private final NotifyViews_after notifyViews_after;
     private Cursor cursorRecordsByField;
@@ -20,6 +23,7 @@ public class FoundListFilling extends ListFilling{
         void ActionOfSearch();
         void ActionDown();
         void ActionUp();
+        void ToPreviousLevel();
     }
 
     public int selFieldId=0;
@@ -34,26 +38,33 @@ public class FoundListFilling extends ListFilling{
 
     @Override
     public void ActionDown(int position) {
-        workThread.bg_operations(new Runnable() {
-            @Override
-            public void run() {
+        //workThread.bg_operations(new Runnable() {
+        //    @Override
+        //    public void run() {
+                Log.d(TAG, "ActionDown: bg_operations");
                 if(cur_level==-1) {
+                    Log.d(TAG, "ActionDown: bg_operations 1");
                     cur_level++;
                     parentIdByLevels.add(cur_level,0);
+                    Log.d(TAG, "ActionDown: bg_operations 2");
                     CheckSelectionOfFieldId(position);
+                    Log.d(TAG, "ActionDown: bg_operations 3");
                     FillingZeroLevelToDown();
+                    Log.d(TAG, "ActionDown: bg_operations 4");
                     selDirection = false;
                 }else {
                     cur_level++;
                     parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
-                    CheckSelectionOfObjId(position);
+                    if(cur_level==0)
+                        CheckSelectionOfObjId(position);
                     FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
                 }
-            }
-        });
+            //}
+       // });
         workThread.ui_operations(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "ActionDown: ui_operations");
                 notifyViews_after.ActionDown();
             }
         });
@@ -90,36 +101,49 @@ public class FoundListFilling extends ListFilling{
     public void ToPreviousLevel() {
 
         if(cur_level>-1){
-            if(selDirection){
-                recordIdByLevels.remove(cur_level);
-                cur_level--;
-                if (cur_level == -1) {
-                    CopyFieldsToRecords();
-                } else {
-                    if (cur_level == 0)
-                        FillingZeroLevelToUp();
-                    else
-                        FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
+            workThread.bg_operations(new Runnable() {
+                @Override
+                public void run() {
+                    if(selDirection){
+                        recordIdByLevels.remove(cur_level);
+                        cur_level--;
+                        if (cur_level == -1) {
+                            CopyFieldsToRecords();
+                        } else {
+                            if (cur_level == 0)
+                                FillingZeroLevelToUp();
+                            else
+                                FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
+                        }
+                    }else {
+                        parentIdByLevels.remove(cur_level);
+                        cur_level--;
+                        if (cur_level == -1) {
+                            CopyFieldsToRecords();
+                        } else {
+                            if (cur_level == 0)
+                                FillingZeroLevelToDown();
+                            else
+                                FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+                        }
+                    }
                 }
-            }else {
-                parentIdByLevels.remove(cur_level);
-                cur_level--;
-                if (cur_level == -1) {
-                    CopyFieldsToRecords();
-                } else {
-                    if (cur_level == 0)
-                        FillingZeroLevelToDown();
-                    else
-                        FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+            });
+            workThread.ui_operations(new Runnable() {
+                @Override
+                public void run() {
+                    notifyViews_after.ToPreviousLevel();
                 }
-            }
+            });
         }
     }
 
     public void ActionOfSearch(CharSequence charsequence){
+
         workThread.bg_operations(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "ActionOfSearch: bg_operations:charsequence="+charsequence);
                 FillingFoundList(charsequence);
             }
         });
@@ -127,6 +151,7 @@ public class FoundListFilling extends ListFilling{
         workThread.ui_operations(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "ActionOfSearch: ui_operations");
                 notifyViews_after.ActionOfSearch();
             }
         });
@@ -142,10 +167,13 @@ public class FoundListFilling extends ListFilling{
         parentIdByLevels.clear();
 
         if(charsequence.length()>0) {
+            Log.d(TAG, "FillingFoundList: charsequence.length()="+String.valueOf(charsequence.length()));
             cursorSearch = readRequests.getFields(charsequence.toString());
 
-            while (cursorSearch.moveToNext())
-                fields.add(new Record(cursorSearch.getInt(0),cursorSearch.getString(1),0,0));
+            while (cursorSearch.moveToNext()) {
+                Log.d(TAG, "FillingFoundList: cursorSearch.moveToNext()");
+                fields.add(new Record(cursorSearch.getInt(0), cursorSearch.getString(1), 0, 0));
+            }    
 
             cursorSearch.close();
         }

@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void LevelUp(View view){
         overviewList.ToPreviousLevel();
+        overviewList.bdView();
     }
 
     @Override

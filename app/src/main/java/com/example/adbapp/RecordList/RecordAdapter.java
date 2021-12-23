@@ -37,7 +37,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     private final LayoutInflater inflater;
     public List<Record> records;
-    private int typeView;
+    public int typeView;
     public int posSelItem=-1;
 
 
@@ -75,7 +75,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public void onBindViewHolder(RecordAdapter.ViewHolder holder, int position) {
         Record record = records.get(position);
 
-        switch (records.get(0).getRecord_id()){
+        switch (typeView){
             case TYPE_VIEW_0:
                 holder.nameView.setText(record.getName());
 
@@ -110,7 +110,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     @Override
     public int getItemViewType(int position) {
         // условие для определения айтем какого типа выводить в конкретной позиции
-        switch (records.get(0).getRecord_id()) {
+        switch (typeView) {
             case TYPE_VIEW_0:
                 return TYPE_VIEW_0;
             default:

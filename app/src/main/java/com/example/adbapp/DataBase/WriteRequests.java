@@ -5,14 +5,19 @@ import static com.example.adbapp.DataBase.DataBaseHelper.*;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import com.example.adbapp.FillingOfList.OverviewListFilling;
 
 public class WriteRequests {
+
+    private String TAG = WriteRequests.class.getCanonicalName();
 
     SQLiteDatabase db;
     DataBaseHelper dataBaseHelper;
     ContentValues cv;
 
-    WriteRequests(Context context){
+    public WriteRequests(Context context){
         dataBaseHelper = new DataBaseHelper(context);
         db = dataBaseHelper.getWritableDatabase();
         cv = new ContentValues();
@@ -25,7 +30,8 @@ public class WriteRequests {
     }
 
     public void AddRecord(int object_id,int parent_id,int field_id,int _time){
-        cv.put(COLUMN_TYPE,object_id);
+        Log.d(TAG, "AddRecord: ");
+        cv.put(COLUMN_OBJECT_ID,object_id);
         cv.put(COLUMN_PARENT_ID,parent_id);
         cv.put(COLUMN_FIELD_ID,field_id);
         cv.put(COLUMN_TIME,_time);
