@@ -1,9 +1,8 @@
-package com.example.adbapp;
+package com.example.adbapp.RecordList;
 
 import android.database.Cursor;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Record {
 

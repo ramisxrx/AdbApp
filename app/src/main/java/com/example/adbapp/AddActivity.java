@@ -15,13 +15,19 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.adbapp.DataBase.DataBaseHelper;
+import com.example.adbapp.FillingOfList.AddingNewRecord;
+import com.example.adbapp.FillingOfList.FoundListFilling;
+import com.example.adbapp.RecordList.Record;
+import com.example.adbapp.RecordList.RecordAdapter;
+import com.example.adbapp.RecordList.RecordDecoration;
+
 import java.util.ArrayList;
 
 
@@ -39,7 +45,10 @@ public class AddActivity extends AppCompatActivity {
 
     private static final String TAG = "**AddActivity**";
 
-    DatabaseHelper sqlHelper;
+    AddingNewRecord addingNewRecord;
+    FoundListFilling foundList;
+
+    DataBaseHelper sqlHelper;
     SQLiteDatabase db;
     Cursor recordCursor, nameCursor, fieldCursor, objectCursor;
     ArrayAdapter<String> fieldAdapter;
@@ -65,6 +74,20 @@ public class AddActivity extends AppCompatActivity {
         saveButton = (Button) findViewById(R.id.saveButton);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
         //HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
+
+        FoundListFilling
+
+        foundList = new FoundListFilling(getApplicationContext());
+
+
+        nameBox.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                foundList.ActionOfSearch(s);
+            }
+        });
+
 
 
         recordClickListener = new RecordAdapter.OnRecordClickListener() {
@@ -117,8 +140,8 @@ public class AddActivity extends AppCompatActivity {
 
                 swipeFlags = ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT;
 
-                if(selFieldId>0){
-                    if(selDirection)
+                if(foundList.selFieldId>0){
+                    if(foundList.selDirection)
                         swipeFlags = ItemTouchHelper.RIGHT;
                     else
                         swipeFlags = ItemTouchHelper.LEFT;
@@ -136,6 +159,29 @@ public class AddActivity extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
+                int oldPosSelItem;
+
+                if(foundList.cur_level==-1) {
+                    addingNewRecord.field_id = records.get(viewHolder.getAdapterPosition()).getRecord_id();
+                    saveButton.setText("Добавить ассоциацию");
+
+                    if(recordAdapter.posSelItem>=0){
+                        oldPosSelItem = recordAdapter.posSelItem;
+                        recordAdapter.posSelItem = viewHolder.getAdapterPosition();
+                        recordAdapter.notifyItemChanged(oldPosSelItem);
+                    }else
+                        recordAdapter.posSelItem = viewHolder.getAdapterPosition();
+
+                    recordAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                }
+
+                if(direction==4)
+                    foundList.ActionDown(viewHolder.getAdapterPosition());
+                else
+                    foundList.ActionUp(viewHolder.getAdapterPosition());
+
+
+                /*
                 int oldPosSelItem;
 
                 Log.d(TAG, "onSwiped: ");
@@ -196,7 +242,7 @@ public class AddActivity extends AppCompatActivity {
 
                 recordAdapter.notifyDataSetChanged();
 
-
+                */
             }
         };
 
@@ -210,9 +256,8 @@ public class AddActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        sqlHelper = new DatabaseHelper(this);
+        sqlHelper = new DataBaseHelper(this);
         db = sqlHelper.getWritableDatabase();
-
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -242,6 +287,7 @@ public class AddActivity extends AppCompatActivity {
             objectCursor.close();
         }
 
+        /*
         nameBox.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) { }
@@ -286,8 +332,8 @@ public class AddActivity extends AppCompatActivity {
                 //UncoverForEachBranch();
             }
         });
+        */
 
-        //HScroll.computeScroll();
     }
 
     public void FillingZeroLevel(int fieldId, boolean direction){
@@ -425,8 +471,8 @@ public class AddActivity extends AppCompatActivity {
         Log.d(TAG, "save: parentIdForSave="+String.valueOf(recordId));
 
         if (recordId == 0) {
-            cv.put(DatabaseHelper.COLUMN_ID, objectId);
-            db.insert(DatabaseHelper.TABLE_OBJECTS,null,cv);
+            cv.put(DataBaseHelper.COLUMN_ID, objectId);
+            db.insert(DataBaseHelper.TABLE_OBJECTS,null,cv);
         }
 
         if(fieldIdForSave>0){
@@ -434,11 +480,11 @@ public class AddActivity extends AppCompatActivity {
             Log.d(TAG, "save: fieldIdForSave="+String.valueOf(fieldIdForSave));
 
             cv.clear();
-            cv.put(DatabaseHelper.COLUMN_OBJECT_ID, String.valueOf(objectId));
-            cv.put(DatabaseHelper.COLUMN_PARENT_ID, String.valueOf(recordId));
-            cv.put(DatabaseHelper.COLUMN_FIELD_ID, String.valueOf(fieldIdForSave));
+            cv.put(DataBaseHelper.COLUMN_OBJECT_ID, String.valueOf(objectId));
+            cv.put(DataBaseHelper.COLUMN_PARENT_ID, String.valueOf(recordId));
+            cv.put(DataBaseHelper.COLUMN_FIELD_ID, String.valueOf(fieldIdForSave));
 
-            db.insert(DatabaseHelper.TABLE_RECORDS,null,cv);
+            db.insert(DataBaseHelper.TABLE_RECORDS,null,cv);
 
   //          recordCursor = db.rawQuery("insert into record_clusters(object_id, parent_id, field_id)" +
      //               "VALUES(?);", new String[]{String.valueOf(objectId)+", "+String.valueOf(recordId)+", "+String.valueOf(fieldIdForSave)});
@@ -448,8 +494,8 @@ public class AddActivity extends AppCompatActivity {
 
             if(!nameCursor.moveToFirst()){
                 cv.clear();
-                cv.put(DatabaseHelper.COLUMN_NAME, nameBox.getText().toString());
-                db.insert(DatabaseHelper.TABLE_NAMES,null,cv);
+                cv.put(DataBaseHelper.COLUMN_NAME, nameBox.getText().toString());
+                db.insert(DataBaseHelper.TABLE_NAMES,null,cv);
 
                 nameCursor = db.rawQuery("select _id FROM name_clusters " +
                         "WHERE  _name = ?", new String[]{nameBox.getText().toString()});
@@ -457,9 +503,9 @@ public class AddActivity extends AppCompatActivity {
             }
 
             cv.clear();
-            cv.put(DatabaseHelper.COLUMN_TYPE, 0);
-            cv.put(DatabaseHelper.COLUMN_NAME_ID, nameCursor.getInt(0));
-            db.insert(DatabaseHelper.TABLE_FIELDS,null,cv);
+            cv.put(DataBaseHelper.COLUMN_TYPE, 0);
+            cv.put(DataBaseHelper.COLUMN_NAME_ID, nameCursor.getInt(0));
+            db.insert(DataBaseHelper.TABLE_FIELDS,null,cv);
 
             fieldCursor = db.rawQuery("select _id FROM field_clusters " +
                     "WHERE  name_id = ?", new String[]{nameCursor.getString(0)});
@@ -467,11 +513,11 @@ public class AddActivity extends AppCompatActivity {
             fieldCursor.moveToLast();
 
             cv.clear();
-            cv.put(DatabaseHelper.COLUMN_OBJECT_ID, String.valueOf(objectId));
-            cv.put(DatabaseHelper.COLUMN_PARENT_ID, String.valueOf(recordId));
-            cv.put(DatabaseHelper.COLUMN_FIELD_ID, fieldCursor.getString(0));
+            cv.put(DataBaseHelper.COLUMN_OBJECT_ID, String.valueOf(objectId));
+            cv.put(DataBaseHelper.COLUMN_PARENT_ID, String.valueOf(recordId));
+            cv.put(DataBaseHelper.COLUMN_FIELD_ID, fieldCursor.getString(0));
 
-            db.insert(DatabaseHelper.TABLE_RECORDS,null,cv);
+            db.insert(DataBaseHelper.TABLE_RECORDS,null,cv);
 
             nameCursor.close();
             fieldCursor.close();

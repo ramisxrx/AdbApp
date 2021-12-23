@@ -4,8 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.example.adbapp.DatabaseHelper;
-import com.example.adbapp.Record;
+import com.example.adbapp.DataBase.DataBaseHelper;
+import com.example.adbapp.DataBase.ReadRequests;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class ListFilling extends RecordList{
 
     private String TAG = ListFilling.class.getCanonicalName();
 
-    protected DatabaseHelper databaseHelper;
+    protected ReadRequests readRequests;
     protected Cursor cursor;
 
     protected ArrayList<Integer> objIdList = new ArrayList<>();
@@ -25,14 +25,10 @@ public class ListFilling extends RecordList{
     protected HandlerThreadOfFilling workThread;
 
     protected int selObjId=0,selItemPos=0;
-    protected boolean selDirection;
     public int cur_level=0;
 
     public ListFilling(Context context){
-        this.cur_level=0;
-        this.parentIdByLevels.add(cur_level,0);
-
-        databaseHelper = new DatabaseHelper(context);
+        readRequests = new ReadRequests(context);
     }
 
 

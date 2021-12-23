@@ -1,6 +1,8 @@
-package com.example.adbapp;
+package com.example.adbapp.RecordList;
 
 import androidx.recyclerview.widget.DiffUtil;
+
+import com.example.adbapp.RecordList.Record;
 
 import java.util.List;
 

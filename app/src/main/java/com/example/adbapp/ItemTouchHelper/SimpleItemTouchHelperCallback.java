@@ -1,12 +1,7 @@
 package com.example.adbapp.ItemTouchHelper;
 
-import static androidx.recyclerview.widget.ItemTouchHelper.Callback.makeMovementFlags;
-
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.adbapp.Record;
-import com.example.adbapp.RecordAdapter;
 
 
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {

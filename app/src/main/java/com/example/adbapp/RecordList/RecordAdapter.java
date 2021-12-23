@@ -1,17 +1,16 @@
-package com.example.adbapp;
+package com.example.adbapp.RecordList;
 
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
+import com.example.adbapp.R;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     private final int TYPE_VIEW_7 = 7; // для фото
 
 
-    interface OnRecordClickListener{
+    public interface OnRecordClickListener{
         void onRecordClick(Record record, int position);
     }
 
@@ -42,7 +41,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public int posSelItem=-1;
 
 
-    RecordAdapter(Context context, List<Record> records,int typeView, OnRecordClickListener onClickListener) {
+    public RecordAdapter(Context context, List<Record> records, int typeView, OnRecordClickListener onClickListener) {
         this.onClickListener = onClickListener;
         this.records = records;
         this.typeView = typeView;

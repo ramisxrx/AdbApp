@@ -11,23 +11,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
 
 import java.util.ArrayList;
 
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.adbapp.FillingOfList.ListFilling;
 import com.example.adbapp.FillingOfList.OverviewListFilling;
-import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
 import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
+import com.example.adbapp.RecordList.Record;
+import com.example.adbapp.RecordList.RecordAdapter;
+import com.example.adbapp.RecordList.RecordDecoration;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
@@ -141,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void addRecord(int idRec){
         Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-        intent.putExtra("id", idRec);
+        intent.putExtra("id",idRec);
         mStartForResult.launch(intent);
 
     }

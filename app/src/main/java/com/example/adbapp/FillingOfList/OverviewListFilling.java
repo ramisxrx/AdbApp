@@ -23,6 +23,7 @@ public class OverviewListFilling extends ListFilling{
     public OverviewListFilling(Context context, NotifyViews_after notifyViews_after){
         super(context);
         this.notifyViews_after=notifyViews_after;
+        parentIdByLevels.add(cur_level,0);
 
         workThread = new HandlerThreadOfFilling("OverviewListFilling");
 
@@ -43,9 +44,8 @@ public class OverviewListFilling extends ListFilling{
             @Override
             public void run() {
                 if(selObjId==0){
-                    cursor = databaseHelper.getRecords(objIdList.get(position));
+                    cursor = readRequests.getRecords(objIdList.get(position));
                     selObjId = objIdList.get(position);
-                    selDirection = false;
                 }
 
                 cur_level++;
@@ -103,7 +103,7 @@ public class OverviewListFilling extends ListFilling{
 
                 Log.d(TAG, "UpdateAfterAddNewRecords: parentIdByLevels="+String.valueOf(parentIdByLevels.get(cur_level)));
 
-                cursorInit = databaseHelper.getRecords_2(parentIdByLevels.get(cur_level));
+                cursorInit = readRequests.getRecords_2(parentIdByLevels.get(cur_level));
 
                 cursorInit.moveToLast();
 
@@ -152,7 +152,7 @@ public class OverviewListFilling extends ListFilling{
         objIdList.clear();
 
         if(cmd_cursorInit) {
-            cursorInit = databaseHelper.getRecords_2(0);
+            cursorInit = readRequests.getRecords_2(0);
             cmd_cursorInit = false;
             Log.d(TAG, "FillingInitialList: cmd_cursorInit");
         }
@@ -171,7 +171,7 @@ public class OverviewListFilling extends ListFilling{
         records.clear();
         cursor.close();
         cursorInit.close();
-        databaseHelper.Destroy();
+        readRequests.Destroy();
         workThread.stop();
     }
 }

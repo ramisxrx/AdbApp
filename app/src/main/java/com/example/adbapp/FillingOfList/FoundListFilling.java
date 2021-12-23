@@ -3,24 +3,27 @@ package com.example.adbapp.FillingOfList;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.example.adbapp.Record;
+import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 
 import java.util.ArrayList;
 
 public class FoundListFilling extends ListFilling{
 
-
-    public interface NotifyViews_after{
-        void ActionOfSearch();
-    }
-
     private final NotifyViews_after notifyViews_after;
     private Cursor cursorRecordsByField;
     private ArrayList<Record> fields = new ArrayList<>();
     private ArrayList<Integer> objIdList = new ArrayList<>();
+    private ArrayList<Integer> recordIdByLevels = new ArrayList<>();
 
-    private int selFieldId;
+    public interface NotifyViews_after{
+        void ActionOfSearch();
+        void ActionDown();
+        void ActionUp();
+    }
+
+    public int selFieldId=0;
+    public boolean selDirection;
 
     public FoundListFilling(Context context, NotifyViews_after notifyViews_after) {
         super(context);
@@ -31,44 +34,84 @@ public class FoundListFilling extends ListFilling{
 
     @Override
     public void ActionDown(int position) {
-
-        if(cur_level==-1) {
-            cur_level++;
-            parentIdByLevels.add(cur_level,0);
-            if(selFieldId==0 || selFieldId!=records.get(position).getRecord_id()){
-                selFieldId=records.get(position).getRecord_id();
-                cursorRecordsByField = databaseHelper.getRecords_3(selFieldId);
+        workThread.bg_operations(new Runnable() {
+            @Override
+            public void run() {
+                if(cur_level==-1) {
+                    cur_level++;
+                    parentIdByLevels.add(cur_level,0);
+                    CheckSelectionOfFieldId(position);
+                    FillingZeroLevelToDown();
+                    selDirection = false;
+                }else {
+                    cur_level++;
+                    parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
+                    CheckSelectionOfObjId(position);
+                    FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+                }
             }
-            FillingZeroLevelToDown();
-        }else {
-            cur_level++;
-            parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
-            if(selObjId==0){
-                selObjId = objIdList.get(position);
-                cursor = databaseHelper.getRecords(selObjId);
+        });
+        workThread.ui_operations(new Runnable() {
+            @Override
+            public void run() {
+                notifyViews_after.ActionDown();
             }
-            FillingOtherLevelToDown(cursor.getInt(0));
-        }
+        });
     }
 
     @Override
     public void ActionUp(int position) {
-
+        workThread.bg_operations(new Runnable() {
+            @Override
+            public void run() {
+                if(cur_level==-1){
+                    cur_level++;
+                    recordIdByLevels.add(cur_level,0);
+                    CheckSelectionOfFieldId(position);
+                    FillingZeroLevelToUp();
+                    selDirection = true;
+                }else{
+                    cur_level++;
+                    recordIdByLevels.add(cur_level,records.get(position).getParent_id());
+                    CheckSelectionOfObjId(position);
+                    FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
+                }
+            }
+        });
+        workThread.ui_operations(new Runnable() {
+            @Override
+            public void run() {
+                notifyViews_after.ActionUp();
+            }
+        });
     }
 
     @Override
     public void ToPreviousLevel() {
 
         if(cur_level>-1){
-            parentIdByLevels.remove(cur_level);
-            cur_level--;
-            if(cur_level==-1){
-                CopyFieldsToRecords();
-            }else{
-                if(cur_level==0)
-                    FillingZeroLevelToDown();
-                else
-                    FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+            if(selDirection){
+                recordIdByLevels.remove(cur_level);
+                cur_level--;
+                if (cur_level == -1) {
+                    CopyFieldsToRecords();
+                } else {
+                    if (cur_level == 0)
+                        FillingZeroLevelToUp();
+                    else
+                        FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
+                }
+            }else {
+                parentIdByLevels.remove(cur_level);
+                cur_level--;
+                if (cur_level == -1) {
+                    CopyFieldsToRecords();
+                } else {
+                    if (cur_level == 0)
+                        FillingZeroLevelToDown();
+                    else
+                        FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+                }
             }
         }
     }
@@ -90,19 +133,23 @@ public class FoundListFilling extends ListFilling{
     }
 
 
+
+
     private void FillingFoundList(CharSequence charsequence){
         Cursor cursorSearch;
         fields.clear();
+        cur_level=-1;
+        parentIdByLevels.clear();
 
         if(charsequence.length()>0) {
-            cursorSearch = databaseHelper.getFields(charsequence.toString());
+            cursorSearch = readRequests.getFields(charsequence.toString());
 
             while (cursorSearch.moveToNext())
                 fields.add(new Record(cursorSearch.getInt(0),cursorSearch.getString(1),0,0));
 
-            CopyFieldsToRecords();
             cursorSearch.close();
         }
+        CopyFieldsToRecords();
     }
 
     private void CopyFieldsToRecords(){
@@ -112,20 +159,44 @@ public class FoundListFilling extends ListFilling{
     }
 
     private void FillingZeroLevelToDown(){
+        Cursor cursorZeroLevel = null;
         int k=0;
         ClearRecords();
         objIdList.clear();
-        selObjId=0;
+
+        for (int i = 0; i < cursorRecordsByField.getCount(); i++) {
+            cursorRecordsByField.moveToPosition(i);
+            cursorZeroLevel = readRequests.getRecords_2(cursorRecordsByField.getInt(0));
+            while (cursorZeroLevel.moveToNext()) {
+                AddNewItemInRecords(cursorZeroLevel.getInt(0), cursorZeroLevel.getString(2), cursorZeroLevel.getInt(3), cursorZeroLevel.getInt(4));
+                records.get(k).setParent_id(cursorZeroLevel.getInt(1));
+                k++;
+                objIdList.add(cursorZeroLevel.getInt(5));
+            }
+        }
+        if (cursorZeroLevel != null) {
+            cursorZeroLevel.close();
+        }
+    }
+
+    private void FillingZeroLevelToUp(){
+        Cursor cursorZeroLevel = null;
+        int k=0;
+        ClearRecords();
+        objIdList.clear();
 
         for(int i=0;i<cursorRecordsByField.getCount();i++){
             cursorRecordsByField.moveToPosition(i);
-            cursor = databaseHelper.getRecords_2(cursorRecordsByField.getInt(0));
-            while (cursor.moveToNext()){
-                AddNewItemInRecords(cursor.getInt(0),cursor.getString(2),cursor.getInt(3),cursor.getInt(4));
-                records.get(k).setParent_id(cursor.getInt(1));
+            cursorZeroLevel = readRequests.getRecords_4(cursorRecordsByField.getInt(1));
+            while (cursorZeroLevel.moveToNext()){
+                AddNewItemInRecords(cursorZeroLevel.getInt(0),cursorZeroLevel.getString(2),cursorZeroLevel.getInt(3),cursorZeroLevel.getInt(4));
+                records.get(k).setParent_id(cursorZeroLevel.getInt(1));
                 k++;
-                objIdList.add(cursor.getInt(5));
+                objIdList.add(cursorZeroLevel.getInt(5));
             }
+        }
+        if (cursorZeroLevel != null) {
+            cursorZeroLevel.close();
         }
     }
 
@@ -139,6 +210,33 @@ public class FoundListFilling extends ListFilling{
                 records.get(k).setParent_id(cursor.getInt(1));
                 k++;
             }
+        }
+    }
+
+    private void FillingOtherLevelToUp(int record_id){
+        ClearRecords();
+        int k=0;
+        for (int i=0;i<cursor.getCount();i++){
+            cursor.moveToPosition(i);
+            if(cursor.getInt(0)==record_id){
+                AddNewItemInRecords(cursor.getInt(0),cursor.getString(2),cursor.getInt(3),cursor.getInt(4));
+                records.get(k).setParent_id(cursor.getInt(1));
+                k++;
+            }
+        }
+    }
+
+    private void CheckSelectionOfFieldId(int position){
+        if(selFieldId==0 || selFieldId!=records.get(position).getRecord_id()){
+            selFieldId=records.get(position).getRecord_id();
+            cursorRecordsByField = readRequests.getRecords_3(selFieldId);
+        }
+    }
+
+    private void CheckSelectionOfObjId(int position){
+        if(selObjId==0 || selObjId!=objIdList.get(position)){
+            selObjId = objIdList.get(position);
+            cursor = readRequests.getRecords(selObjId);
         }
     }
 

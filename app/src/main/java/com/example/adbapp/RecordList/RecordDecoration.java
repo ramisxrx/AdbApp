@@ -1,12 +1,13 @@
-package com.example.adbapp;
+package com.example.adbapp.RecordList;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.adbapp.RecordList.Record;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
     private Paint mPaint;
     private View view;
 
-    RecordDecoration(List<Record> records) {
+    public RecordDecoration(List<Record> records) {
         this.records=records;
     }
     

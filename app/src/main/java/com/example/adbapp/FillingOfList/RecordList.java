@@ -1,6 +1,6 @@
 package com.example.adbapp.FillingOfList;
 
-import com.example.adbapp.Record;
+import com.example.adbapp.RecordList.Record;
 
 import java.util.ArrayList;
 
