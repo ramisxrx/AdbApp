@@ -267,11 +267,11 @@ public class FoundListFilling extends ListFilling{
 
     public void Destroy(){
         records.clear();
-        if(!cursor.isClosed())
+        if(cursor!=null)
             cursor.close();
-        if(!cursorRecordsByField.isClosed())
+        if(cursorRecordsByField!=null)
             cursorRecordsByField.close();
         readRequests.Destroy();
-        workThread.stop();
+        workThread.quit();
     }
 }

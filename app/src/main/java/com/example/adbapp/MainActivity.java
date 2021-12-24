@@ -82,18 +82,17 @@ public class MainActivity extends AppCompatActivity {
         OverviewListFilling.NotifyViews_after notifyViews_after = new OverviewListFilling.NotifyViews_after() {
             @Override
             public void ActionDown() {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Свайп", Toast.LENGTH_SHORT);
-                toast.show();
-
                 parentRec.setText(overviewList.parentRecordsByLevel.get(overviewList.cur_level).getName());
                 recordAdapter.notifyDataSetChanged();
+                buttonLevelUp.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void ToPreviousLevel() {
                 parentRec.setText(overviewList.parentRecordsByLevel.get(overviewList.cur_level).getName());
                 recordAdapter.notifyDataSetChanged();
+                if(overviewList.cur_level==0)
+                    buttonLevelUp.setVisibility(View.GONE);
             }
 
             @Override

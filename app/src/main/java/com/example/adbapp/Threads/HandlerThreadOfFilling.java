@@ -33,4 +33,5 @@ public class HandlerThreadOfFilling extends HandlerThread {
     public void ClearQueue_BG(){
         BG_handler.removeCallbacksAndMessages(null);
     }
+
 }

@@ -38,7 +38,7 @@ public class AddActivity extends AppCompatActivity {
     TextView parentRec;
     EditText nameBox;
     Button saveButton;
-    ListView fieldList;
+    Button buttonLevelUp;
 
     RecordAdapter recordAdapter;
     RecordAdapter.OnRecordClickListener recordClickListener;
@@ -73,6 +73,7 @@ public class AddActivity extends AppCompatActivity {
         parentRec = (TextView) findViewById(R.id.parentRec);
         nameBox = (EditText) findViewById(R.id.name);
         saveButton = (Button) findViewById(R.id.saveButton);
+        buttonLevelUp = findViewById(R.id.buttonLevelUp);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
         //HScroll =(HorizontalScrollView) findViewById(R.id.hscroll);
 
@@ -86,7 +87,7 @@ public class AddActivity extends AppCompatActivity {
             @Override
             public void Save() {
                 Toast toast = Toast.makeText(getApplicationContext(),
-                        "Добавление новой записи...", Toast.LENGTH_LONG);
+                        "Добавление новой записи...", Toast.LENGTH_SHORT);
                 toast.show();
             }
         };
@@ -113,12 +114,14 @@ public class AddActivity extends AppCompatActivity {
             public void ActionDown() {
                 recordAdapter.typeView = 1;
                 recordAdapter.notifyDataSetChanged();
+                buttonLevelUp.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void ActionUp() {
                 recordAdapter.typeView = 1;
                 recordAdapter.notifyDataSetChanged();
+                buttonLevelUp.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -126,6 +129,8 @@ public class AddActivity extends AppCompatActivity {
                 if(foundList.cur_level==-1)
                     recordAdapter.typeView = 0;
                 recordAdapter.notifyDataSetChanged();
+                if(foundList.cur_level==-1)
+                    buttonLevelUp.setVisibility(View.GONE);
             }
         };
 
@@ -148,31 +153,32 @@ public class AddActivity extends AppCompatActivity {
         recordClickListener = new RecordAdapter.OnRecordClickListener() {
             @Override
             public void onRecordClick(Record record, int position) {
+                if(foundList.cur_level==-1) {
+                    int oldPosSelItem;
 
-                int oldPosSelItem;
-
-                if(recordAdapter.posSelItem>=0){
-                    if(recordAdapter.posSelItem==position) {
-                        recordAdapter.posSelItem = -1;
-                        addingNewRecord.field_id = 0;
-                    }else{
-                        oldPosSelItem = recordAdapter.posSelItem;
+                    if (recordAdapter.posSelItem >= 0) {
+                        if (recordAdapter.posSelItem == position) {
+                            recordAdapter.posSelItem = -1;
+                            addingNewRecord.field_id = 0;
+                        } else {
+                            oldPosSelItem = recordAdapter.posSelItem;
+                            recordAdapter.posSelItem = position;
+                            recordAdapter.notifyItemChanged(oldPosSelItem);
+                            addingNewRecord.field_id = foundList.records.get(position).getRecord_id();
+                        }
+                    } else {
                         recordAdapter.posSelItem = position;
-                        recordAdapter.notifyItemChanged(oldPosSelItem);
                         addingNewRecord.field_id = foundList.records.get(position).getRecord_id();
+
                     }
-                }else{
-                    recordAdapter.posSelItem = position;
-                    addingNewRecord.field_id = foundList.records.get(position).getRecord_id();
 
+                    if (addingNewRecord.field_id == 0)
+                        saveButton.setText("Добавить новый запись");
+                    else
+                        saveButton.setText("Добавить ассоциацию");
+
+                    recordAdapter.notifyItemChanged(position);
                 }
-
-                if(addingNewRecord.field_id==0)
-                    saveButton.setText("Добавить новый запись");
-                else
-                    saveButton.setText("Добавить ассоциацию");
-
-                recordAdapter.notifyItemChanged(position);
             }
         };
 
@@ -201,7 +207,6 @@ public class AddActivity extends AppCompatActivity {
                     else
                         swipeFlags = ItemTouchHelper.LEFT;
                 }
-
 
                 return makeMovementFlags(dragFlags,swipeFlags);
             }
@@ -616,6 +621,7 @@ public class AddActivity extends AppCompatActivity {
         }else {
             setResult(RESULT_OK, data);
         }
+        records.clear();
         foundList.Destroy();
         addingNewRecord.Destroy();
         finish();

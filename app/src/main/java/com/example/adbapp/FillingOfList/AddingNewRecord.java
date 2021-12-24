@@ -77,7 +77,7 @@ public class AddingNewRecord {
                 }
 
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -132,10 +132,10 @@ public class AddingNewRecord {
     }
 
     public void Destroy(){
-        if(!cursor.isClosed())
+        if(cursor!=null)
             cursor.close();
         readRequests.Destroy();
         writeRequests.Destroy();
-        workThread.quit();
+        workThread.quitSafely();
     }
 }

@@ -175,12 +175,12 @@ public class OverviewListFilling extends ListFilling{
 
     public void Destroy(){
         records.clear();
-        if(!cursor.isClosed())
+        if(cursor!=null)
             cursor.close();
-        if(!cursorInit.isClosed())
+        if(cursorInit!=null)
             cursorInit.close();
         readRequests.Destroy();
-        workThread.stop();
+        workThread.quit();
     }
 
     public void bdView(){
