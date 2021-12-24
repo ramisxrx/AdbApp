@@ -122,12 +122,12 @@ public class ReadRequests {
         return cursor;
     }
 
-    public Cursor getFields_2(String _name){
+    public Cursor getFields_2(int name_id){
         return db.rawQuery("SELECT "
-                +TABLE_FIELDS+"."+COLUMN_ID+
+                +COLUMN_ID+
                 " FROM "+
-                TABLE_FIELDS+" INNER JOIN "+TABLE_NAMES+" ON "+TABLE_FIELDS+"."+COLUMN_NAME_ID+"="+TABLE_NAMES+"."+COLUMN_ID+
-                " WHERE "+COLUMN_NAME+"=?", new String[]{_name});
+                TABLE_FIELDS+
+                " WHERE "+COLUMN_NAME_ID+"=?", new String[]{String.valueOf(name_id)});
     }
 
     public Cursor getRecordsTEST(){
@@ -138,6 +138,8 @@ public class ReadRequests {
                 +COLUMN_OBJECT_ID+","
                 +COLUMN_PARENT_ID+","
                 +COLUMN_NAME+","
+                +COLUMN_NAME_ID+","
+                +COLUMN_FIELD_ID+","
                 +COLUMN_TIME+","
                 +COLUMN_TYPE+
                 " FROM "+

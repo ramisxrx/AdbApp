@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.adbapp.DataBase.DataBaseHelper;
 import com.example.adbapp.FillingOfList.AddingNewRecord;
@@ -81,11 +82,27 @@ public class AddActivity extends AppCompatActivity {
         else
             recordId = 0;
 
-        addingNewRecord = new AddingNewRecord(getApplicationContext(),recordId,nameBox.getText().toString(),1);
+        AddingNewRecord.NotifyViews_before notifyViews_before = new AddingNewRecord.NotifyViews_before() {
+            @Override
+            public void Save() {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Добавление новой записи...", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        };
+
+        AddingNewRecord.NotifyViews_after notifyViews_after = new AddingNewRecord.NotifyViews_after() {
+            @Override
+            public void Save() {
+                goHome(!addingNewRecord.successAddingNewRecord);
+            }
+        };
+
+        addingNewRecord = new AddingNewRecord(getApplicationContext(),recordId,1,notifyViews_before,notifyViews_after);
 
         parentRec.setText(addingNewRecord.parentName);
 
-        FoundListFilling.NotifyViews_after notifyViews_after = new FoundListFilling.NotifyViews_after() {
+        FoundListFilling.NotifyViews_after FoundList_notifyViews_after = new FoundListFilling.NotifyViews_after() {
             @Override
             public void ActionOfSearch() {
                 recordAdapter.typeView = 0;
@@ -94,13 +111,13 @@ public class AddActivity extends AppCompatActivity {
 
             @Override
             public void ActionDown() {
-                //recordAdapter.typeView = 1;
+                recordAdapter.typeView = 1;
                 recordAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void ActionUp() {
-                //recordAdapter.typeView = 1;
+                recordAdapter.typeView = 1;
                 recordAdapter.notifyDataSetChanged();
             }
 
@@ -112,7 +129,7 @@ public class AddActivity extends AppCompatActivity {
             }
         };
 
-        foundList = new FoundListFilling(getApplicationContext(),notifyViews_after);
+        foundList = new FoundListFilling(getApplicationContext(),FoundList_notifyViews_after);
 
         records = foundList.records;
         nameBox.addTextChangedListener(new TextWatcher() {
@@ -120,6 +137,9 @@ public class AddActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 foundList.ActionOfSearch(s);
+                addingNewRecord._name = nameBox.getText().toString();
+
+                saveButton.setEnabled(addingNewRecord._name.length() > 0);
             }
         });
 
@@ -210,6 +230,12 @@ public class AddActivity extends AppCompatActivity {
                     recordAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                 }
                 */
+                if(foundList.cur_level==-1) {
+                    recordAdapter.posSelItem = viewHolder.getAdapterPosition();
+                    addingNewRecord.field_id = foundList.records.get(viewHolder.getAdapterPosition()).getRecord_id();
+                    saveButton.setText("Добавить ассоциацию");
+                }
+
                 if(direction==4)
                     foundList.ActionDown(viewHolder.getAdapterPosition());
                 else
@@ -567,7 +593,7 @@ public class AddActivity extends AppCompatActivity {
             cv.clear();
         }
         */
-        goHome(false);
+        //goHome(false);
     }
 
     public void back(View view){
@@ -590,6 +616,8 @@ public class AddActivity extends AppCompatActivity {
         }else {
             setResult(RESULT_OK, data);
         }
+        foundList.Destroy();
+        addingNewRecord.Destroy();
         finish();
     }
 }

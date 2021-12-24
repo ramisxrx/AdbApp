@@ -4,7 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
+
+import java.util.ArrayList;
 
 public class OverviewListFilling extends ListFilling{
 
@@ -15,6 +18,8 @@ public class OverviewListFilling extends ListFilling{
         void ToPreviousLevel();
         void UpdateAfterAddNewRecords();
     }
+
+    public ArrayList<Record> parentRecordsByLevel = new ArrayList<>();
 
     private final NotifyViews_after notifyViews_after;
     private Cursor cursorInit, cursorTEST;
@@ -27,6 +32,8 @@ public class OverviewListFilling extends ListFilling{
 
         workThread = new HandlerThreadOfFilling("OverviewListFilling");
 
+        cur_level = 0;
+        parentRecordsByLevel.add(cur_level,new Record(0,"БАЗОВЫЙ УРОВЕНЬ",0,0));
         cmd_cursorInit = true;
 
         workThread.bg_operations(new Runnable() {
@@ -43,21 +50,22 @@ public class OverviewListFilling extends ListFilling{
         workThread.bg_operations(new Runnable() {
             @Override
             public void run() {
-                CheckSelectionOfObjId(position);
+                if(cur_level==0)
+                    CheckSelectionOfObjId(position);
+
                 cur_level++;
-
                 parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
-
+                parentRecordsByLevel.add(cur_level, records.get(position));
                 Log.d(TAG, "ActionDown: cur_level:"+String.valueOf(cur_level)+" parentIdByLevels:"+String.valueOf(records.get(position).getRecord_id()));
 
-                FillingOfListDown(parentIdByLevels.get(cur_level));
-            }
-        });
+                FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
 
-        workThread.ui_operations(new Runnable() {
-            @Override
-            public void run() {
-                notifyViews_after.ActionDown();
+                workThread.ui_operations(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyViews_after.ActionDown();
+                    }
+                });
             }
         });
     }
@@ -68,24 +76,24 @@ public class OverviewListFilling extends ListFilling{
         Log.d(TAG, "ToPreviousLevel: cur_level="+String.valueOf(cur_level));
 
         if(cur_level>0){
-
             workThread.bg_operations(new Runnable() {
                 @Override
                 public void run() {
                     parentIdByLevels.remove(cur_level);
+                    parentRecordsByLevel.remove(cur_level);
                     cur_level--;
 
                     if(cur_level==0)
                         FillingInitialList();
                     else
-                        FillingOfListDown(parentIdByLevels.get(cur_level));
-                }
-            });
+                        FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
 
-            workThread.ui_operations(new Runnable() {
-                @Override
-                public void run() {
-                    notifyViews_after.ToPreviousLevel();
+                    workThread.ui_operations(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyViews_after.ToPreviousLevel();
+                        }
+                    });
                 }
             });
         }
@@ -99,35 +107,27 @@ public class OverviewListFilling extends ListFilling{
 
                 Log.d(TAG, "UpdateAfterAddNewRecords: parentIdByLevels="+String.valueOf(parentIdByLevels.get(cur_level)));
 
-                //selObjId = 0;
-                //cursorInit = readRequests.getRecords_2(parentIdByLevels.get(cur_level));
-
-                //cursorInit.moveToLast();
-
                 if(cur_level==0){
                     cmd_cursorInit=true;
                     FillingInitialList();
                 }else {
                     cursor = readRequests.getRecords(selObjId);
-                    FillingOfListDown(parentIdByLevels.get(cur_level));
+                    FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
                 }
 
-                //AddNewItemInRecords(cursorInit.getInt(0),cursorInit.getString(2),cursorInit.getInt(3),cursorInit.getInt(4));
+                workThread.ui_operations(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyViews_after.UpdateAfterAddNewRecords();
+                    }
+                });
             }
         });
-
-        workThread.ui_operations(new Runnable() {
-            @Override
-            public void run() {
-                notifyViews_after.UpdateAfterAddNewRecords();
-            }
-        });
-
     }
 
 
 
-    private void FillingOfListDown(int parent_id){
+    private void FillingOtherLevelToDown(int parent_id){
         Log.d(TAG, "FillingOfListDown: BG_Operations: Current thread="+Thread.currentThread());
 
         ClearRecords();
@@ -175,8 +175,10 @@ public class OverviewListFilling extends ListFilling{
 
     public void Destroy(){
         records.clear();
-        cursor.close();
-        cursorInit.close();
+        if(!cursor.isClosed())
+            cursor.close();
+        if(!cursorInit.isClosed())
+            cursorInit.close();
         readRequests.Destroy();
         workThread.stop();
     }
@@ -184,7 +186,12 @@ public class OverviewListFilling extends ListFilling{
     public void bdView(){
         cursorTEST = readRequests.getRecordsTEST();
         while (cursorTEST.moveToNext()){
-            Log.d(TAG, "record_id:"+cursorTEST.getString(0)+"object_id:"+cursorTEST.getString(1)+"parent_id:"+cursorTEST.getString(2)+"name:"+cursorTEST.getString(3));
+            Log.d(TAG, "     record_id:"+cursorTEST.getString(0)+
+                            " object_id:"+cursorTEST.getString(1)+
+                            " parent_id:"+cursorTEST.getString(2)+
+                            " name:"+cursorTEST.getString(3)+
+                            " name_id:"+cursorTEST.getString(4)+
+                            " field_id:"+cursorTEST.getString(5));
         }
     }
 }

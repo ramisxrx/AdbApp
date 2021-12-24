@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -29,6 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
+    TextView parentRec;
     Button buttonLevelUp;
 
     RecordAdapter recordAdapter;
@@ -48,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
 
                     if(result.getResultCode() == Activity.RESULT_OK){
                         overviewList.UpdateAfterAddNewRecords();
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "Новая запись добавлена", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 }
             });
@@ -57,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        parentRec = (TextView) findViewById(R.id.parentRec);
         buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         buttonLevelUp = findViewById(R.id.buttonLevelUp);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
@@ -76,11 +82,17 @@ public class MainActivity extends AppCompatActivity {
         OverviewListFilling.NotifyViews_after notifyViews_after = new OverviewListFilling.NotifyViews_after() {
             @Override
             public void ActionDown() {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Свайп", Toast.LENGTH_SHORT);
+                toast.show();
+
+                parentRec.setText(overviewList.parentRecordsByLevel.get(overviewList.cur_level).getName());
                 recordAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void ToPreviousLevel() {
+                parentRec.setText(overviewList.parentRecordsByLevel.get(overviewList.cur_level).getName());
                 recordAdapter.notifyDataSetChanged();
             }
 
@@ -91,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         overviewList = new OverviewListFilling(getApplicationContext(),notifyViews_after);
-
+        parentRec.setText(overviewList.parentRecordsByLevel.get(overviewList.cur_level).getName());
         records = overviewList.records;
 
         recordAdapter = new RecordAdapter(this, records,1, recordClickListener);

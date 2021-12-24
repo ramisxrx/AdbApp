@@ -38,34 +38,30 @@ public class FoundListFilling extends ListFilling{
 
     @Override
     public void ActionDown(int position) {
-        //workThread.bg_operations(new Runnable() {
-        //    @Override
-        //    public void run() {
+        workThread.bg_operations(new Runnable() {
+            @Override
+            public void run() {
                 Log.d(TAG, "ActionDown: bg_operations");
                 if(cur_level==-1) {
-                    Log.d(TAG, "ActionDown: bg_operations 1");
                     cur_level++;
                     parentIdByLevels.add(cur_level,0);
-                    Log.d(TAG, "ActionDown: bg_operations 2");
                     CheckSelectionOfFieldId(position);
-                    Log.d(TAG, "ActionDown: bg_operations 3");
                     FillingZeroLevelToDown();
-                    Log.d(TAG, "ActionDown: bg_operations 4");
                     selDirection = false;
                 }else {
                     cur_level++;
                     parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
-                    if(cur_level==0)
+                    if(cur_level==1)
                         CheckSelectionOfObjId(position);
                     FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
                 }
-            //}
-       // });
-        workThread.ui_operations(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "ActionDown: ui_operations");
-                notifyViews_after.ActionDown();
+                workThread.ui_operations(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "ActionDown: ui_operations");
+                        notifyViews_after.ActionDown();
+                    }
+                });
             }
         });
     }
@@ -84,15 +80,16 @@ public class FoundListFilling extends ListFilling{
                 }else{
                     cur_level++;
                     recordIdByLevels.add(cur_level,records.get(position).getParent_id());
-                    CheckSelectionOfObjId(position);
+                    if(cur_level==1)
+                        CheckSelectionOfObjId(position);
                     FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
                 }
-            }
-        });
-        workThread.ui_operations(new Runnable() {
-            @Override
-            public void run() {
-                notifyViews_after.ActionUp();
+                workThread.ui_operations(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyViews_after.ActionUp();
+                    }
+                });
             }
         });
     }
@@ -127,12 +124,12 @@ public class FoundListFilling extends ListFilling{
                                 FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
                         }
                     }
-                }
-            });
-            workThread.ui_operations(new Runnable() {
-                @Override
-                public void run() {
-                    notifyViews_after.ToPreviousLevel();
+                    workThread.ui_operations(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyViews_after.ToPreviousLevel();
+                        }
+                    });
                 }
             });
         }
@@ -145,14 +142,14 @@ public class FoundListFilling extends ListFilling{
             public void run() {
                 Log.d(TAG, "ActionOfSearch: bg_operations:charsequence="+charsequence);
                 FillingFoundList(charsequence);
-            }
-        });
 
-        workThread.ui_operations(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "ActionOfSearch: ui_operations");
-                notifyViews_after.ActionOfSearch();
+                workThread.ui_operations(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "ActionOfSearch: ui_operations");
+                        notifyViews_after.ActionOfSearch();
+                    }
+                });
             }
         });
     }
@@ -268,4 +265,13 @@ public class FoundListFilling extends ListFilling{
         }
     }
 
+    public void Destroy(){
+        records.clear();
+        if(!cursor.isClosed())
+            cursor.close();
+        if(!cursorRecordsByField.isClosed())
+            cursorRecordsByField.close();
+        readRequests.Destroy();
+        workThread.stop();
+    }
 }

@@ -20,6 +20,7 @@ public class HandlerThreadOfFilling extends HandlerThread {
     }
 
     public HandlerThreadOfFilling bg_operations(Runnable task){
+        BG_handler.removeCallbacksAndMessages(null);
         BG_handler.post(task);
         return this;
     }
@@ -27,5 +28,9 @@ public class HandlerThreadOfFilling extends HandlerThread {
     public HandlerThreadOfFilling ui_operations(Runnable task){
         UI_handler.post(task);
         return this;
+    }
+
+    public void ClearQueue_BG(){
+        BG_handler.removeCallbacksAndMessages(null);
     }
 }

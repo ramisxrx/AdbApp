@@ -8,7 +8,7 @@
     android:background="@color/gray">
 
     <TextView
-        android:id="@+id/parent"
+        android:id="@+id/parentRec"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Запись"
@@ -29,7 +29,7 @@
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/parent" />
+        app:layout_constraintTop_toBottomOf="@id/parentRec" />
 
     <Button
         android:id="@+id/buttonLevelUp"
