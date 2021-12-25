@@ -11,13 +11,8 @@ import java.util.ArrayList;
 
 public class FoundListFilling extends ListFilling{
 
-    private String TAG = FoundListFilling.class.getCanonicalName();
-
-    private final NotifyViews_after notifyViews_after;
-    private Cursor cursorRecordsByField;
-    private ArrayList<Record> fields = new ArrayList<>();
-    private ArrayList<Integer> objIdList = new ArrayList<>();
-    private ArrayList<Integer> recordIdByLevels = new ArrayList<>();
+    public int selFieldId=0;
+    public boolean selDirection;
 
     public interface NotifyViews_after{
         void ActionOfSearch();
@@ -26,8 +21,13 @@ public class FoundListFilling extends ListFilling{
         void ToPreviousLevel();
     }
 
-    public int selFieldId=0;
-    public boolean selDirection;
+    private String TAG = FoundListFilling.class.getCanonicalName();
+
+    private final NotifyViews_after notifyViews_after;
+    private Cursor cursorRecordsByField;
+    private ArrayList<Record> fields = new ArrayList<>();
+    private ArrayList<Integer> objIdList = new ArrayList<>();
+    private ArrayList<Integer> recordIdByLevels = new ArrayList<>();
 
     public FoundListFilling(Context context, NotifyViews_after notifyViews_after) {
         super(context);
@@ -161,7 +161,6 @@ public class FoundListFilling extends ListFilling{
         Cursor cursorSearch;
         fields.clear();
         cur_level=-1;
-        parentIdByLevels.clear();
 
         if(charsequence.length()>0) {
             Log.d(TAG, "FillingFoundList: charsequence.length()="+String.valueOf(charsequence.length()));

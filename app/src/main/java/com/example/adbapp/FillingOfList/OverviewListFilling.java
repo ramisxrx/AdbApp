@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class OverviewListFilling extends ListFilling{
 
-    private String TAG = OverviewListFilling.class.getCanonicalName();
+    public ArrayList<Record> parentRecordsByLevel = new ArrayList<>();
 
     public interface NotifyViews_after{
         void ActionDown();
@@ -19,7 +19,7 @@ public class OverviewListFilling extends ListFilling{
         void UpdateAfterAddNewRecords();
     }
 
-    public ArrayList<Record> parentRecordsByLevel = new ArrayList<>();
+    private String TAG = OverviewListFilling.class.getCanonicalName();
 
     private final NotifyViews_after notifyViews_after;
     private Cursor cursorInit, cursorTEST;

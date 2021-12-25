@@ -24,7 +24,7 @@ public class ListFilling extends RecordList{
 
     protected HandlerThreadOfFilling workThread;
 
-    protected int selObjId=0,selItemPos=0;
+    protected int selObjId=0;
     public int cur_level=0;
 
     public ListFilling(Context context){

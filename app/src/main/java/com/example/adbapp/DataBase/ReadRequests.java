@@ -130,6 +130,24 @@ public class ReadRequests {
                 " WHERE "+COLUMN_NAME_ID+"=?", new String[]{String.valueOf(name_id)});
     }
 
+    public Cursor getRecords_5(int field_id){
+        Cursor cursor;
+
+        cursor = db.rawQuery("SELECT "
+                +TABLE_RECORDS+"."+COLUMN_ID+","
+                +COLUMN_PARENT_ID+","
+                +COLUMN_NAME+","
+                +COLUMN_TIME+","
+                +COLUMN_TYPE+","
+                +COLUMN_OBJECT_ID+
+                " FROM "+
+                TABLE_RECORDS+" INNER JOIN "+TABLE_FIELDS+" ON "+TABLE_RECORDS+"."+COLUMN_FIELD_ID+"="+TABLE_FIELDS+"."+COLUMN_ID+
+                " INNER JOIN "+TABLE_NAMES+" ON "+TABLE_FIELDS+"."+COLUMN_NAME_ID+"="+TABLE_NAMES+"."+COLUMN_ID+
+                " WHERE "+COLUMN_FIELD_ID+"=?", new String[]{String.valueOf(field_id)});
+
+        return cursor;
+    }
+
     public Cursor getRecordsTEST(){
         Cursor cursor;
 
