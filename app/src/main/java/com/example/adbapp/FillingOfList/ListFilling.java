@@ -22,8 +22,6 @@ public class ListFilling extends RecordList{
     protected ArrayList<Integer> objIdList = new ArrayList<>();
     protected ArrayList<Integer> parentIdByLevels = new ArrayList<>();
 
-    protected HandlerThreadOfFilling workThread;
-
     protected int selObjId=0;
     public int cur_level=0;
 

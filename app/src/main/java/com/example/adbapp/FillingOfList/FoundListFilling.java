@@ -23,6 +23,7 @@ public class FoundListFilling extends ListFilling{
 
     private String TAG = FoundListFilling.class.getCanonicalName();
 
+    private HandlerThreadOfFilling workThread;
     private final NotifyViews_after notifyViews_after;
     private Cursor cursorRecordsByField;
     private ArrayList<Record> fields = new ArrayList<>();

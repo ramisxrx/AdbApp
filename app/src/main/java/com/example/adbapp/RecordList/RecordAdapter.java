@@ -31,9 +31,13 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public interface OnRecordClickListener{
         void onRecordClick(Record record, int position);
     }
+    public interface OnRecordLongClickListener{
+        void onRecordLongClick(int position);
+    }
 
 
     private final OnRecordClickListener onClickListener;
+    private final OnRecordLongClickListener onLongClickListener;
 
     private final LayoutInflater inflater;
     public List<Record> records;
@@ -41,8 +45,9 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public int posSelItem=-1;
 
 
-    public RecordAdapter(Context context, List<Record> records, int typeView, OnRecordClickListener onClickListener) {
+    public RecordAdapter(Context context, List<Record> records, int typeView, OnRecordClickListener onClickListener,OnRecordLongClickListener onLongClickListener) {
         this.onClickListener = onClickListener;
+        this.onLongClickListener = onLongClickListener;
         this.records = records;
         this.typeView = typeView;
         this.inflater = LayoutInflater.from(context);
@@ -103,6 +108,14 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
             {
                 // вызываем метод слушателя, передавая ему данные
                 onClickListener.onRecordClick(record, holder.getAdapterPosition());
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                onLongClickListener.onRecordLongClick(holder.getAdapterPosition());
+                return true;
             }
         });
     }

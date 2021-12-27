@@ -22,11 +22,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.FillingOfList.OverviewListFilling;
 import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
+import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,14 +36,18 @@ public class MainActivity extends AppCompatActivity {
     TextView parentRec;
     Button buttonLevelUp;
 
+    HandlerThreadOfFilling BG_Thread;
+
     RecordAdapter recordAdapter;
     FloatingActionButton buttonFAB;
     SimpleItemTouchHelperCallback simpleItemTouchHelperCallback;
 
     OverviewListFilling overviewList;
+    AssociativeListFilling associativeList;
 
     private static final String TAG = "**MainActivity**";
 
+    boolean associationMode;
     ArrayList<Record> records = new ArrayList<>();
 
     ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -75,9 +81,60 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        BG_Thread = new HandlerThreadOfFilling("BG_MainActivity");
+
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
             //addRecord(record.getRecord_id());
         };
+        RecordAdapter.OnRecordLongClickListener recordLongClickListener = new RecordAdapter.OnRecordLongClickListener() {
+            @Override
+            public void onRecordLongClick(int position) {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Поиск ассоциаций...", Toast.LENGTH_SHORT);
+                toast.show();
+                associativeList.ActionOfInitialization(records.get(position).getRecord_id());
+            }
+        };
+
+        AssociativeListFilling.NotifyViews_after associativeList_notifyViews_after = new AssociativeListFilling.NotifyViews_after() {
+            @Override
+            public void ActionOfInitialization() {
+                if(associativeList.hasAssociations) {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Ассоциации найдены!", Toast.LENGTH_SHORT);
+                    toast.show();
+                    associationMode = true;
+                    SwitchingOfRecordList();
+                    recordAdapter.notifyDataSetChanged();
+                    buttonLevelUp.setVisibility(View.GONE);
+                }else{
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Ассоциации НЕ найдены!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+
+            @Override
+            public void ActionDown() {
+                recordAdapter.notifyDataSetChanged();
+                buttonLevelUp.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void ActionUp() {
+                recordAdapter.notifyDataSetChanged();
+                buttonLevelUp.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void ToPreviousLevel() {
+                recordAdapter.notifyDataSetChanged();
+                if(associativeList.cur_level==0)
+                    buttonLevelUp.setVisibility(View.GONE);
+            }
+        };
+
+        associativeList = new AssociativeListFilling(getApplicationContext(),BG_Thread,associativeList_notifyViews_after);
 
         OverviewListFilling.NotifyViews_after notifyViews_after = new OverviewListFilling.NotifyViews_after() {
             @Override
@@ -101,11 +158,11 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        overviewList = new OverviewListFilling(getApplicationContext(),notifyViews_after);
+        overviewList = new OverviewListFilling(getApplicationContext(),BG_Thread,notifyViews_after);
         parentRec.setText(overviewList.parentRecordsByLevel.get(overviewList.cur_level).getName());
         records = overviewList.records;
 
-        recordAdapter = new RecordAdapter(this, records,1, recordClickListener);
+        recordAdapter = new RecordAdapter(this, records,1, recordClickListener,recordLongClickListener);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
@@ -145,6 +202,13 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
+    }
+
+    private void SwitchingOfRecordList(){
+        if(associationMode)
+            recordAdapter.records = associativeList.records;
+        else
+            recordAdapter.records = overviewList.records;
     }
 
     public void addRecord(int idRec){

@@ -148,6 +148,18 @@ public class ReadRequests {
         return cursor;
     }
 
+    public Cursor getFieldId(int record_id){
+        Cursor cursor;
+
+        cursor = db.rawQuery("SELECT "
+                +COLUMN_FIELD_ID+
+                " FROM "+
+                TABLE_RECORDS+
+                " WHERE " +COLUMN_ID+"=?", new String[]{String.valueOf(record_id)});
+
+        return cursor;
+    }
+
     public Cursor getRecordsTEST(){
         Cursor cursor;
 

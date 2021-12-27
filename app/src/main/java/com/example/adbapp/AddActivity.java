@@ -182,7 +182,7 @@ public class AddActivity extends AppCompatActivity {
             }
         };
 
-        recordAdapter = new RecordAdapter(this, records,1, recordClickListener);
+        recordAdapter = new RecordAdapter(this, records,1, recordClickListener,null);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);

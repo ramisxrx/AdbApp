@@ -21,16 +21,16 @@ public class OverviewListFilling extends ListFilling{
 
     private String TAG = OverviewListFilling.class.getCanonicalName();
 
+    private HandlerThreadOfFilling workThread;
     private final NotifyViews_after notifyViews_after;
     private Cursor cursorInit, cursorTEST;
     private boolean cmd_cursorInit;
 
-    public OverviewListFilling(Context context, NotifyViews_after notifyViews_after){
+    public OverviewListFilling(Context context,HandlerThreadOfFilling workThread,NotifyViews_after notifyViews_after){
         super(context);
+        this.workThread = workThread;
         this.notifyViews_after=notifyViews_after;
         parentIdByLevels.add(cur_level,0);
-
-        workThread = new HandlerThreadOfFilling("OverviewListFilling");
 
         cur_level = 0;
         parentRecordsByLevel.add(cur_level,new Record(0,"БАЗОВЫЙ УРОВЕНЬ",0,0));

@@ -2,6 +2,7 @@ package com.example.adbapp.FillingOfList;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 
@@ -16,32 +17,52 @@ public class AssociativeListFilling extends ListFilling{
         void ToPreviousLevel();
     }
 
+    private String TAG = AssociativeListFilling.class.getCanonicalName();
+
+    private HandlerThreadOfFilling workThread;
     private final NotifyViews_after notifyViews_after;
     private Cursor cursorInit;
     private int field_id;
     private ArrayList<Integer> recordIdByLevels = new ArrayList<>();
 
-    public boolean selDirection;
+    public boolean selDirection,hasAssociations;
 
-    public AssociativeListFilling(Context context, NotifyViews_after notifyViews_after) {
+    public AssociativeListFilling(Context context,HandlerThreadOfFilling workThread, NotifyViews_after notifyViews_after) {
         super(context);
+        this.workThread = workThread;
         this.notifyViews_after = notifyViews_after;
         parentIdByLevels.add(0,0);
         recordIdByLevels.add(0,0);
-
-        workThread = new HandlerThreadOfFilling("ActionOfInitialization");
     }
 
-    public void ActionOfInitialization(int field_id){
+    public void ActionOfInitialization(int record_id){
+        workThread.bg_operations(new Runnable() {
+            @Override
+            public void run() {
+                cursorInit = readRequests.getFieldId(record_id);
+                cursorInit.moveToFirst();
+                field_id = cursorInit.getInt(0);
+                Log.d(TAG, "ActionOfInitialization: field_id="+String.valueOf(field_id));
+                cursorInit = readRequests.getRecords_5(field_id);
+                Log.d(TAG, "ActionOfInitialization: cursorInit.getCount()="+String.valueOf(cursorInit.getCount()));
+                hasAssociations = cursorInit.getCount()>1;
+                if(hasAssociations) {
+                    cur_level = 0;
+                    objIdList.clear();
+                    while (cursorInit.moveToNext())
+                        objIdList.add(cursorInit.getInt(5));
 
-        this.field_id = field_id;
-        cur_level = 0;
-        objIdList.clear();
-        cursorInit = readRequests.getRecords_5(field_id);
-        while (cursorInit.moveToNext())
-            objIdList.add(cursorInit.getInt(5));
+                    FillingInitialList();
+                }
 
-        FillingInitialList();
+                workThread.ui_operations(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyViews_after.ActionOfInitialization();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -64,10 +85,22 @@ public class AssociativeListFilling extends ListFilling{
 
     @Override
     public void ToPreviousLevel() {
-        if(cur_level==0){
-
-        }else{
-
+        if(cur_level>0) {
+            if(selDirection){
+                recordIdByLevels.remove(cur_level);
+                cur_level--;
+                if (cur_level == 0)
+                    FillingInitialList();
+                else
+                    FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
+            }else{
+                parentIdByLevels.remove(cur_level);
+                cur_level--;
+                if (cur_level == 0)
+                    FillingInitialList();
+                else
+                    FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+            }
         }
     }
 
