@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
                     toast.show();
                     associationMode = true;
                     SwitchingOfRecordList();
-                    recordAdapter.notifyDataSetChanged();
                     buttonLevelUp.setVisibility(View.GONE);
                 }else{
                     Toast toast = Toast.makeText(getApplicationContext(),
@@ -175,6 +174,25 @@ public class MainActivity extends AppCompatActivity {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
             @Override
+            public int getMovementFlags (RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                int swipeFlags = 0;
+                int dragFlags = 0;
+                if(associationMode){
+                    if(associativeList.cur_level==0)
+                        swipeFlags = ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT;
+                    else{
+                        if(associativeList.selDirection)
+                            swipeFlags = ItemTouchHelper.RIGHT;
+                        else
+                            swipeFlags = ItemTouchHelper.LEFT;
+                    }
+                }else
+                    swipeFlags = ItemTouchHelper.LEFT;
+
+                return makeMovementFlags(dragFlags,swipeFlags);
+            }
+
+            @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
@@ -182,8 +200,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Log.d(TAG, "onSwiped: ");
-
-                overviewList.ActionDown(viewHolder.getAdapterPosition());
+                if(associationMode){
+                    if(direction==4)
+                        associativeList.ActionDown(viewHolder.getAdapterPosition());
+                    else
+                        associativeList.ActionUp(viewHolder.getAdapterPosition());
+                }else
+                    overviewList.ActionDown(viewHolder.getAdapterPosition());
 
                 //recordAdapter.notifyDataSetChanged();
             }
@@ -209,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
             recordAdapter.records = associativeList.records;
         else
             recordAdapter.records = overviewList.records;
+        recordAdapter.notifyDataSetChanged();
     }
 
     public void addRecord(int idRec){
@@ -219,7 +243,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void LevelUp(View view){
-        overviewList.ToPreviousLevel();
+        if(associationMode)
+            associativeList.ToPreviousLevel();
+        else
+            overviewList.ToPreviousLevel();
         overviewList.bdView();
     }
 

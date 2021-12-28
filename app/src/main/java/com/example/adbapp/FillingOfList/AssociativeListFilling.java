@@ -67,48 +67,92 @@ public class AssociativeListFilling extends ListFilling{
 
     @Override
     public void ActionDown(int position) {
-        if(cur_level==0)
-            CheckSelectionOfObjId(position);
-        cur_level++;
-        parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
-        FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+        workThread.bg_operations(new Runnable() {
+            @Override
+            public void run() {
+                if(cur_level==0) {
+                    selDirection = false;
+                    CheckSelectionOfObjId(position);
+                }
+                cur_level++;
+                parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
+                FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+
+                workThread.ui_operations(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyViews_after.ActionDown();
+                    }
+                });
+            }
+        });
+
     }
 
     @Override
     public void ActionUp(int position) {
-        if(cur_level==0)
-            CheckSelectionOfObjId(position);
-        cur_level++;
-        recordIdByLevels.add(cur_level,records.get(position).getRecord_id());
-        FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
+        workThread.bg_operations(new Runnable() {
+            @Override
+            public void run() {
+                if(cur_level==0) {
+                    selDirection = true;
+                    CheckSelectionOfObjId(position);
+                }
+                cur_level++;
+                recordIdByLevels.add(cur_level,records.get(position).getParent_id());
+                FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
+
+                workThread.ui_operations(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyViews_after.ActionUp();
+                    }
+                });
+            }
+        });
     }
 
     @Override
     public void ToPreviousLevel() {
         if(cur_level>0) {
-            if(selDirection){
-                recordIdByLevels.remove(cur_level);
-                cur_level--;
-                if (cur_level == 0)
-                    FillingInitialList();
-                else
-                    FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
-            }else{
-                parentIdByLevels.remove(cur_level);
-                cur_level--;
-                if (cur_level == 0)
-                    FillingInitialList();
-                else
-                    FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
-            }
+            workThread.bg_operations(new Runnable() {
+                @Override
+                public void run() {
+                    if (selDirection) {
+                        recordIdByLevels.remove(cur_level);
+                        cur_level--;
+                        if (cur_level == 0)
+                            FillingInitialList();
+                        else
+                            FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
+                    } else {
+                        parentIdByLevels.remove(cur_level);
+                        cur_level--;
+                        if (cur_level == 0)
+                            FillingInitialList();
+                        else
+                            FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+                    }
+
+                    workThread.ui_operations(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyViews_after.ToPreviousLevel();
+                        }
+                    });
+                }
+            });
         }
     }
 
     private void FillingInitialList(){
         ClearRecords();
+        int k=0;
         for (int i = 0; i < cursorInit.getCount(); i++) {
             cursorInit.moveToPosition(i);
             AddNewItemInRecords(cursorInit.getInt(0), cursorInit.getString(2), cursorInit.getInt(3), cursorInit.getInt(4));
+            records.get(k).setParent_id(cursorInit.getInt(1));
+            k++;
         }
     }
 
