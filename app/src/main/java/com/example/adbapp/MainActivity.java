@@ -5,11 +5,14 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.os.Bundle;
 import android.widget.Button;
@@ -35,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView parentRec;
     Button buttonLevelUp;
-
+    ActionBar actionBar;
     HandlerThreadOfFilling BG_Thread;
 
     RecordAdapter recordAdapter;
@@ -68,7 +71,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        actionBar = getSupportActionBar();
+        if(actionBar!=null) {
+            actionBar.setDisplayUseLogoEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
         parentRec = (TextView) findViewById(R.id.parentRec);
         buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         buttonLevelUp = findViewById(R.id.buttonLevelUp);
@@ -89,10 +96,11 @@ public class MainActivity extends AppCompatActivity {
         RecordAdapter.OnRecordLongClickListener recordLongClickListener = new RecordAdapter.OnRecordLongClickListener() {
             @Override
             public void onRecordLongClick(int position) {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Поиск ассоциаций...", Toast.LENGTH_SHORT);
-                toast.show();
-                associativeList.ActionOfInitialization(records.get(position).getRecord_id());
+                if(associationMode) {
+                    if(associativeList.cur_level!=0)
+                        associativeList.ActionOfInitialization(associativeList.records.get(position).getRecord_id());
+                }else
+                    associativeList.ActionOfInitialization(overviewList.records.get(position).getRecord_id());
             }
         };
 
@@ -103,9 +111,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "Ассоциации найдены!", Toast.LENGTH_SHORT);
                     toast.show();
-                    associationMode = true;
-                    SwitchingOfRecordList();
-                    buttonLevelUp.setVisibility(View.GONE);
+                    SwitchingOfRecordList(true);
                 }else{
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "Ассоциации НЕ найдены!", Toast.LENGTH_SHORT);
@@ -222,16 +228,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
+    public boolean onCreateOptionsMenu(Menu menu){
+        return true;
     }
 
-    private void SwitchingOfRecordList(){
-        if(associationMode)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                SwitchingOfRecordList(false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    private void SwitchingOfRecordList(boolean associationMode){
+        this.associationMode = associationMode;
+        if(associationMode) {
             recordAdapter.records = associativeList.records;
-        else
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setSubtitle("Режим ассоциаций");
+            buttonLevelUp.setVisibility(View.GONE);
+        }
+        else {
             recordAdapter.records = overviewList.records;
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setSubtitle("");
+            buttonLevelUp.setVisibility(View.VISIBLE);
+        }
         recordAdapter.notifyDataSetChanged();
     }
 
