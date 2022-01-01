@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.adbapp.ContentView;
 import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
 import com.example.adbapp.R;
 
@@ -56,8 +57,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     @Override
     public RecordAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view;
-
+        View view = ContentView.getView(inflater,parent,viewType);
+        /*
         switch(viewType){
             case TYPE_VIEW_0:
                 view = inflater.inflate(R.layout.field_item, parent, false);
@@ -72,7 +73,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                 Log.d(TAG, "onCreateViewHolder: record_item");
                 break;
         }
-
+        */
         return new ViewHolder(view);
     }
 

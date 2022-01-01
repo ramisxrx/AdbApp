@@ -1,7 +1,7 @@
 package com.example.adbapp;
 
-import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -10,7 +10,6 @@ import java.util.zip.Inflater;
 
 public class ContentView{
 
-    private static Inflater inflater;
     private static final String TAG = ContentView.class.getCanonicalName();
 
     private static final int TYPE_VIEW_0 = 0; // для показа fields
@@ -26,12 +25,12 @@ public class ContentView{
 
     }
     
-    public static View getView(ViewGroup parent, int viewType){
+    public static View getView(LayoutInflater layoutInflater,ViewGroup parent, int viewType){
         View view;
 
         switch(viewType){
             case TYPE_VIEW_0:
-                view = inflater.inflate(R.layout.field_item, parent, false);
+                view = layoutInflater.inflate(R.layout.field_item, parent, false);
                 Log.d(TAG, "onCreateViewHolder: field_item");
                 break;
             //case TYPE_VIEW_1:
@@ -39,11 +38,12 @@ public class ContentView{
             //    break;
 
             default:
-                view = inflater.inflate(R.layout.record_item, parent, false);
+                view = layoutInflater.inflate(R.layout.record_item, parent, false);
                 Log.d(TAG, "onCreateViewHolder: record_item");
                 break;
         }
 
         return view;
     }
+
 }

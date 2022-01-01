@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     Button buttonLevelUp;
     ActionBar actionBar;
     HandlerThreadOfFilling BG_Thread;
+
+    RecordFragment recordFragment;
+    FrameLayout frameLayout;
+    RecordContainer recordContainer;
 
     RecordAdapter recordAdapter;
     FloatingActionButton buttonFAB;
@@ -76,10 +81,12 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayUseLogoEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(false);
         }
+        frameLayout = (FrameLayout) findViewById(R.id.container_parent);
         parentRec = (TextView) findViewById(R.id.parentRec);
         buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         buttonLevelUp = findViewById(R.id.buttonLevelUp);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
+        recordContainer = new RecordContainer(getApplicationContext(),frameLayout);
 
         buttonFAB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,14 +151,14 @@ public class MainActivity extends AppCompatActivity {
         OverviewListFilling.NotifyViews_after notifyViews_after = new OverviewListFilling.NotifyViews_after() {
             @Override
             public void ActionDown() {
-                parentRec.setText(overviewList.parentRecordsByLevel.get(overviewList.cur_level).getName());
+                recordContainer.FillingContainer(overviewList.parentRecordsByLevel.get(overviewList.cur_level),1);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelUp.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void ToPreviousLevel() {
-                parentRec.setText(overviewList.parentRecordsByLevel.get(overviewList.cur_level).getName());
+                recordContainer.FillingContainer(overviewList.parentRecordsByLevel.get(overviewList.cur_level),1);
                 recordAdapter.notifyDataSetChanged();
                 if(overviewList.cur_level==0)
                     buttonLevelUp.setVisibility(View.GONE);
@@ -164,9 +171,8 @@ public class MainActivity extends AppCompatActivity {
         };
 
         overviewList = new OverviewListFilling(getApplicationContext(),BG_Thread,notifyViews_after);
-        parentRec.setText(overviewList.parentRecordsByLevel.get(overviewList.cur_level).getName());
         records = overviewList.records;
-
+        recordContainer.FillingContainer(overviewList.parentRecordsByLevel.get(overviewList.cur_level),0);
         recordAdapter = new RecordAdapter(this, records,1, recordClickListener,recordLongClickListener);
         recordList.setAdapter(recordAdapter);
 

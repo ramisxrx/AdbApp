@@ -7,29 +7,28 @@
     android:layout_height="match_parent"
     android:background="@color/gray">
 
-    <TextView
-        android:id="@+id/parentRec"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Запись"
-        android:textSize="16sp"
-        android:background="@drawable/layout_bg"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+    <FrameLayout
+        android:id="@+id/container_parent"
+        android:layout_width="410dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 
-        android:layout_marginTop="12dp"
-
+        android:layout_marginTop="20dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/parentRec" />
+        app:layout_constraintTop_toBottomOf="@+id/container_parent" />
 
     <Button
         android:id="@+id/buttonLevelUp"
@@ -52,6 +51,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:srcCompat="@android:drawable/ic_input_add" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
