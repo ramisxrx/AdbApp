@@ -56,24 +56,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     @Override
     public RecordAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         View view = ContentView.getView(inflater,parent,viewType);
-        /*
-        switch(viewType){
-            case TYPE_VIEW_0:
-                view = inflater.inflate(R.layout.field_item, parent, false);
-                Log.d(TAG, "onCreateViewHolder: field_item");
-                break;
-            //case TYPE_VIEW_1:
-            //    view = inflater.inflate(R.layout.record_item, parent, false);
-            //    break;
-
-            default:
-                view = inflater.inflate(R.layout.record_item, parent, false);
-                Log.d(TAG, "onCreateViewHolder: record_item");
-                break;
-        }
-        */
         return new ViewHolder(view);
     }
 
@@ -123,19 +106,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        // условие для определения айтем какого типа выводить в конкретной позиции
-        switch (typeView) {
-            case TYPE_VIEW_0:
-                if(position==0)
-                    return TYPE_VIEW_1;
-                else
-                    return TYPE_VIEW_0;
-            default:
-                if(position==0)
-                    return TYPE_VIEW_0;
-                else
-                    return TYPE_VIEW_1;
-        }
+        return ContentView.getListItemViewType(records.get(position),typeView);
     }
 
     @Override

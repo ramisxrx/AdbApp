@@ -30,7 +30,7 @@ public class RecordContainer {
         if(view!=null)
             frameLayout.removeView(view);
         view = ContentView.getView(inflater,frameLayout,viewType);
-        view.setLayoutParams(layoutParams);
+        //view.setLayoutParams(layoutParams);
 
         nameView = (TextView) view.findViewById(R.id.name);
         timeView = (TextView) view.findViewById(R.id.time);

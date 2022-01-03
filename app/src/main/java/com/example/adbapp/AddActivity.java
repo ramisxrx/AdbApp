@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +30,16 @@ public class AddActivity extends AppCompatActivity {
     EditText nameBox;
     Button saveButton;
     Button buttonLevelUp;
+    Spinner spinner;
 
+    TypeRecordAdapter typeRecordAdapter;
     RecordAdapter recordAdapter;
     RecordAdapter.OnRecordClickListener recordClickListener;
     //HorizontalScrollView HScroll;
 
     private static final String TAG = "**AddActivity**";
+
+    private final String[] typesRecord = { "Запись", "Текст", "Дата" };
 
     AddingNewRecord addingNewRecord;
     FoundListFilling foundList;
@@ -50,7 +55,12 @@ public class AddActivity extends AppCompatActivity {
         nameBox = (EditText) findViewById(R.id.name);
         saveButton = (Button) findViewById(R.id.saveButton);
         buttonLevelUp = findViewById(R.id.buttonLevelUp);
+        spinner = findViewById(R.id.spinner);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
+
+        typeRecordAdapter = new TypeRecordAdapter(getApplicationContext(),R.layout.field_item,typesRecord);
+
+        spinner.setAdapter(typeRecordAdapter);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null)

@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.adbapp.RecordList.Record;
+
 import java.util.zip.Inflater;
 
 
@@ -31,7 +33,7 @@ public class ContentView{
         switch(viewType){
             case TYPE_VIEW_0:
                 view = layoutInflater.inflate(R.layout.field_item, parent, false);
-                Log.d(TAG, "onCreateViewHolder: field_item");
+                Log.d(TAG, "onCreateView: field_item");
                 break;
             //case TYPE_VIEW_1:
             //    view = inflater.inflate(R.layout.record_item, parent, false);
@@ -39,11 +41,17 @@ public class ContentView{
 
             default:
                 view = layoutInflater.inflate(R.layout.record_item, parent, false);
-                Log.d(TAG, "onCreateViewHolder: record_item");
+                Log.d(TAG, "onCreateView: record_item");
                 break;
         }
 
         return view;
     }
 
+    public static int getListItemViewType(Record record, int typeView){
+        if(typeView==0)
+            return TYPE_VIEW_0;
+        else
+            return record.getField_type();
+    }
 }
