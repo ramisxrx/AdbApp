@@ -22,7 +22,7 @@ public class ListFilling extends RecordList{
     protected ArrayList<Integer> objIdList = new ArrayList<>();
     protected ArrayList<Integer> parentIdByLevels = new ArrayList<>();
 
-    protected int selObjId=0;
+    public int selObjId=0;
     public int cur_level=0;
 
     public ListFilling(Context context){

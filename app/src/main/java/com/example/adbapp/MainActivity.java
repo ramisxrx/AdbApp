@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(false);
         }
         frameLayout = (FrameLayout) findViewById(R.id.container_parent);
-        parentRec = (TextView) findViewById(R.id.parentRec);
         buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         buttonLevelUp = findViewById(R.id.buttonLevelUp);
         RecyclerView recordList = (RecyclerView) findViewById(R.id.list);
@@ -91,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         buttonFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addRecord(overviewList.get_ParentIdOfCurrentLevel());
+                addRecord(recordContainer.getRecord());
             }
         });
 
@@ -151,14 +150,14 @@ public class MainActivity extends AppCompatActivity {
         OverviewListFilling.NotifyViews_after notifyViews_after = new OverviewListFilling.NotifyViews_after() {
             @Override
             public void ActionDown() {
-                recordContainer.FillingContainer(overviewList.parentRecordsByLevel.get(overviewList.cur_level),1);
+                recordContainer.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level),1);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelUp.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void ToPreviousLevel() {
-                recordContainer.FillingContainer(overviewList.parentRecordsByLevel.get(overviewList.cur_level),1);
+                recordContainer.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level),1);
                 recordAdapter.notifyDataSetChanged();
                 if(overviewList.cur_level==0)
                     buttonLevelUp.setVisibility(View.GONE);
@@ -172,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
         overviewList = new OverviewListFilling(getApplicationContext(),BG_Thread,notifyViews_after);
         records = overviewList.records;
-        recordContainer.FillingContainer(overviewList.parentRecordsByLevel.get(overviewList.cur_level),0);
+        recordContainer.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level),0);
         recordAdapter = new RecordAdapter(this, records,1, recordClickListener,recordLongClickListener);
         recordList.setAdapter(recordAdapter);
 
@@ -271,11 +270,14 @@ public class MainActivity extends AppCompatActivity {
         recordAdapter.notifyDataSetChanged();
     }
 
-    public void addRecord(int idRec){
+    public void addRecord(Record record){
         Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-        intent.putExtra("id",idRec);
+        intent.putExtra("record_id",record.getRecord_id());
+        intent.putExtra("name",record.getName());
+        intent.putExtra("time",record.getTime());
+        intent.putExtra("field_type",record.getField_type());
+        intent.putExtra("object_id",overviewList.selObjId);
         mStartForResult.launch(intent);
-
     }
 
     public void LevelUp(View view){

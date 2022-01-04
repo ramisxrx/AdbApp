@@ -16,6 +16,7 @@ public class RecordContainer {
     private View view;
     private final FrameLayout.LayoutParams layoutParams;
     private final LayoutInflater inflater;
+    private Record record;
     private TextView nameView,timeView;
 
     RecordContainer(Context context,FrameLayout frameLayout) {
@@ -27,6 +28,7 @@ public class RecordContainer {
     }
 
     public void FillingContainer(Record record,int viewType){
+        this.record = record;
         if(view!=null)
             frameLayout.removeView(view);
         view = ContentView.getView(inflater,frameLayout,viewType);
@@ -45,5 +47,9 @@ public class RecordContainer {
                 break;
         }
         frameLayout.addView(view);
+    }
+
+    public Record getRecord(){
+        return this.record;
     }
 }

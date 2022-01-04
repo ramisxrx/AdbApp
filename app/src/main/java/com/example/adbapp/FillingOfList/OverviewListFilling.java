@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class OverviewListFilling extends ListFilling{
 
-    public ArrayList<Record> parentRecordsByLevel = new ArrayList<>();
+    public ArrayList<Record> parentRecordByLevel = new ArrayList<>();
 
     public interface NotifyViews_after{
         void ActionDown();
@@ -33,7 +33,7 @@ public class OverviewListFilling extends ListFilling{
         parentIdByLevels.add(cur_level,0);
 
         cur_level = 0;
-        parentRecordsByLevel.add(cur_level,new Record(0,"БАЗОВЫЙ УРОВЕНЬ",0,0));
+        parentRecordByLevel.add(cur_level,new Record(0,"БАЗОВЫЙ УРОВЕНЬ",0,0));
         cmd_cursorInit = true;
 
         workThread.bg_operations(new Runnable() {
@@ -55,7 +55,7 @@ public class OverviewListFilling extends ListFilling{
 
                 cur_level++;
                 parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
-                parentRecordsByLevel.add(cur_level, records.get(position));
+                parentRecordByLevel.add(cur_level, records.get(position));
                 Log.d(TAG, "ActionDown: cur_level:"+String.valueOf(cur_level)+" parentIdByLevels:"+String.valueOf(records.get(position).getRecord_id()));
 
                 FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
@@ -80,7 +80,7 @@ public class OverviewListFilling extends ListFilling{
                 @Override
                 public void run() {
                     parentIdByLevels.remove(cur_level);
-                    parentRecordsByLevel.remove(cur_level);
+                    parentRecordByLevel.remove(cur_level);
                     cur_level--;
 
                     if(cur_level==0)

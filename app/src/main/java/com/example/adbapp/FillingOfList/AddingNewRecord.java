@@ -27,11 +27,12 @@ public class AddingNewRecord {
     private Cursor cursor;
     private HandlerThreadOfFilling workThread;
 
-    public String parentName,_name;
-    public int parentType,field_id;
+    public String _name;
+    public int field_id;
     public boolean successAddingNewRecord;
 
-    public AddingNewRecord(Context context, int parent_id, int _type, NotifyViews_before notifyViews_before,NotifyViews_after notifyViews_after){
+    public AddingNewRecord(Context context,int object_id, int parent_id, int _type, NotifyViews_before notifyViews_before,NotifyViews_after notifyViews_after){
+        this.object_id = object_id;
         this.parent_id=parent_id;
         this._type=_type;
         this.notifyViews_before = notifyViews_before;
@@ -39,7 +40,6 @@ public class AddingNewRecord {
         readRequests = new ReadRequests(context);
         writeRequests = new WriteRequests(context);
         successAddingNewRecord = false;
-        DefinitionsInit();
 
         workThread = new HandlerThreadOfFilling("AddingNewRecord");
     }
@@ -92,6 +92,7 @@ public class AddingNewRecord {
         });
     }
 
+    /*
     private void DefinitionsInit(){
         if(parent_id>0){
             cursor = readRequests.getObjectNameType(parent_id);
@@ -102,7 +103,7 @@ public class AddingNewRecord {
             }
         }
     }
-
+    */
     private void AddNewObject(){
         cursor = readRequests.getObjects();
         if(cursor.moveToLast())

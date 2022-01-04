@@ -7,39 +7,36 @@
     android:layout_height="match_parent"
     tools:ignore="ExtraText">
 
-    <TextView
-        android:id="@+id/parentRec"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <FrameLayout
+        android:id="@+id/container_parent"
+        android:layout_width="410dp"
+        android:layout_height="50dp"
         android:layout_marginTop="4dp"
-        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
+    </FrameLayout>
 
     <EditText
         android:id="@+id/name"
-        android:layout_width="206dp"
-        android:layout_height="27dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="405dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="24dp"
         android:hint="Введите запись"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/parentRec" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="154dp"
         android:layout_height="28dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/parentRec" />
+        app:layout_constraintTop_toBottomOf="@+id/container_parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
