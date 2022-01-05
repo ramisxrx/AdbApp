@@ -19,17 +19,6 @@
 
     </FrameLayout>
 
-    <EditText
-        android:id="@+id/name"
-        android:layout_width="405dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="24dp"
-        android:hint="Введите запись"
-
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner" />
-
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="154dp"
@@ -38,21 +27,16 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/container_parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-
-        android:layout_marginTop="12dp"
-
-        app:layout_constraintBottom_toTopOf="@id/buttonLevelUp"
+    <FrameLayout
+        android:id="@+id/container_add"
+        android:layout_width="match_parent"
+        android:layout_height="410dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner">
+
+    </FrameLayout>
 
     <Button
         android:id="@+id/saveButton"
@@ -66,20 +50,6 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/buttonLevelUp"
-        android:layout_width="227dp"
-        android:layout_height="35dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone"
-        android:layout_marginBottom="12dp"
-        android:onClick="LevelUp"
-        android:text="На предыдущий уровень"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@id/backButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
 
     <Button
         android:id="@+id/backButton"

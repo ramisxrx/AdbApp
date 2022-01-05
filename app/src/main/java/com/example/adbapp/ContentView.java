@@ -14,14 +14,14 @@ public class ContentView{
 
     private static final String TAG = ContentView.class.getCanonicalName();
 
-    private static final int TYPE_VIEW_0 = 0; // для показа fields
-    private static final int TYPE_VIEW_1 = 1; // для записей
-    private final int TYPE_VIEW_2 = 2; // для мнострочного текста
-    private final int TYPE_VIEW_3 = 3; // для даты
-    private final int TYPE_VIEW_4 = 4; // для времени
-    private final int TYPE_VIEW_5 = 5; // для даты и времени
-    private final int TYPE_VIEW_6 = 6; // для номера телефона
-    private final int TYPE_VIEW_7 = 7; // для фото
+    public static final int TYPE_VIEW_0 = 0; // для показа fields
+    public static final int TYPE_VIEW_1 = 1; // для записей
+    public static final int TYPE_VIEW_2 = 2; // для мнострочного текста
+    public static final int TYPE_VIEW_3 = 3; // для даты
+    public static final int TYPE_VIEW_4 = 4; // для времени
+    public static final int TYPE_VIEW_5 = 5; // для даты и времени
+    public static final int TYPE_VIEW_6 = 6; // для номера телефона
+    public static final int TYPE_VIEW_7 = 7; // для фото
 
     public ContentView() {
 
