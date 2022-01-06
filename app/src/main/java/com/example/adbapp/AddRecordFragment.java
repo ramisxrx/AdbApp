@@ -33,7 +33,7 @@ public class AddRecordFragment extends Fragment {
     FoundListFilling foundList;
 
     String name_ToAdd;
-    int field_id_ToAdd;
+    int field_id_ToAdd=0;
 
     public AddRecordFragment() {
         // Required empty public constructor

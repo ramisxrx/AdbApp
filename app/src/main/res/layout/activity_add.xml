@@ -19,22 +19,18 @@
 
     </FrameLayout>
 
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="154dp"
-        android:layout_height="28dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/container_parent" />
-
     <FrameLayout
         android:id="@+id/container_add"
         android:layout_width="match_parent"
         android:layout_height="410dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginBottom="88dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner">
+
+        app:layout_constraintTop_toBottomOf="@+id/container_parent"
+        app:layout_constraintVertical_bias="0.039">
 
     </FrameLayout>
 
@@ -43,26 +39,26 @@
         android:layout_width="200dp"
         android:layout_height="52dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="12dp"
         android:onClick="save"
         android:text="Добавить новую запись"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/container_add" />
 
     <Button
         android:id="@+id/backButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
         android:onClick="back"
         android:text="Назад"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/container_add" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

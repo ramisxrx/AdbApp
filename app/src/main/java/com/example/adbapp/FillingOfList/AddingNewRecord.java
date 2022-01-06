@@ -23,18 +23,16 @@ public class AddingNewRecord {
     private final NotifyViews_after notifyViews_after;
     private WriteRequests writeRequests;
     private ReadRequests readRequests;
-    private int parent_id, object_id, _time, name_id, _type;
+    private int parent_id, object_id, _time, name_id, _type, field_id;
     private Cursor cursor;
     private HandlerThreadOfFilling workThread;
-
     public String _name;
-    public int field_id;
+
     public boolean successAddingNewRecord;
 
-    public AddingNewRecord(Context context,int object_id, int parent_id, int _type, NotifyViews_before notifyViews_before,NotifyViews_after notifyViews_after){
+    public AddingNewRecord(Context context,int object_id, int parent_id, NotifyViews_before notifyViews_before,NotifyViews_after notifyViews_after){
         this.object_id = object_id;
         this.parent_id=parent_id;
-        this._type=_type;
         this.notifyViews_before = notifyViews_before;
         this.notifyViews_after = notifyViews_after;
         readRequests = new ReadRequests(context);
@@ -90,6 +88,19 @@ public class AddingNewRecord {
                 });
             }
         });
+    }
+
+    public void setParametersToAdd(int field_id, String _name){
+        this.field_id = field_id;
+        this._name = _name;
+    }
+
+    public void setTypeContent(int _type){
+        this._type = _type;
+    }
+
+    public int getTypeContent(){
+        return _type;
     }
 
     /*

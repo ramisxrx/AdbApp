@@ -191,7 +191,9 @@ public class OverviewListFilling extends ListFilling{
                             " parent_id:"+cursorTEST.getString(2)+
                             " name:"+cursorTEST.getString(3)+
                             " name_id:"+cursorTEST.getString(4)+
-                            " field_id:"+cursorTEST.getString(5));
+                            " field_id:"+cursorTEST.getString(5)+
+                            " time:"+cursorTEST.getString(6)+
+                            " type:"+cursorTEST.getString(7));
         }
     }
 }

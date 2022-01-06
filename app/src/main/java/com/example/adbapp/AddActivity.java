@@ -50,14 +50,14 @@ public class AddActivity extends AppCompatActivity {
 
     AddingNewRecord addingNewRecord;
 
-    int recordId, object_id, field_id;
+    int recordId, object_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         saveButton = (Button) findViewById(R.id.saveButton);
-        spinner = findViewById(R.id.spinner);
+        //spinner = findViewById(R.id.spinner);
         frameLayout = (FrameLayout) findViewById(R.id.container_parent);
 
         addRecordFragment = new AddRecordFragment();
@@ -66,7 +66,6 @@ public class AddActivity extends AppCompatActivity {
 
         fragmentTransaction.replace(R.id.container_add,addRecordFragment);
         fragmentTransaction.commit();
-
 
         actionBar = getSupportActionBar();
         if(actionBar!=null) {
@@ -77,10 +76,9 @@ public class AddActivity extends AppCompatActivity {
 
         recordContainer = new RecordContainer(getApplicationContext(),frameLayout);
         typeRecordAdapter = new TypeRecordAdapter(getApplicationContext(),R.layout.record_item,typesRecord);
-        field_id = ContentView.TYPE_VIEW_1;
 
-        spinner.setAdapter(typeRecordAdapter);
-
+        //spinner.setAdapter(typeRecordAdapter);
+        /*
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -95,12 +93,14 @@ public class AddActivity extends AppCompatActivity {
             }
         });
 
+         */
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             recordContainer.FillingContainer(new Record(extras.getInt("record_id"),
-                    extras.getString("name"),
-                    extras.getInt("time"),
-                    extras.getInt("field_type")), 1);
+                                                        extras.getString("name"),
+                                                        extras.getInt("time"),
+                                                        extras.getInt("field_type")), 1);
 
             object_id = extras.getInt("object_id");
         }
@@ -122,7 +122,8 @@ public class AddActivity extends AppCompatActivity {
                 goHome(!addingNewRecord.successAddingNewRecord);
             }
         };
-        addingNewRecord = new AddingNewRecord(getApplicationContext(),object_id,recordContainer.getRecord().getRecord_id(),field_id,notifyViews_before,notifyViews_after);
+        addingNewRecord = new AddingNewRecord(getApplicationContext(),object_id,recordContainer.getRecord().getRecord_id(),notifyViews_before,notifyViews_after);
+        addingNewRecord.setTypeContent(ContentView.TYPE_VIEW_1);
     }
 
     @Override
@@ -138,22 +139,22 @@ public class AddActivity extends AppCompatActivity {
                 goHome(true);
                 return true;
             case R.id.item1:
-                if(field_id!=ContentView.TYPE_VIEW_1){
+                if(addingNewRecord.getTypeContent()!=ContentView.TYPE_VIEW_1){
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container_add,addRecordFragment);
                     fragmentTransaction.commit();
-                    field_id = ContentView.TYPE_VIEW_1;
+                    addingNewRecord.setTypeContent(ContentView.TYPE_VIEW_1);
                     actionBar.setSubtitle("Добавление записи");
                 }
                 return true;
             case R.id.item2:
-                if(field_id!=ContentView.TYPE_VIEW_2){
+                if(addingNewRecord.getTypeContent()!=ContentView.TYPE_VIEW_2){
                     if(addTextFragment==null)
                         addTextFragment = new AddTextFragment();
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container_add,addTextFragment);
                     fragmentTransaction.commit();
-                    field_id = ContentView.TYPE_VIEW_2;
+                    addingNewRecord.setTypeContent(ContentView.TYPE_VIEW_2);
                     actionBar.setSubtitle("Добавление текста");
                 }
                 return true;
@@ -169,6 +170,16 @@ public class AddActivity extends AppCompatActivity {
     }
 
     public void save(View view){
+        switch (addingNewRecord.getTypeContent()){
+            case ContentView.TYPE_VIEW_1:
+                addingNewRecord.setParametersToAdd(addRecordFragment.field_id_ToAdd,addRecordFragment.name_ToAdd);
+                break;
+
+            default:
+                addingNewRecord.setParametersToAdd(addTextFragment.field_id_ToAdd,addTextFragment.name_ToAdd);
+        }
+
+
         addingNewRecord.Save();
     }
 
