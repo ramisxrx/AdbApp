@@ -1,35 +1,24 @@
 package com.example.adbapp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.adbapp.FillingOfList.AddingNewRecord;
-import com.example.adbapp.FillingOfList.FoundListFilling;
+import com.example.adbapp.Fragments.AddRecordFragment;
+import com.example.adbapp.Fragments.AddTextFragment;
+import com.example.adbapp.Fragments.RecordContainer;
 import com.example.adbapp.RecordList.Record;
-import com.example.adbapp.RecordList.RecordAdapter;
-import com.example.adbapp.RecordList.RecordDecoration;
 
 public class AddActivity extends AppCompatActivity {
 

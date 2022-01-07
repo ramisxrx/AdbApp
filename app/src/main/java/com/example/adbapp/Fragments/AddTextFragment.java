@@ -1,4 +1,4 @@
-package com.example.adbapp;
+package com.example.adbapp.Fragments;
 
 import android.os.Bundle;
 
@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.adbapp.FillingOfList.FoundListFilling;
+import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
@@ -32,8 +33,8 @@ public class AddTextFragment extends Fragment {
 
     FoundListFilling foundList;
 
-    String name_ToAdd;
-    int field_id_ToAdd;
+    public String name_ToAdd;
+    public int field_id_ToAdd;
 
     public AddTextFragment() {
         // Required empty public constructor
@@ -55,6 +56,18 @@ public class AddTextFragment extends Fragment {
 
         saveButton = (Button) getActivity().findViewById(R.id.saveButton);
         saveButton.setText("Добавить новый текст");
+
+        nameBox.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                name_ToAdd = nameBox.getText().toString();
+
+                saveButton.setEnabled(name_ToAdd.length()>0);
+            }
+        });
+
         name_ToAdd = nameBox.getText().toString();
         return view;
     }

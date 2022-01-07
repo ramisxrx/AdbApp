@@ -1,4 +1,4 @@
-package com.example.adbapp;
+package com.example.adbapp.Fragments;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,11 +17,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adbapp.FillingOfList.FoundListFilling;
+import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
 
 public class AddRecordFragment extends Fragment {
+
+    private static final String TAG = "**AddRecordFragment**";
 
     EditText nameBox;
     RecyclerView recordList;
@@ -32,8 +35,8 @@ public class AddRecordFragment extends Fragment {
 
     FoundListFilling foundList;
 
-    String name_ToAdd;
-    int field_id_ToAdd=0;
+    public String name_ToAdd;
+    public int field_id_ToAdd=0;
 
     public AddRecordFragment() {
         // Required empty public constructor
@@ -67,23 +70,26 @@ public class AddRecordFragment extends Fragment {
             public void ActionDown() {
                 recordAdapter.typeView = 1;
                 recordAdapter.notifyDataSetChanged();
-                buttonLevelBack.setVisibility(View.VISIBLE);
+                //buttonLevelBack.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void ActionUp() {
                 recordAdapter.typeView = 1;
                 recordAdapter.notifyDataSetChanged();
-                buttonLevelBack.setVisibility(View.VISIBLE);
+                //buttonLevelBack.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void ToPreviousLevel() {
                 if(foundList.cur_level==-1)
                     recordAdapter.typeView = 0;
+                recordList.smoothScrollToPosition(foundList.records.size()-1);
+                Log.d(TAG, "ToPreviousLevel: recordAdapter.posSelItem="+String.valueOf(recordAdapter.posSelItem));
+                Log.d(TAG, "ToPreviousLevel: foundList.records.size()-1 ="+String.valueOf(foundList.records.size()-1));
                 recordAdapter.notifyDataSetChanged();
-                if(foundList.cur_level==-1)
-                    buttonLevelBack.setVisibility(View.GONE);
+                //if(foundList.cur_level==-1)
+                    //buttonLevelBack.setVisibility(View.GONE);
             }
         };
 

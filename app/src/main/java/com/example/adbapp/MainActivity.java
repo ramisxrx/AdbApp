@@ -22,12 +22,16 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.FillingOfList.OverviewListFilling;
+import com.example.adbapp.Fragments.AssociationsFragment;
+import com.example.adbapp.Fragments.OverviewFragment;
+import com.example.adbapp.Fragments.RecordContainer;
 import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
@@ -37,21 +41,23 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView parentRec;
     Button buttonLevelUp;
     ActionBar actionBar;
     HandlerThreadOfFilling BG_Thread;
 
-    RecordFragment recordFragment;
     FrameLayout frameLayout;
     RecordContainer recordContainer;
 
     RecordAdapter recordAdapter;
     FloatingActionButton buttonFAB;
-    SimpleItemTouchHelperCallback simpleItemTouchHelperCallback;
 
     OverviewListFilling overviewList;
     AssociativeListFilling associativeList;
+
+
+    OverviewFragment overviewFragment;
+    AssociationsFragment associationsFragment;
+    FragmentTransaction fragmentTransaction;
 
     private static final String TAG = "**MainActivity**";
 
@@ -81,6 +87,22 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayUseLogoEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(false);
         }
+
+        OverviewFragment.ActionsOfActivity actionsOfActivity = new OverviewFragment.ActionsOfActivity() {
+            @Override
+            public void SwitchingToAssociationsMode() {
+                SwitchingToAssociationsMode_2(true);
+            }
+        };
+
+        overviewFragment = new OverviewFragment(actionsOfActivity);
+
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+        fragmentTransaction.replace(R.id.container_main,overviewFragment);
+        fragmentTransaction.commit();
+
+        /*
         frameLayout = (FrameLayout) findViewById(R.id.container_parent);
         buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         buttonLevelUp = findViewById(R.id.buttonLevelUp);
@@ -226,10 +248,8 @@ public class MainActivity extends AppCompatActivity {
         ItemTouchHelper touchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         touchHelper.attachToRecyclerView(recordList);
 
-        //ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(recordAdapter,);
-        //ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-        //touchHelper.attachToRecyclerView(recordList);
 
+         */
     }
 
     @Override
@@ -241,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                SwitchingOfRecordList(false);
+                SwitchingToAssociationsMode_2(false);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -253,19 +273,19 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    private void SwitchingOfRecordList(boolean associationMode){
+    private void SwitchingToAssociationsMode_2(boolean associationMode){
         this.associationMode = associationMode;
         if(associationMode) {
-            recordAdapter.records = associativeList.records;
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setSubtitle("Режим ассоциаций");
-            buttonLevelUp.setVisibility(View.GONE);
+            if(associationsFragment==null)
+                associationsFragment = new AssociationsFragment();
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.container_main,associationsFragment);
         }
         else {
-            recordAdapter.records = overviewList.records;
             actionBar.setDisplayHomeAsUpEnabled(false);
             actionBar.setSubtitle("");
-            buttonLevelUp.setVisibility(View.VISIBLE);
         }
         recordAdapter.notifyDataSetChanged();
     }
@@ -281,11 +301,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void LevelUp(View view){
-        if(associationMode)
-            associativeList.ToPreviousLevel();
-        else
-            overviewList.ToPreviousLevel();
-        overviewList.bdView();
+        //if(associationMode)
+        //    associativeList.ToPreviousLevel();
+        //else
+        //    overviewList.ToPreviousLevel();
+        //overviewList.bdView();
     }
 
     @Override

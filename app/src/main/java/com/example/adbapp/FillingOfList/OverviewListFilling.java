@@ -17,6 +17,7 @@ public class OverviewListFilling extends ListFilling{
         void ActionDown();
         void ToPreviousLevel();
         void UpdateAfterAddNewRecords();
+        void CheckingAssociations();
     }
 
     private String TAG = OverviewListFilling.class.getCanonicalName();
@@ -25,6 +26,8 @@ public class OverviewListFilling extends ListFilling{
     private final NotifyViews_after notifyViews_after;
     private Cursor cursorInit, cursorTEST;
     private boolean cmd_cursorInit;
+
+    public boolean hasAssociations=false;
 
     public OverviewListFilling(Context context,HandlerThreadOfFilling workThread,NotifyViews_after notifyViews_after){
         super(context);
@@ -119,6 +122,28 @@ public class OverviewListFilling extends ListFilling{
                     @Override
                     public void run() {
                         notifyViews_after.UpdateAfterAddNewRecords();
+                    }
+                });
+            }
+        });
+    }
+
+    public void CheckingAssociations(int record_id){
+        workThread.bg_operations(new Runnable() {
+            @Override
+            public void run() {
+                Cursor cursorChecking = readRequests.getFieldId(record_id);
+                cursorChecking.moveToFirst();
+                int field_id = cursorChecking.getInt(0);
+                Log.d(TAG, "hasAssociations: field_id="+String.valueOf(field_id));
+                cursorChecking = readRequests.getRecords_5(field_id);
+                Log.d(TAG, "hasAssociations: cursorInit.getCount()="+String.valueOf(cursorChecking.getCount()));
+                hasAssociations = cursorChecking.getCount()>1;
+
+                workThread.ui_operations(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyViews_after.CheckingAssociations();
                     }
                 });
             }

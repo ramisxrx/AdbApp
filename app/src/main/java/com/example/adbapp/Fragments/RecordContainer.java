@@ -1,4 +1,4 @@
-package com.example.adbapp;
+package com.example.adbapp.Fragments;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.example.adbapp.ContentView;
+import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 
 public class RecordContainer {
@@ -19,7 +21,7 @@ public class RecordContainer {
     private Record record;
     private TextView nameView,timeView;
 
-    RecordContainer(Context context,FrameLayout frameLayout) {
+    public RecordContainer(Context context, FrameLayout frameLayout) {
         this.inflater = LayoutInflater.from(context);
         this.frameLayout = frameLayout;
         layoutParams = new FrameLayout.LayoutParams
