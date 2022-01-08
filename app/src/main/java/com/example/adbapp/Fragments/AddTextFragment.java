@@ -3,6 +3,7 @@ package com.example.adbapp.Fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,8 @@ import com.example.adbapp.RecordList.RecordDecoration;
 
 public class AddTextFragment extends Fragment {
 
+    private static final String TAG = "*AddTextFragment*";
+    
     EditText nameBox;
     RecyclerView recordList;
     Button buttonLevelBack;
@@ -38,20 +42,30 @@ public class AddTextFragment extends Fragment {
 
     public AddTextFragment() {
         // Required empty public constructor
+        Log.d(TAG, "AddTextFragment: ");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d(TAG, "onCreate: ");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Log.d(TAG, "onCreateView: ");
+        
         View view = inflater.inflate(R.layout.fragment_add_text, container, false);
+        
+        return view;
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "onViewCreated: ");
+        
         nameBox = (EditText) view.findViewById(R.id.name);
 
         saveButton = (Button) getActivity().findViewById(R.id.saveButton);
@@ -69,6 +83,17 @@ public class AddTextFragment extends Fragment {
         });
 
         name_ToAdd = nameBox.getText().toString();
-        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: ");
     }
 }

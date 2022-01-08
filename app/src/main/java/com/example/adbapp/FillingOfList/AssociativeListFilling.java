@@ -4,11 +4,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 
 import java.util.ArrayList;
 
 public class AssociativeListFilling extends ListFilling{
+
+    public ArrayList<Record> parentRecordByLevel = new ArrayList<>();
 
     public interface NotifyViews_after{
         void ActionOfInitialization();
@@ -48,6 +51,8 @@ public class AssociativeListFilling extends ListFilling{
                 hasAssociations = cursorInit.getCount()>1;
                 if(hasAssociations) {
                     cur_level = 0;
+                    parentRecordByLevel.clear();
+                    parentRecordByLevel.add(cur_level,new Record(0,"АСОЦИАЦИИ:",0,0));
                     objIdList.clear();
                     while (cursorInit.moveToNext())
                         objIdList.add(cursorInit.getInt(5));
@@ -75,6 +80,7 @@ public class AssociativeListFilling extends ListFilling{
                     CheckSelectionOfObjId(position);
                 }
                 cur_level++;
+                parentRecordByLevel.add(cur_level, records.get(position));
                 parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
                 FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
 
@@ -99,6 +105,7 @@ public class AssociativeListFilling extends ListFilling{
                     CheckSelectionOfObjId(position);
                 }
                 cur_level++;
+                parentRecordByLevel.add(cur_level, records.get(position));
                 recordIdByLevels.add(cur_level,records.get(position).getParent_id());
                 FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
 
@@ -118,6 +125,7 @@ public class AssociativeListFilling extends ListFilling{
             workThread.bg_operations(new Runnable() {
                 @Override
                 public void run() {
+                    parentRecordByLevel.remove(cur_level);
                     if (selDirection) {
                         recordIdByLevels.remove(cur_level);
                         cur_level--;

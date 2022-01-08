@@ -1,9 +1,12 @@
 package com.example.adbapp.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,27 +24,84 @@ import com.example.adbapp.R;
 import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AssociationsFragment extends Fragment {
 
     private static final String TAG = "**AssociationsFragment*";
 
+    public interface ActionsOfActivity{
+        void SwitchingToAssociationsMode();
+    }
+
+    private final ActionsOfActivity actionsOfActivity;
+
     Button buttonLevelBack;
     FrameLayout frameLayout;
+    RecyclerView recordList;
+    FloatingActionButton buttonFAB;
 
     HandlerThreadOfFilling BG_Thread;
-    RecordContainer recordContainer;
+    public RecordContainer recordContainer;
     RecordAdapter recordAdapter;
-    AssociativeListFilling associativeList;
+    public AssociativeListFilling associativeList;
 
-    public AssociationsFragment() {
-        // Required empty public constructor
+    private Context context;
+
+    public AssociationsFragment(Context context,ActionsOfActivity actionsOfActivity) {
+        this.context = context;
+        this.actionsOfActivity = actionsOfActivity;
+
+        AssociativeListFilling.NotifyViews_after associativeList_notifyViews_after = new AssociativeListFilling.NotifyViews_after() {
+            @Override
+            public void ActionOfInitialization() {
+                if(associativeList.hasAssociations) {
+                    Toast toast = Toast.makeText(context,
+                            "Ассоциации найдены!", Toast.LENGTH_SHORT);
+                    toast.show();
+                    actionsOfActivity.SwitchingToAssociationsMode();
+                    //buttonFAB.setVisibility(View.GONE);
+                }else{
+                    Toast toast = Toast.makeText(context,
+                            "Ассоциации НЕ найдены!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+
+            @Override
+            public void ActionDown() {
+                recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),1);
+                recordAdapter.notifyDataSetChanged();
+                buttonLevelBack.setVisibility(View.VISIBLE);
+                buttonFAB.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void ActionUp() {
+                recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),1);
+                recordAdapter.notifyDataSetChanged();
+                buttonLevelBack.setVisibility(View.VISIBLE);
+                buttonFAB.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void ToPreviousLevel() {
+                recordAdapter.notifyDataSetChanged();
+                if(associativeList.cur_level==0) {
+                    buttonLevelBack.setVisibility(View.GONE);
+                    buttonFAB.setVisibility(View.GONE);
+                }
+            }
+        };
+
+        BG_Thread = new HandlerThreadOfFilling("BG_AssociationsFragment");
+        associativeList = new AssociativeListFilling(this.context,BG_Thread,associativeList_notifyViews_after);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BG_Thread = new HandlerThreadOfFilling("BG_AssociationsFragment");
+        context = getContext();
     }
 
     @Override
@@ -52,8 +112,16 @@ public class AssociationsFragment extends Fragment {
 
         frameLayout = (FrameLayout) view.findViewById(R.id.container_parent);
         buttonLevelBack = view.findViewById(R.id.buttonLevelBack);
-        RecyclerView recordList = (RecyclerView) view.findViewById(R.id.list);
+        recordList = (RecyclerView) view.findViewById(R.id.list);
+        buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
         recordContainer = new RecordContainer(getContext(),frameLayout);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
             //addRecord(record.getRecord_id());
@@ -67,45 +135,9 @@ public class AssociationsFragment extends Fragment {
             }
         };
 
-        AssociativeListFilling.NotifyViews_after associativeList_notifyViews_after = new AssociativeListFilling.NotifyViews_after() {
-            @Override
-            public void ActionOfInitialization() {
-                if(associativeList.hasAssociations) {
-                    Toast toast = Toast.makeText(getContext(),
-                            "Ассоциации найдены!", Toast.LENGTH_SHORT);
-                    toast.show();
-                    SwitchingOfRecordList(true);
-                }else{
-                    Toast toast = Toast.makeText(getContext(),
-                            "Ассоциации НЕ найдены!", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
-            }
-
-            @Override
-            public void ActionDown() {
-                recordAdapter.notifyDataSetChanged();
-                buttonLevelBack.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void ActionUp() {
-                recordAdapter.notifyDataSetChanged();
-                buttonLevelBack.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void ToPreviousLevel() {
-                recordAdapter.notifyDataSetChanged();
-                if(associativeList.cur_level==0)
-                    buttonLevelBack.setVisibility(View.GONE);
-            }
-        };
-
-        associativeList = new AssociativeListFilling(getContext(),BG_Thread,associativeList_notifyViews_after);
-
-        recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(overviewList.cur_level),0);
+        recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),0);
         recordAdapter = new RecordAdapter(getContext(), associativeList.records,1, recordClickListener,recordLongClickListener);
+
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(getContext());
@@ -154,6 +186,15 @@ public class AssociationsFragment extends Fragment {
         ItemTouchHelper touchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         touchHelper.attachToRecyclerView(recordList);
 
-        return view;
+        buttonFAB.setVisibility(View.GONE);
+
+        recordAdapter.notifyDataSetChanged();
+
+        buttonLevelBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                associativeList.ToPreviousLevel();
+            }
+        });
     }
 }

@@ -50,6 +50,7 @@ public class AddActivity extends AppCompatActivity {
         frameLayout = (FrameLayout) findViewById(R.id.container_parent);
 
         addRecordFragment = new AddRecordFragment();
+        addTextFragment = new AddTextFragment();
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
 

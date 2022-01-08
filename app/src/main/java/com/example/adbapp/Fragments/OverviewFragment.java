@@ -29,18 +29,19 @@ public class OverviewFragment extends Fragment {
     private static final String TAG = "**OverviewFragment**";
 
     public interface ActionsOfActivity{
-        void SwitchingToAssociationsMode();
+        void CheckingAssociations(int record_id);
     }
 
     private final ActionsOfActivity actionsOfActivity;
 
     Button buttonLevelBack;
     FrameLayout frameLayout;
+    FloatingActionButton buttonFAB;
 
     HandlerThreadOfFilling BG_Thread;
-    RecordContainer recordContainer;
+    public RecordContainer recordContainer;
     RecordAdapter recordAdapter;
-    OverviewListFilling overviewList;
+    public OverviewListFilling overviewList;
 
     public OverviewFragment(ActionsOfActivity actionsOfActivity) {
         this.actionsOfActivity = actionsOfActivity;
@@ -62,6 +63,7 @@ public class OverviewFragment extends Fragment {
         frameLayout = (FrameLayout) view.findViewById(R.id.container_parent);
         buttonLevelBack = view.findViewById(R.id.buttonLevelBack);
         RecyclerView recordList = (RecyclerView) view.findViewById(R.id.list);
+        buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
         recordContainer = new RecordContainer(getContext(),frameLayout);
 
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
@@ -76,7 +78,7 @@ public class OverviewFragment extends Fragment {
                 //        associativeList.ActionOfInitialization(associativeList.records.get(position).getRecord_id());
                 //}else
                 //    associativeList.ActionOfInitialization(overviewList.records.get(position).getRecord_id());
-                overviewList.CheckingAssociations(overviewList.records.get(position).getRecord_id());
+                actionsOfActivity.CheckingAssociations(overviewList.records.get(position).getRecord_id());
             }
         };
 
@@ -107,7 +109,6 @@ public class OverviewFragment extends Fragment {
                     Toast toast = Toast.makeText(getContext(),
                             "Ассоциации найдены!", Toast.LENGTH_SHORT);
                     toast.show();
-                    actionsOfActivity.SwitchingToAssociationsMode();
                 }else{
                     Toast toast = Toast.makeText(getContext(),
                             "Ассоциации НЕ найдены!", Toast.LENGTH_SHORT);
@@ -164,6 +165,8 @@ public class OverviewFragment extends Fragment {
                 overviewList.bdView();
             }
         });
+
+        buttonFAB.setVisibility(View.VISIBLE);
 
         return view;
     }
