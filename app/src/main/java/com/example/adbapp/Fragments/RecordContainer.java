@@ -33,13 +33,14 @@ public class RecordContainer {
         this.record = record;
         if(view!=null)
             frameLayout.removeView(view);
-        view = ContentView.getView(inflater,frameLayout,viewType);
+
+        view = ContentView.getView(inflater,frameLayout,ContentView.getListItemViewType(record,viewType));
         //view.setLayoutParams(layoutParams);
 
         nameView = (TextView) view.findViewById(R.id.name);
         timeView = (TextView) view.findViewById(R.id.time);
 
-        switch (viewType){
+        switch (ContentView.getListItemViewType(record,viewType)){
             case 0:
                 nameView.setText(record.getName());
                 break;

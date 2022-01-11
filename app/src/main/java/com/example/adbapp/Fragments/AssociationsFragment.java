@@ -86,6 +86,7 @@ public class AssociationsFragment extends Fragment {
 
             @Override
             public void ToPreviousLevel() {
+                recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),1);
                 recordAdapter.notifyDataSetChanged();
                 if(associativeList.cur_level==0) {
                     buttonLevelBack.setVisibility(View.GONE);

@@ -92,7 +92,6 @@ public class AssociativeListFilling extends ListFilling{
                 });
             }
         });
-
     }
 
     @Override
@@ -105,9 +104,9 @@ public class AssociativeListFilling extends ListFilling{
                     CheckSelectionOfObjId(position);
                 }
                 cur_level++;
-                parentRecordByLevel.add(cur_level, records.get(position));
                 recordIdByLevels.add(cur_level,records.get(position).getParent_id());
                 FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
+                addParentRecordByLevel(records.get(records.size()-1).getParent_id());
 
                 workThread.ui_operations(new Runnable() {
                     @Override
@@ -188,6 +187,17 @@ public class AssociativeListFilling extends ListFilling{
                 k++;
             }
         }
+    }
+
+    private void addParentRecordByLevel(int record_id){
+        for (int i=0;i<cursor.getCount();i++){
+            cursor.moveToPosition(i);
+            if(cursor.getInt(0)==record_id){
+                parentRecordByLevel.add(cur_level, new Record(cursor.getInt(0),cursor.getString(2),cursor.getInt(3),cursor.getInt(4)));
+            }
+        }
+        if(cur_level>parentRecordByLevel.size()-1)
+            parentRecordByLevel.add(cur_level,new Record(0,"БАЗОВЫЙ УРОВЕНЬ",0,0));
     }
 
     private void CheckSelectionOfObjId(int position){
