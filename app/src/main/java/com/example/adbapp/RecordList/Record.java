@@ -6,17 +6,27 @@ import java.util.ArrayList;
 
 public class Record {
 
-    private int record_id,_time, parent_id=0,field_type=1;
+    private int record_id, parent_id=0,field_type=1;
+    private long _time;
     private String _name;
     private boolean hasChildRec=false;
 
 
-    public Record(int record_id, String _name, int _time, int field_type) {
+    public Record(int record_id, String _name, long _time, int field_type) {
 
         this.record_id =record_id;
         this._name = _name;
         this._time = _time;
         this.field_type = field_type;
+    }
+
+    public Record(int record_id, String _name, long _time, int field_type, int parent_id) {
+
+        this.record_id =record_id;
+        this._name = _name;
+        this._time = _time;
+        this.field_type = field_type;
+        this.parent_id = parent_id;
     }
 
     public int getRecord_id(){
@@ -35,11 +45,11 @@ public class Record {
         this._name = _name;
     }
 
-    public int getTime(){
+    public long getTime(){
         return this._time;
     }
 
-    public void setTime(int _time){
+    public void setTime(long _time){
         this._time = _time;
     }
 

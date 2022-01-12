@@ -13,6 +13,7 @@ import com.example.adbapp.ContentView;
 import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
 import com.example.adbapp.R;
 
+import java.util.Date;
 import java.util.List;
 
 public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder> implements ItemTouchHelperAdapter {
@@ -79,7 +80,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                 break;
             default:
                 holder.nameView.setText(record.getName());
-                holder.timeView.setText(String.valueOf(record.getTime()));
+                //holder.timeView.setText(String.valueOf(record.getTime()));
+                holder.timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));
                 Log.d(TAG, "onBindViewHolder: record");
                 break;
         }

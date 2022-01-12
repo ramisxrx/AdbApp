@@ -24,6 +24,11 @@ import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class OverviewFragment extends Fragment {
 
     private static final String TAG = "**OverviewFragment**";
@@ -73,11 +78,6 @@ public class OverviewFragment extends Fragment {
         RecordAdapter.OnRecordLongClickListener recordLongClickListener = new RecordAdapter.OnRecordLongClickListener() {
             @Override
             public void onRecordLongClick(int position) {
-                //if(associationMode) {
-                //    if(associativeList.cur_level!=0)
-                //        associativeList.ActionOfInitialization(associativeList.records.get(position).getRecord_id());
-                //}else
-                //    associativeList.ActionOfInitialization(overviewList.records.get(position).getRecord_id());
                 actionsOfActivity.CheckingAssociations(overviewList.records.get(position).getRecord_id());
             }
         };
@@ -96,24 +96,20 @@ public class OverviewFragment extends Fragment {
                 recordAdapter.notifyDataSetChanged();
                 if(overviewList.cur_level==0)
                     buttonLevelBack.setVisibility(View.GONE);
+
+                SimpleDateFormat sdfDateTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"+ "", Locale.US);
+                String newtime = sdfDateTime.format(new Date(System.currentTimeMillis()));
+
+                String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+
+                Toast toast = Toast.makeText(getContext(),
+                        newtime, Toast.LENGTH_SHORT);
+                toast.show();
             }
 
             @Override
             public void UpdateAfterAddNewRecords() {
                 recordAdapter.notifyItemInserted(overviewList.records.size());
-            }
-
-            @Override
-            public void CheckingAssociations() {
-                if(overviewList.hasAssociations){
-                    Toast toast = Toast.makeText(getContext(),
-                            "Ассоциации найдены!", Toast.LENGTH_SHORT);
-                    toast.show();
-                }else{
-                    Toast toast = Toast.makeText(getContext(),
-                            "Ассоциации НЕ найдены!", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
             }
         };
 
@@ -169,5 +165,11 @@ public class OverviewFragment extends Fragment {
         buttonFAB.setVisibility(View.VISIBLE);
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        overviewList.Destroy();
     }
 }

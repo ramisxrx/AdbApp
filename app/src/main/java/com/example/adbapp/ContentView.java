@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import com.example.adbapp.RecordList.Record;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.zip.Inflater;
 
 
@@ -53,5 +55,9 @@ public class ContentView{
             return TYPE_VIEW_0;
         else
             return record.getField_type();
+    }
+
+    public static SimpleDateFormat getDateTimeFormat(){
+        return new SimpleDateFormat("dd/MM/yyyy HH:mm"+ "", Locale.US);
     }
 }

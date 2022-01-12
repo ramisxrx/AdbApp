@@ -17,17 +17,14 @@ public class OverviewListFilling extends ListFilling{
         void ActionDown();
         void ToPreviousLevel();
         void UpdateAfterAddNewRecords();
-        void CheckingAssociations();
     }
 
     private String TAG = OverviewListFilling.class.getCanonicalName();
 
     private HandlerThreadOfFilling workThread;
     private final NotifyViews_after notifyViews_after;
-    private Cursor cursorInit, cursorTEST;
+    private Cursor cursorInit;
     private boolean cmd_cursorInit;
-
-    public boolean hasAssociations=false;
 
     public OverviewListFilling(Context context,HandlerThreadOfFilling workThread,NotifyViews_after notifyViews_after){
         super(context);
@@ -128,30 +125,6 @@ public class OverviewListFilling extends ListFilling{
         });
     }
 
-    public void CheckingAssociations(int record_id){
-        workThread.bg_operations(new Runnable() {
-            @Override
-            public void run() {
-                Cursor cursorChecking = readRequests.getFieldId(record_id);
-                cursorChecking.moveToFirst();
-                int field_id = cursorChecking.getInt(0);
-                Log.d(TAG, "hasAssociations: field_id="+String.valueOf(field_id));
-                cursorChecking = readRequests.getRecords_5(field_id);
-                Log.d(TAG, "hasAssociations: cursorInit.getCount()="+String.valueOf(cursorChecking.getCount()));
-                hasAssociations = cursorChecking.getCount()>1;
-
-                workThread.ui_operations(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyViews_after.CheckingAssociations();
-                    }
-                });
-            }
-        });
-    }
-
-
-
     private void FillingOtherLevelToDown(int parent_id){
         Log.d(TAG, "FillingOfListDown: BG_Operations: Current thread="+Thread.currentThread());
 
@@ -161,7 +134,7 @@ public class OverviewListFilling extends ListFilling{
             cursor.moveToPosition(i);
 
             if(cursor.getInt(1)==parent_id) {
-                AddNewItemInRecords(cursor.getInt(0), cursor.getString(2), cursor.getInt(3), cursor.getInt(4));
+                AddNewItemInRecords(cursor);
 
                 Log.d(TAG, "FillingOfListDown: Record_id:"+cursor.getString(0)+" Parent_id:"+cursor.getString(1));
             }
@@ -184,7 +157,7 @@ public class OverviewListFilling extends ListFilling{
         for (int i=0;i<cursorInit.getCount();i++){
             cursorInit.moveToPosition(i);
 
-            AddNewItemInRecords(cursorInit.getInt(0),cursorInit.getString(2),cursorInit.getInt(3),cursorInit.getInt(4));
+            AddNewItemInRecords(cursorInit);
             objIdList.add(cursorInit.getInt(5));
 
             Log.d(TAG, "FillingInitialList: Record_id:"+cursorInit.getString(0)+" Parent_id:"+cursorInit.getString(1));
@@ -199,6 +172,8 @@ public class OverviewListFilling extends ListFilling{
     }
 
     public void Destroy(){
+        parentRecordByLevel.clear();
+        parentIdByLevels.clear();
         records.clear();
         if(cursor!=null)
             cursor.close();
@@ -209,7 +184,8 @@ public class OverviewListFilling extends ListFilling{
     }
 
     public void bdView(){
-        cursorTEST = readRequests.getRecordsTEST();
+
+        Cursor cursorTEST = readRequests.getRecordsTEST();
         while (cursorTEST.moveToNext()){
             Log.d(TAG, "     record_id:"+cursorTEST.getString(0)+
                             " object_id:"+cursorTEST.getString(1)+
@@ -220,5 +196,6 @@ public class OverviewListFilling extends ListFilling{
                             " time:"+cursorTEST.getString(6)+
                             " type:"+cursorTEST.getString(7));
         }
+        cursorTEST.close();
     }
 }

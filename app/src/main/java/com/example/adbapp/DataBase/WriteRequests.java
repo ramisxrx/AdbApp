@@ -34,7 +34,7 @@ public class WriteRequests {
         cv.put(COLUMN_OBJECT_ID,object_id);
         cv.put(COLUMN_PARENT_ID,parent_id);
         cv.put(COLUMN_FIELD_ID,field_id);
-        cv.put(COLUMN_TIME,_time);
+        cv.put(COLUMN_TIME,System.currentTimeMillis()/1000);
         db.insert(TABLE_RECORDS,null,cv);
         cv.clear();
     }

@@ -106,7 +106,7 @@ public class AssociativeListFilling extends ListFilling{
                 cur_level++;
                 recordIdByLevels.add(cur_level,records.get(position).getParent_id());
                 FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
-                addParentRecordByLevel(records.get(records.size()-1).getParent_id());
+                addParentRecordByLevel();
 
                 workThread.ui_operations(new Runnable() {
                     @Override
@@ -157,46 +157,41 @@ public class AssociativeListFilling extends ListFilling{
         int k=0;
         for (int i = 0; i < cursorInit.getCount(); i++) {
             cursorInit.moveToPosition(i);
-            AddNewItemInRecords(cursorInit.getInt(0), cursorInit.getString(2), cursorInit.getInt(3), cursorInit.getInt(4));
-            records.get(k).setParent_id(cursorInit.getInt(1));
-            k++;
+            AddNewItemInRecords(cursorInit);
         }
     }
 
     private void FillingOtherLevelToDown(int parent_id){
         ClearRecords();
-        int k=0;
         for (int i=0;i<cursor.getCount();i++){
             cursor.moveToPosition(i);
-            if(cursor.getInt(1)==parent_id){
-                AddNewItemInRecords(cursor.getInt(0),cursor.getString(2),cursor.getInt(3),cursor.getInt(4));
-                records.get(k).setParent_id(cursor.getInt(1));
-                k++;
-            }
+            if(cursor.getInt(1)==parent_id)
+                AddNewItemInRecords(cursor);
+
         }
     }
 
     private void FillingOtherLevelToUp(int record_id){
         ClearRecords();
-        int k=0;
         for (int i=0;i<cursor.getCount();i++){
             cursor.moveToPosition(i);
-            if(cursor.getInt(0)==record_id){
-                AddNewItemInRecords(cursor.getInt(0),cursor.getString(2),cursor.getInt(3),cursor.getInt(4));
-                records.get(k).setParent_id(cursor.getInt(1));
-                k++;
-            }
+            if(cursor.getInt(0)==record_id)
+                AddNewItemInRecords(cursor);
+
         }
     }
 
-    private void addParentRecordByLevel(int record_id){
-        for (int i=0;i<cursor.getCount();i++){
-            cursor.moveToPosition(i);
-            if(cursor.getInt(0)==record_id){
-                parentRecordByLevel.add(cur_level, new Record(cursor.getInt(0),cursor.getString(2),cursor.getInt(3),cursor.getInt(4)));
+    private void addParentRecordByLevel(){
+        if(records.size()>0) {
+            for (int i = 0; i < cursor.getCount(); i++) {
+                cursor.moveToPosition(i);
+                if (cursor.getInt(0) == records.get(records.size()-1).getParent_id()) {
+                    parentRecordByLevel.add(cur_level, new Record(cursor.getInt(0), cursor.getString(2), cursor.getInt(3), cursor.getInt(4)));
+                }
             }
-        }
-        if(cur_level>parentRecordByLevel.size()-1)
+            if(cur_level>parentRecordByLevel.size()-1)
+                parentRecordByLevel.add(cur_level,new Record(0,"БАЗОВЫЙ УРОВЕНЬ",0,0));
+        }else
             parentRecordByLevel.add(cur_level,new Record(0,"БАЗОВЫЙ УРОВЕНЬ",0,0));
     }
 
@@ -205,5 +200,18 @@ public class AssociativeListFilling extends ListFilling{
             selObjId = objIdList.get(position);
             cursor = readRequests.getRecords(selObjId);
         }
+    }
+
+    public void Destroy(){
+        records.clear();
+        parentRecordByLevel.clear();
+        parentIdByLevels.clear();
+        recordIdByLevels.clear();
+        if(cursor!=null)
+            cursor.close();
+        if(cursorInit!=null)
+            cursorInit.close();
+        readRequests.Destroy();
+        workThread.quit();
     }
 }
