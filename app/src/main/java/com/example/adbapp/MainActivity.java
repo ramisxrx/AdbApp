@@ -92,12 +92,15 @@ public class MainActivity extends AppCompatActivity {
         OverviewFragment.ActionsOfActivity overview_ActionsOfActivity = new OverviewFragment.ActionsOfActivity() {
             @Override
             public void CheckingAssociations(int record_id) {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Callback: associationsFragment.associativeList.ActionOfInitialization(record_id)", Toast.LENGTH_SHORT);
+                toast.show();
+                associationsFragment = new AssociationsFragment(getApplicationContext(),associations_ActionsOfActivity);
                 associationsFragment.associativeList.ActionOfInitialization(record_id);
             }
         };
 
         overviewFragment = new OverviewFragment(overview_ActionsOfActivity);
-        associationsFragment = new AssociationsFragment(getApplicationContext(),associations_ActionsOfActivity);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
@@ -151,6 +154,8 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setSubtitle("");
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.container_main,overviewFragment);
+            associationsFragment.onDestroy();
+            associationsFragment = null;
         }
         fragmentTransaction.commit();
     }

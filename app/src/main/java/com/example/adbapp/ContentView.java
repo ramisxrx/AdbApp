@@ -58,6 +58,6 @@ public class ContentView{
     }
 
     public static SimpleDateFormat getDateTimeFormat(){
-        return new SimpleDateFormat("dd/MM/yyyy HH:mm"+ "", Locale.US);
+        return new SimpleDateFormat("dd-MM-yyyy HH:mm"+ "", Locale.US);
     }
 }

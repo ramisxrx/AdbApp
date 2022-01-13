@@ -46,10 +46,11 @@ public class AssociationsFragment extends Fragment {
     RecordAdapter recordAdapter;
     public AssociativeListFilling associativeList;
 
-    private Context context;
+    private Context context, contextActivity;
 
     public AssociationsFragment(Context context,ActionsOfActivity actionsOfActivity) {
         this.context = context;
+        this.contextActivity = context;
         this.actionsOfActivity = actionsOfActivity;
 
         AssociativeListFilling.NotifyViews_after associativeList_notifyViews_after = new AssociativeListFilling.NotifyViews_after() {
@@ -109,7 +110,8 @@ public class AssociationsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_associations, container, false);
+        // использую макет overview так как одинаково
+        View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
         frameLayout = (FrameLayout) view.findViewById(R.id.container_parent);
         buttonLevelBack = view.findViewById(R.id.buttonLevelBack);
@@ -197,6 +199,20 @@ public class AssociationsFragment extends Fragment {
                 associativeList.ToPreviousLevel();
             }
         });
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d(TAG, "onDetach: ");
+        //context = contextActivity;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //context = getActivity().getApplicationContext();
+        Log.d(TAG, "onStop: "+context.getPackageResourcePath());
     }
 
     @Override

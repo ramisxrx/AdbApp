@@ -96,15 +96,6 @@ public class OverviewFragment extends Fragment {
                 recordAdapter.notifyDataSetChanged();
                 if(overviewList.cur_level==0)
                     buttonLevelBack.setVisibility(View.GONE);
-
-                SimpleDateFormat sdfDateTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"+ "", Locale.US);
-                String newtime = sdfDateTime.format(new Date(System.currentTimeMillis()));
-
-                String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-
-                Toast toast = Toast.makeText(getContext(),
-                        newtime, Toast.LENGTH_SHORT);
-                toast.show();
             }
 
             @Override

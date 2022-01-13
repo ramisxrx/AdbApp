@@ -12,6 +12,8 @@ import com.example.adbapp.ContentView;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 
+import java.util.Date;
+
 public class RecordContainer {
 
     private final FrameLayout frameLayout;
@@ -46,7 +48,7 @@ public class RecordContainer {
                 break;
             default:
                 nameView.setText(record.getName());
-                timeView.setText(String.valueOf(record.getTime()));
+                timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));
                 break;
         }
         frameLayout.addView(view);
