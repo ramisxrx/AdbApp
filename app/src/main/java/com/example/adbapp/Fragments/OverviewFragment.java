@@ -93,7 +93,9 @@ public class OverviewFragment extends Fragment {
             @Override
             public void ToPreviousLevel() {
                 recordContainer.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level),1);
+                //recordList.smoothScrollToPosition(overviewList.selItemCurLevel);
                 recordAdapter.notifyDataSetChanged();
+                recordList.scrollToPosition(overviewList.selItemCurLevel);
                 if(overviewList.cur_level==0)
                     buttonLevelBack.setVisibility(View.GONE);
             }

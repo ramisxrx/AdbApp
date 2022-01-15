@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "**MainActivity**";
 
     boolean associationMode=false;
-    ArrayList<Record> records = new ArrayList<>();
 
     ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {

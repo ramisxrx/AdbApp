@@ -38,10 +38,6 @@ public class AddRecordFragment extends Fragment {
     public String name_ToAdd;
     public int field_id_ToAdd=0;
 
-    public AddRecordFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

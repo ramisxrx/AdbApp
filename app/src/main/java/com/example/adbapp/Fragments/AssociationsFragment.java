@@ -47,6 +47,7 @@ public class AssociationsFragment extends Fragment {
     public AssociativeListFilling associativeList;
 
     private Context context, contextActivity;
+    boolean viewCreated=false;
 
     public AssociationsFragment(Context context,ActionsOfActivity actionsOfActivity) {
         this.context = context;
@@ -58,13 +59,18 @@ public class AssociationsFragment extends Fragment {
             public void ActionOfInitialization() {
                 if(associativeList.hasAssociations) {
                     Toast toast = Toast.makeText(context,
-                            "Ассоциации найдены!", Toast.LENGTH_SHORT);
+                            "Ассоциации найдены! AssociationFragment", Toast.LENGTH_SHORT);
                     toast.show();
-                    actionsOfActivity.SwitchingToAssociationsMode();
+                    if(viewCreated) {
+                        recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),0);
+                        recordAdapter.notifyDataSetChanged();
+                    }
+                    else
+                        actionsOfActivity.SwitchingToAssociationsMode();
                     //buttonFAB.setVisibility(View.GONE);
                 }else{
                     Toast toast = Toast.makeText(context,
-                            "Ассоциации НЕ найдены!", Toast.LENGTH_SHORT);
+                            "Ассоциации НЕ найдены! AssociationFragment", Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }
@@ -88,6 +94,7 @@ public class AssociationsFragment extends Fragment {
             @Override
             public void ToPreviousLevel() {
                 recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),1);
+                recordList.smoothScrollToPosition(associativeList.selItemCurLevel);
                 recordAdapter.notifyDataSetChanged();
                 if(associativeList.cur_level==0) {
                     buttonLevelBack.setVisibility(View.GONE);
@@ -133,8 +140,11 @@ public class AssociationsFragment extends Fragment {
         RecordAdapter.OnRecordLongClickListener recordLongClickListener = new RecordAdapter.OnRecordLongClickListener() {
             @Override
             public void onRecordLongClick(int position) {
-                if(associativeList.cur_level!=0)
+                if(associativeList.cur_level!=0) {
+                    Log.d(TAG, "onRecordLongClick: ");
+                    Log.d(TAG, "onRecordLongClick: cur_level="+String.valueOf(associativeList.cur_level));
                     associativeList.ActionOfInitialization(associativeList.records.get(position).getRecord_id());
+                }    
             }
         };
 
@@ -199,6 +209,8 @@ public class AssociationsFragment extends Fragment {
                 associativeList.ToPreviousLevel();
             }
         });
+
+        viewCreated = true;
     }
 
     @Override
@@ -206,6 +218,7 @@ public class AssociationsFragment extends Fragment {
         super.onDetach();
         Log.d(TAG, "onDetach: ");
         //context = contextActivity;
+        viewCreated = false;
     }
 
     @Override

@@ -36,20 +36,22 @@ public class AssociativeListFilling extends ListFilling{
         this.notifyViews_after = notifyViews_after;
         parentIdByLevels.add(0,0);
         recordIdByLevels.add(0,0);
+        selItemByLevels.add(0,0);
     }
 
     public void ActionOfInitialization(int record_id){
         workThread.bg_operations(new Runnable() {
             @Override
             public void run() {
-                cursorInit = readRequests.getFieldId(record_id);
-                cursorInit.moveToFirst();
-                field_id = cursorInit.getInt(0);
+                Cursor cursorChecking = readRequests.getFieldId(record_id);
+                cursorChecking.moveToFirst();
+                field_id = cursorChecking.getInt(0);
                 Log.d(TAG, "ActionOfInitialization: field_id="+String.valueOf(field_id));
-                cursorInit = readRequests.getRecords_5(field_id);
-                Log.d(TAG, "ActionOfInitialization: cursorInit.getCount()="+String.valueOf(cursorInit.getCount()));
-                hasAssociations = cursorInit.getCount()>1;
+                cursorChecking = readRequests.getRecords_5(field_id);
+                Log.d(TAG, "ActionOfInitialization: cursorChecking.getCount()="+String.valueOf(cursorChecking.getCount()));
+                hasAssociations = cursorChecking.getCount()>1;
                 if(hasAssociations) {
+                    cursorInit = cursorChecking;
                     cur_level = 0;
                     parentRecordByLevel.clear();
                     parentRecordByLevel.add(cur_level,new Record(0,"АСОЦИАЦИИ:",0,0));
@@ -59,6 +61,9 @@ public class AssociativeListFilling extends ListFilling{
 
                     FillingInitialList();
                 }
+
+                Log.d(TAG, "ActionOfInitialization: parentIdByLevels"+String.valueOf(parentIdByLevels.size()));
+                Log.d(TAG, "ActionOfInitialization: recordIdByLevels"+String.valueOf(recordIdByLevels.size()));
 
                 workThread.ui_operations(new Runnable() {
                     @Override
@@ -80,6 +85,7 @@ public class AssociativeListFilling extends ListFilling{
                     CheckSelectionOfObjId(position);
                 }
                 cur_level++;
+                selItemByLevels.add(cur_level,position);
                 parentRecordByLevel.add(cur_level, records.get(position));
                 parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
                 FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
@@ -104,6 +110,7 @@ public class AssociativeListFilling extends ListFilling{
                     CheckSelectionOfObjId(position);
                 }
                 cur_level++;
+                selItemByLevels.add(cur_level,position);
                 recordIdByLevels.add(cur_level,records.get(position).getParent_id());
                 FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
                 addParentRecordByLevel();
@@ -125,6 +132,8 @@ public class AssociativeListFilling extends ListFilling{
                 @Override
                 public void run() {
                     parentRecordByLevel.remove(cur_level);
+                    selItemCurLevel = selItemByLevels.get(cur_level);
+                    selItemByLevels.remove(cur_level);
                     if (selDirection) {
                         recordIdByLevels.remove(cur_level);
                         cur_level--;

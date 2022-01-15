@@ -35,6 +35,7 @@ public class OverviewListFilling extends ListFilling{
         cur_level = 0;
         parentRecordByLevel.add(cur_level,new Record(0,"БАЗОВЫЙ УРОВЕНЬ",0,0));
         cmd_cursorInit = true;
+        selItemByLevels.add(0,0);
 
         workThread.bg_operations(new Runnable() {
             @Override
@@ -54,6 +55,7 @@ public class OverviewListFilling extends ListFilling{
                     CheckSelectionOfObjId(position);
 
                 cur_level++;
+                selItemByLevels.add(cur_level,position);
                 parentIdByLevels.add(cur_level,records.get(position).getRecord_id());
                 parentRecordByLevel.add(cur_level, records.get(position));
                 Log.d(TAG, "ActionDown: cur_level:"+String.valueOf(cur_level)+" parentIdByLevels:"+String.valueOf(records.get(position).getRecord_id()));
@@ -79,6 +81,8 @@ public class OverviewListFilling extends ListFilling{
             workThread.bg_operations(new Runnable() {
                 @Override
                 public void run() {
+                    selItemCurLevel = selItemByLevels.get(cur_level);
+                    selItemByLevels.remove(cur_level);
                     parentIdByLevels.remove(cur_level);
                     parentRecordByLevel.remove(cur_level);
                     cur_level--;

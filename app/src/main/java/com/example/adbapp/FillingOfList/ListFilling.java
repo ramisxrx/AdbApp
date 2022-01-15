@@ -21,9 +21,11 @@ public class ListFilling extends RecordList{
 
     protected ArrayList<Integer> objIdList = new ArrayList<>();
     protected ArrayList<Integer> parentIdByLevels = new ArrayList<>();
+    public ArrayList<Integer> selItemByLevels = new ArrayList<>();
 
     public int selObjId=0;
     public int cur_level=0;
+    public int selItemCurLevel=0;
 
     public ListFilling(Context context){
         readRequests = new ReadRequests(context);
