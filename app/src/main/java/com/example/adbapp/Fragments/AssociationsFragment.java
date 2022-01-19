@@ -94,8 +94,8 @@ public class AssociationsFragment extends Fragment {
             @Override
             public void ToPreviousLevel() {
                 recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),1);
-                recordList.smoothScrollToPosition(associativeList.selItemCurLevel);
                 recordAdapter.notifyDataSetChanged();
+                recordList.scrollToPosition(associativeList.selItemCurLevel);
                 if(associativeList.cur_level==0) {
                     buttonLevelBack.setVisibility(View.GONE);
                     buttonFAB.setVisibility(View.GONE);

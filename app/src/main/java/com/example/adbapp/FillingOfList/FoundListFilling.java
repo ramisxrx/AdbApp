@@ -56,6 +56,8 @@ public class FoundListFilling extends ListFilling{
                         CheckSelectionOfObjId(position);
                     FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
                 }
+                selItemByLevels.add(cur_level,position);
+
                 workThread.ui_operations(new Runnable() {
                     @Override
                     public void run() {
@@ -85,6 +87,8 @@ public class FoundListFilling extends ListFilling{
                         CheckSelectionOfObjId(position);
                     FillingOtherLevelToUp(recordIdByLevels.get(cur_level));
                 }
+                selItemByLevels.add(cur_level,position);
+
                 workThread.ui_operations(new Runnable() {
                     @Override
                     public void run() {
@@ -102,6 +106,8 @@ public class FoundListFilling extends ListFilling{
             workThread.bg_operations(new Runnable() {
                 @Override
                 public void run() {
+                    selItemCurLevel = selItemByLevels.get(cur_level);
+                    selItemByLevels.remove(cur_level);
                     if(selDirection){
                         recordIdByLevels.remove(cur_level);
                         cur_level--;

@@ -37,13 +37,16 @@ public class ContentView{
                 view = layoutInflater.inflate(R.layout.field_item, parent, false);
                 Log.d(TAG, "onCreateView: field_item");
                 break;
-            //case TYPE_VIEW_1:
-            //    view = inflater.inflate(R.layout.record_item, parent, false);
-            //    break;
-
-            default:
+            case TYPE_VIEW_1:
                 view = layoutInflater.inflate(R.layout.record_item, parent, false);
                 Log.d(TAG, "onCreateView: record_item");
+                break;
+            case TYPE_VIEW_2:
+                view = layoutInflater.inflate(R.layout.text_item, parent, false);
+                Log.d(TAG, "onCreateView: text_item");
+                break;
+            default:
+                view = null;
                 break;
         }
 

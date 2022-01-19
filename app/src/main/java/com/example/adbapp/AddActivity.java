@@ -50,10 +50,7 @@ public class AddActivity extends AppCompatActivity {
         frameLayout = (FrameLayout) findViewById(R.id.container_parent);
 
         addRecordFragment = new AddRecordFragment();
-        addTextFragment = new AddTextFragment();
-
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
         fragmentTransaction.replace(R.id.container_add,addRecordFragment);
         fragmentTransaction.commit();
 
@@ -135,6 +132,7 @@ public class AddActivity extends AppCompatActivity {
                     fragmentTransaction.commit();
                     addingNewRecord.setTypeContent(ContentView.TYPE_VIEW_1);
                     actionBar.setSubtitle("Добавление записи");
+                    saveButton.setEnabled(false);
                 }
                 return true;
             case R.id.item2:
@@ -146,6 +144,7 @@ public class AddActivity extends AppCompatActivity {
                     fragmentTransaction.commit();
                     addingNewRecord.setTypeContent(ContentView.TYPE_VIEW_2);
                     actionBar.setSubtitle("Добавление текста");
+                    saveButton.setEnabled(false);
                 }
                 return true;
             default:

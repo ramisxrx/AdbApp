@@ -80,12 +80,8 @@ public class AddRecordFragment extends Fragment {
             public void ToPreviousLevel() {
                 if(foundList.cur_level==-1)
                     recordAdapter.typeView = 0;
-                recordList.smoothScrollToPosition(foundList.records.size()-1);
-                Log.d(TAG, "ToPreviousLevel: recordAdapter.posSelItem="+String.valueOf(recordAdapter.posSelItem));
-                Log.d(TAG, "ToPreviousLevel: foundList.records.size()-1 ="+String.valueOf(foundList.records.size()-1));
                 recordAdapter.notifyDataSetChanged();
-                //if(foundList.cur_level==-1)
-                    //buttonLevelBack.setVisibility(View.GONE);
+                recordList.scrollToPosition(foundList.selItemCurLevel);
             }
         };
 
