@@ -1,16 +1,20 @@
 package com.example.adbapp.Fragments;
 
 import android.content.Context;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.adbapp.ContentView;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
+
+import org.w3c.dom.Text;
 
 import java.util.Date;
 
@@ -22,6 +26,7 @@ public class RecordContainer {
     private final LayoutInflater inflater;
     private Record record;
     private TextView nameView,timeView;
+    private TextView textView;
 
     public RecordContainer(Context context, FrameLayout frameLayout) {
         this.inflater = LayoutInflater.from(context);
@@ -41,14 +46,26 @@ public class RecordContainer {
 
         nameView = (TextView) view.findViewById(R.id.name);
         timeView = (TextView) view.findViewById(R.id.time);
+        textView = (TextView) view.findViewById(R.id.text);
 
         switch (ContentView.getListItemViewType(record,viewType)){
-            case 0:
+            case ContentView.TYPE_VIEW_0:
                 nameView.setText(record.getName());
                 break;
-            default:
+            case ContentView.TYPE_VIEW_1:
                 nameView.setText(record.getName());
                 timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));
+                break;
+            case ContentView.TYPE_VIEW_2:
+                textView.setText(record.getName());
+                textView.setMaxLines(5);
+                textView.setVerticalScrollBarEnabled(true);
+                textView.setMovementMethod(new ScrollingMovementMethod());
+                textView.setEnabled(false);
+                timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));
+                break;
+            default:
+
                 break;
         }
         frameLayout.addView(view);

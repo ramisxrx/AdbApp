@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextClock;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -84,7 +86,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                 Log.d(TAG, "onBindViewHolder: record");
                 break;
             case TYPE_VIEW_2:
-                holder.nameView.setText(record.getName());
+                holder.textView.setText(record.getName());
                 holder.timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));
                 Log.d(TAG, "onBindViewHolder: text");
                 break;
@@ -137,10 +139,12 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView nameView, timeView;
+        final TextView textView;
         ViewHolder(View view){
             super(view);
             nameView = (TextView) view.findViewById(R.id.name);
             timeView = (TextView) view.findViewById(R.id.time);
+            textView = (TextView) view.findViewById(R.id.text);
 
         }
     }
