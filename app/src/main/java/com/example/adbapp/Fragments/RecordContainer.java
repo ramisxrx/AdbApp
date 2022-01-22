@@ -10,7 +10,11 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.example.adbapp.Container.ContainerRecord;
+import com.example.adbapp.Container.ParentRecord;
+import com.example.adbapp.Container.ParentRecordBase;
 import com.example.adbapp.ContentView;
+import com.example.adbapp.Interfaces.Fillable;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 

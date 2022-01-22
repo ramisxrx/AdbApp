@@ -53,6 +53,30 @@ public class ContentView{
         return view;
     }
 
+    public static View getViewParentRecord(LayoutInflater layoutInflater,ViewGroup parent, int viewType){
+        View view;
+
+        switch(viewType){
+            case TYPE_VIEW_0:
+                view = layoutInflater.inflate(R.layout.field_item, parent, false);
+                Log.d(TAG, "getViewParentRecord: field");
+                break;
+            case TYPE_VIEW_1:
+                view = layoutInflater.inflate(R.layout.record_item, parent, false);
+                Log.d(TAG, "getViewParentRecord: record");
+                break;
+            case TYPE_VIEW_2:
+                view = layoutInflater.inflate(R.layout.text_item, parent, false);
+                Log.d(TAG, "getViewParentRecord: text");
+                break;
+            default:
+                view = null;
+                break;
+        }
+
+        return view;
+    }
+
     public static int getListItemViewType(Record record, int typeView){
         if(typeView==0)
             return TYPE_VIEW_0;
