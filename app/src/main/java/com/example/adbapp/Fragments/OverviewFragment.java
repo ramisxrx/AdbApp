@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.example.adbapp.Container.ParentRecordBase;
 import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.FillingOfList.OverviewListFilling;
 import com.example.adbapp.R;
@@ -45,6 +46,7 @@ public class OverviewFragment extends Fragment {
 
     HandlerThreadOfFilling BG_Thread;
     public RecordContainer recordContainer;
+    public ParentRecordBase parentRecordBase;
     RecordAdapter recordAdapter;
     public OverviewListFilling overviewList;
 
@@ -70,6 +72,8 @@ public class OverviewFragment extends Fragment {
         RecyclerView recordList = (RecyclerView) view.findViewById(R.id.list);
         buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
         recordContainer = new RecordContainer(getContext(),frameLayout);
+
+        parentRecordBase = new ParentRecordBase(getContext(),frameLayout);
 
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
             //addRecord(record.getRecord_id());

@@ -32,15 +32,23 @@ public class RecordContainer {
     private TextView nameView,timeView;
     private TextView textView;
 
+    private ParentRecordBase parentRecordBase;
+
     public RecordContainer(Context context, FrameLayout frameLayout) {
         this.inflater = LayoutInflater.from(context);
         this.frameLayout = frameLayout;
         layoutParams = new FrameLayout.LayoutParams
                 (FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
+
+        parentRecordBase = new ParentRecordBase(context,frameLayout);
     }
 
     public void FillingContainer(Record record,int viewType){
+
+        parentRecordBase.FillingContainer(record);
+
+        /*
         this.record = record;
         if(view!=null)
             frameLayout.removeView(view);
@@ -73,9 +81,11 @@ public class RecordContainer {
                 break;
         }
         frameLayout.addView(view);
+
+         */
     }
 
     public Record getRecord(){
-        return this.record;
+        return parentRecordBase.getRecord();
     }
 }
