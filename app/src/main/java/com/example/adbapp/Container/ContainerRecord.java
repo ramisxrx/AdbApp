@@ -7,15 +7,14 @@ import com.example.adbapp.Interfaces.Fillable;
 import com.example.adbapp.RecordList.Record;
 
 public abstract class ContainerRecord {
-    private Fillable fillable;
     private FrameLayout frameLayout;
-    private View view;
+    protected View view;
     protected Record record;
 
     protected ContainerRecord(FrameLayout frameLayout, View view){
         this.frameLayout = frameLayout;
         this.view = view;
-        DeleteOldViewFramelayout();
+        //DeleteOldViewFramelayout();
         //if(thisIsNewView(view)){
          //   FindingNewViews();
         //}
@@ -33,10 +32,6 @@ public abstract class ContainerRecord {
         frameLayout.addView(view);
     }
 
-    protected void setFillable(Fillable fillable){
-        this.fillable = fillable;
-    }
-
     protected void setRecord(Record record){
         this.record = record;
     }
@@ -44,14 +39,16 @@ public abstract class ContainerRecord {
     abstract void FindingNewViews();
 
     public void FillingContainer(Record record){
+        if(this.record!=record)
+            FindingNewViews();
         setRecord(record);
        //if(thisIsNewView(view))
-            FindingNewViews();
-
-        fillable.fill(record);
+        fillView();
         DeleteOldViewFramelayout();
         AddNewViewFramelayout();
     }
+
+    abstract void fillView();
 
     public Record getRecord(){
         return record;

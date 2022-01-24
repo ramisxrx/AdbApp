@@ -11,23 +11,20 @@ import com.example.adbapp.RecordList.Record;
 
 import java.util.Date;
 
-public class ParentZeroLevel extends ContainerRecord implements Fillable {
+public class ParentZeroLevel extends ContainerRecord{
     private TextView nameView;
-    private View view;
 
     public ParentZeroLevel(View view, FrameLayout frameLayout) {
         super(frameLayout,view);
-        this.view = view;
-        this.setFillable(this);
-    }
-
-    @Override
-    public void fill(Record record) {
-        nameView.setText(record.getName());
     }
 
     @Override
     void FindingNewViews() {
         nameView = (TextView) view.findViewById(R.id.name);
+    }
+
+    @Override
+    void fillView() {
+        nameView.setText(record.getName());
     }
 }

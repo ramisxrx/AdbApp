@@ -36,9 +36,14 @@ public class ParentRecordBase {
             switch (record.getField_type()) {
                 case TYPE_VIEW_0:
                     containerRecord = new ParentZeroLevel(view,frameLayout);
+                    break;
 
                 case TYPE_VIEW_1:
                     containerRecord = new ParentRecord(view, frameLayout);
+                    break;
+
+                case TYPE_VIEW_2:
+                    containerRecord = new ParentText(view, frameLayout);
                     break;
                 default:
 
