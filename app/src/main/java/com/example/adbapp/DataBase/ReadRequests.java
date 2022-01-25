@@ -82,14 +82,14 @@ public class ReadRequests {
         return cursor;
     }
 
-    public Cursor getFields(String _name){
+    public Cursor getFields(String _name, int type){
         return db.rawQuery("SELECT "
                 +TABLE_FIELDS+"."+COLUMN_ID+","
                 +COLUMN_NAME+","
                 +COLUMN_TYPE+
                 " FROM "+
                 TABLE_FIELDS+" INNER JOIN "+TABLE_NAMES+" ON "+TABLE_FIELDS+"."+COLUMN_NAME_ID+"="+TABLE_NAMES+"."+COLUMN_ID+
-                " WHERE "+COLUMN_NAME+" LIKE ?", new String[]{"%" + _name + "%"});
+                " WHERE "+COLUMN_NAME+" LIKE ? AND "+COLUMN_TYPE+"=?", new String[]{"%" + _name + "%",String.valueOf(type)});
     }
 
     public Cursor getObjects(){

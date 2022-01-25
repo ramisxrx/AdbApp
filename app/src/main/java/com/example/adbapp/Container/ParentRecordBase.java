@@ -1,8 +1,8 @@
 package com.example.adbapp.Container;
 
 import static com.example.adbapp.ContentView.TYPE_VIEW_0;
-import static com.example.adbapp.ContentView.TYPE_VIEW_1;
-import static com.example.adbapp.ContentView.TYPE_VIEW_2;
+import static com.example.adbapp.ContentView.TYPE_RECORD;
+import static com.example.adbapp.ContentView.TYPE_TEXT;
 
 import android.content.Context;
 import android.util.Log;
@@ -38,11 +38,11 @@ public class ParentRecordBase {
                     containerRecord = new ParentZeroLevel(view,frameLayout);
                     break;
 
-                case TYPE_VIEW_1:
+                case TYPE_RECORD:
                     containerRecord = new ParentRecord(view, frameLayout);
                     break;
 
-                case TYPE_VIEW_2:
+                case TYPE_TEXT:
                     containerRecord = new ParentText(view, frameLayout);
                     break;
                 default:

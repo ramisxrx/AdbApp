@@ -110,7 +110,7 @@ public class AddActivity extends AppCompatActivity {
             }
         };
         addingNewRecord = new AddingNewRecord(getApplicationContext(),object_id,recordContainer.getRecord().getRecord_id(),notifyViews_before,notifyViews_after);
-        addingNewRecord.setTypeContent(ContentView.TYPE_VIEW_1);
+        addingNewRecord.setTypeContent(ContentView.TYPE_RECORD);
     }
 
     @Override
@@ -126,23 +126,23 @@ public class AddActivity extends AppCompatActivity {
                 goHome(true);
                 return true;
             case R.id.item1:
-                if(addingNewRecord.getTypeContent()!=ContentView.TYPE_VIEW_1){
+                if(addingNewRecord.getTypeContent()!=ContentView.TYPE_RECORD){
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container_add,addRecordFragment);
                     fragmentTransaction.commit();
-                    addingNewRecord.setTypeContent(ContentView.TYPE_VIEW_1);
+                    addingNewRecord.setTypeContent(ContentView.TYPE_RECORD);
                     actionBar.setSubtitle("Добавление записи");
                     saveButton.setEnabled(false);
                 }
                 return true;
             case R.id.item2:
-                if(addingNewRecord.getTypeContent()!=ContentView.TYPE_VIEW_2){
+                if(addingNewRecord.getTypeContent()!=ContentView.TYPE_TEXT){
                     if(addTextFragment==null)
                         addTextFragment = new AddTextFragment();
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container_add,addTextFragment);
                     fragmentTransaction.commit();
-                    addingNewRecord.setTypeContent(ContentView.TYPE_VIEW_2);
+                    addingNewRecord.setTypeContent(ContentView.TYPE_TEXT);
                     actionBar.setSubtitle("Добавление текста");
                     saveButton.setEnabled(false);
                 }
@@ -160,12 +160,14 @@ public class AddActivity extends AppCompatActivity {
 
     public void save(View view){
         switch (addingNewRecord.getTypeContent()){
-            case ContentView.TYPE_VIEW_1:
+            case ContentView.TYPE_RECORD:
                 addingNewRecord.setParametersToAdd(addRecordFragment.field_id_ToAdd,addRecordFragment.name_ToAdd);
                 break;
-
-            default:
+            case ContentView.TYPE_TEXT:
                 addingNewRecord.setParametersToAdd(addTextFragment.field_id_ToAdd,addTextFragment.name_ToAdd);
+                break;
+            default:
+                break;
         }
 
 

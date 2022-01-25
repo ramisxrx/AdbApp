@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.adbapp.ContentView;
 import com.example.adbapp.FillingOfList.FoundListFilling;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
@@ -85,7 +86,7 @@ public class AddRecordFragment extends Fragment {
             }
         };
 
-        foundList = new FoundListFilling(this.getContext(),FoundList_notifyViews_after);
+        foundList = new FoundListFilling(this.getContext(),FoundList_notifyViews_after, ContentView.TYPE_RECORD);
 
         nameBox.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {}

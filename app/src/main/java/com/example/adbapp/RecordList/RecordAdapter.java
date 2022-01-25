@@ -80,6 +80,20 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
                 Log.d(TAG, "onBindViewHolder: field");
                 break;
+
+            case 501:
+                holder.nameView.setText(record.getName());
+
+                if(position==posSelItem) {
+                    holder.itemView.setSelected(true);
+                }
+                else {
+                    holder.itemView.setSelected(false);
+                }
+
+                Log.d(TAG, "onBindViewHolder: found_record");
+                break;
+
             case TYPE_VIEW_1:
                 holder.nameView.setText(record.getName());
                 holder.timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));

@@ -29,10 +29,12 @@ public class FoundListFilling extends ListFilling{
     private ArrayList<Record> fields = new ArrayList<>();
     private ArrayList<Integer> objIdList = new ArrayList<>();
     private ArrayList<Integer> recordIdByLevels = new ArrayList<>();
+    private int searchingType;
 
-    public FoundListFilling(Context context, NotifyViews_after notifyViews_after) {
+    public FoundListFilling(Context context, NotifyViews_after notifyViews_after,int searchingType) {
         super(context);
         this.notifyViews_after = notifyViews_after;
+        this.searchingType = searchingType;
         cur_level = -1;
         workThread = new HandlerThreadOfFilling("FoundListFilling");
     }
@@ -171,7 +173,7 @@ public class FoundListFilling extends ListFilling{
 
         if(charsequence.length()>0) {
             Log.d(TAG, "FillingFoundList: charsequence.length()="+String.valueOf(charsequence.length()));
-            cursorSearch = readRequests.getFields(charsequence.toString());
+            cursorSearch = readRequests.getFields(charsequence.toString(),searchingType);
 
             while (cursorSearch.moveToNext()) {
                 Log.d(TAG, "FillingFoundList: cursorSearch.moveToNext()");

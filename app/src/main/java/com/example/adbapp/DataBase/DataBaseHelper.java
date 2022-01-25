@@ -58,9 +58,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                           "('Иванов Василий');");
 
         db.execSQL("INSERT INTO "+ TABLE_FIELDS +" (" + COLUMN_TYPE + "," + COLUMN_NAME_ID + ")" +
-                "VALUES (0,1)," +
-                       "(0,2)," +
-                       "(0,3);");
+                "VALUES (1,1)," +
+                       "(1,2)," +
+                       "(1,3);");
 
         db.execSQL("INSERT INTO "+ TABLE_OBJECTS +" (" + COLUMN_ID + ")" +
                 "VALUES (1);");
