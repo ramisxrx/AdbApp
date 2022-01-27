@@ -22,16 +22,6 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     private static final String TAG = "**RecordAdapter**";
 
-    private final int TYPE_VIEW_0 = 0; // для показа fields
-    private final int TYPE_VIEW_1 = 1; // для записей
-    private final int TYPE_VIEW_2 = 2; // для мнострочного текста
-    private final int TYPE_VIEW_3 = 3; // для даты
-    private final int TYPE_VIEW_4 = 4; // для времени
-    private final int TYPE_VIEW_5 = 5; // для даты и времени
-    private final int TYPE_VIEW_6 = 6; // для номера телефона
-    private final int TYPE_VIEW_7 = 7; // для фото
-
-
     public interface OnRecordClickListener{
         void onRecordClick(Record record, int position);
     }
@@ -59,6 +49,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     @Override
     public RecordAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d(TAG, "onCreateViewHolder: viewType="+String.valueOf(viewType));
         View view = ContentView.getView(inflater,parent,viewType);
         return new ViewHolder(view);
     }
@@ -68,7 +59,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         Record record = records.get(position);
 
         switch (getItemViewType(position)){
-            case TYPE_VIEW_0:
+            case ContentView.TYPE_VIEW_0:
                 holder.nameView.setText(record.getName());
 
                 if(position==posSelItem) {
@@ -81,7 +72,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                 Log.d(TAG, "onBindViewHolder: field");
                 break;
 
-            case 501:
+            case ContentView.TYPE_RECORD+ContentView.FOUND_TYPE_BIAS:
                 holder.nameView.setText(record.getName());
 
                 if(position==posSelItem) {
@@ -94,12 +85,12 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                 Log.d(TAG, "onBindViewHolder: found_record");
                 break;
 
-            case TYPE_VIEW_1:
+            case ContentView.TYPE_RECORD:
                 holder.nameView.setText(record.getName());
                 holder.timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));
                 Log.d(TAG, "onBindViewHolder: record");
                 break;
-            case TYPE_VIEW_2:
+            case ContentView.TYPE_TEXT:
                 holder.textView.setText(record.getName());
                 holder.timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));
                 Log.d(TAG, "onBindViewHolder: text");

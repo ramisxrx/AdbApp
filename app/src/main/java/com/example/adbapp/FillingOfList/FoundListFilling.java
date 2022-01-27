@@ -177,7 +177,7 @@ public class FoundListFilling extends ListFilling{
 
             while (cursorSearch.moveToNext()) {
                 Log.d(TAG, "FillingFoundList: cursorSearch.moveToNext()");
-                fields.add(new Record(cursorSearch.getInt(0), cursorSearch.getString(1), 0, 0));
+                fields.add(new Record(cursorSearch.getInt(0), cursorSearch.getString(1), 0, searchingType));
             }    
 
             cursorSearch.close();

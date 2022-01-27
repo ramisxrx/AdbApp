@@ -25,7 +25,7 @@ public class ContentView{
     public static final int TYPE_VIEW_6 = 6; // для номера телефона
     public static final int TYPE_VIEW_7 = 7; // для фото
 
-    private static final int FOUND_TYPE_BIAS = 500;
+    public static final int FOUND_TYPE_BIAS = 500;
 
     public ContentView() {
 
@@ -43,8 +43,7 @@ public class ContentView{
                 view = layoutInflater.inflate(R.layout.record_item, parent, false);
                 Log.d(TAG, "onCreateView: record_item");
                 break;
-            //case TYPE_RECORD+FOUND_TYPE_BIAS:
-            case 501:
+            case TYPE_RECORD+FOUND_TYPE_BIAS:
                 view = layoutInflater.inflate(R.layout.found_record_item, parent, false);
                 Log.d(TAG, "onCreateView: found_record_item");
                 break;
@@ -86,9 +85,12 @@ public class ContentView{
     }
 
     public static int getListItemViewType(Record record, int typeView){
-        if(typeView==0)
-            //return record.getField_type()+FOUND_TYPE_BIAS;
-            return 501;
+        Log.d(TAG, "getListItemViewType: record.getField_type()="+String.valueOf(record.getField_type()));
+        if(typeView==0) {
+            Log.d(TAG, "getListItemViewType: FOUND_TYPE_BIAS="+String.valueOf(FOUND_TYPE_BIAS));
+            Log.d(TAG, "getListItemViewType: record.getField_type() + FOUND_TYPE_BIAS="+String.valueOf(record.getField_type() + FOUND_TYPE_BIAS));
+            return record.getField_type() + FOUND_TYPE_BIAS;
+        }
         else
             return record.getField_type();
     }
