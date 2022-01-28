@@ -86,7 +86,7 @@ public class AddActivity extends AppCompatActivity {
         if (extras != null) {
             recordContainer.FillingContainer(new Record(extras.getInt("record_id"),
                                                         extras.getString("name"),
-                                                        extras.getInt("time"),
+                                                        extras.getLong("time"),
                                                         extras.getInt("field_type")), 1);
 
             object_id = extras.getInt("object_id");

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.example.adbapp.RecordList.Record;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.zip.Inflater;
 
@@ -97,5 +98,9 @@ public class ContentView{
 
     public static SimpleDateFormat getDateTimeFormat(){
         return new SimpleDateFormat("dd-MM-yyyy HH:mm"+ "", Locale.US);
+    }
+
+    public static String getDateTime(long time){
+        return getDateTimeFormat().format(new Date(time*1000));
     }
 }
