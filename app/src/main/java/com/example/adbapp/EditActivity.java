@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -22,6 +23,8 @@ import com.example.adbapp.RecordList.Record;
 public class EditActivity extends AppCompatActivity {
 
     FrameLayout frameLayout;
+    LayoutInflater inflater;
+    View viewEditable;
 
     Editable editable;
 
@@ -31,10 +34,10 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
 
         Bundle extras = getIntent().getExtras();
-
-        View view = null;
+        inflater = LayoutInflater.from(getApplicationContext());
 
         if (extras != null) {
+            viewEditable = ContentView.getViewEditableRecord(inflater,frameLayout,extras.getInt("field_type"));
             switch (extras.getInt("field_type")) {
                 case TYPE_RECORD:
                     editable = new EditableRecord();
@@ -55,7 +58,7 @@ public class EditActivity extends AppCompatActivity {
                                            extras.getString("name"),
                                            extras.getLong("time"),
                                            extras.getInt("field_type")),
-                                view,
+                                viewEditable,
                                 frameLayout);
 
         editable.FillingContainer();

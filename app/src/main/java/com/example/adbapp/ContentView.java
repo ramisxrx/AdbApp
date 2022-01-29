@@ -85,6 +85,20 @@ public class ContentView{
         return view;
     }
 
+    public static View getViewEditableRecord(LayoutInflater layoutInflater,ViewGroup parent, int viewType){
+        View view;
+        switch(viewType){
+            case TYPE_RECORD:
+                view = layoutInflater.inflate(R.layout.record_item, parent, false);
+                Log.d(TAG, "getViewEditableRecord: record");
+                break;
+            default:
+                view = null;
+                break;
+        }
+        return view;
+    }
+
     public static int getListItemViewType(Record record, int typeView){
         Log.d(TAG, "getListItemViewType: record.getField_type()="+String.valueOf(record.getField_type()));
         if(typeView==0) {
