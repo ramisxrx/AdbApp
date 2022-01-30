@@ -6,6 +6,7 @@ public class SaveButtonEditRecord extends SaveButtonEdit{
 
     public SaveButtonEditRecord(Button button){
         this.button = button;
+        setInitText();
     }
 
     @Override
