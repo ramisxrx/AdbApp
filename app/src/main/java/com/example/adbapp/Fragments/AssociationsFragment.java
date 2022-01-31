@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.R;
+import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
@@ -32,6 +33,7 @@ public class AssociationsFragment extends Fragment {
 
     public interface ActionsOfActivity{
         void SwitchingToAssociationsMode();
+        void SwitchingToEditing(Record record);
     }
 
     private final ActionsOfActivity actionsOfActivity;
@@ -46,12 +48,11 @@ public class AssociationsFragment extends Fragment {
     RecordAdapter recordAdapter;
     public AssociativeListFilling associativeList;
 
-    private Context context, contextActivity;
+    private Context context;
     boolean viewCreated=false;
 
     public AssociationsFragment(Context context,ActionsOfActivity actionsOfActivity) {
         this.context = context;
-        this.contextActivity = context;
         this.actionsOfActivity = actionsOfActivity;
 
         AssociativeListFilling.NotifyViews_after associativeList_notifyViews_after = new AssociativeListFilling.NotifyViews_after() {
@@ -140,11 +141,14 @@ public class AssociationsFragment extends Fragment {
         RecordAdapter.OnRecordLongClickListener recordLongClickListener = new RecordAdapter.OnRecordLongClickListener() {
             @Override
             public void onRecordLongClick(int position) {
+                /*
                 if(associativeList.cur_level!=0) {
                     Log.d(TAG, "onRecordLongClick: ");
                     Log.d(TAG, "onRecordLongClick: cur_level="+String.valueOf(associativeList.cur_level));
                     associativeList.ActionOfInitialization(associativeList.records.get(position).getRecord_id());
-                }    
+                }
+                 */
+                actionsOfActivity.SwitchingToEditing(associativeList.records.get(position));
             }
         };
 
@@ -217,14 +221,12 @@ public class AssociationsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         Log.d(TAG, "onDetach: ");
-        //context = contextActivity;
         viewCreated = false;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        //context = getActivity().getApplicationContext();
         Log.d(TAG, "onStop: "+context.getPackageResourcePath());
     }
 

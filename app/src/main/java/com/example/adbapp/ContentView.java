@@ -89,7 +89,7 @@ public class ContentView{
         View view;
         switch(viewType){
             case TYPE_RECORD:
-                view = layoutInflater.inflate(R.layout.record_item, parent, false);
+                view = layoutInflater.inflate(R.layout.container_edit_record, parent, false);
                 Log.d(TAG, "getViewEditableRecord: record");
                 break;
             default:

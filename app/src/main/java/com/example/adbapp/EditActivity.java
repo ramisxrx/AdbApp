@@ -35,6 +35,7 @@ public class EditActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         inflater = LayoutInflater.from(getApplicationContext());
+        frameLayout = (FrameLayout) findViewById(R.id.container_edit_record);
 
         if (extras != null) {
             viewEditable = ContentView.getViewEditableRecord(inflater,frameLayout,extras.getInt("field_type"));

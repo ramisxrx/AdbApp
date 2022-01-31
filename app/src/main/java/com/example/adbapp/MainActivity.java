@@ -86,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "AssociationsFragment.ActionsOfActivity: ");
                 }
             }
+
+            @Override
+            public void SwitchingToEditing(Record record) {
+                editRecord(record,0);
+            }
         };
 
         OverviewFragment.ActionsOfActivity overview_ActionsOfActivity = new OverviewFragment.ActionsOfActivity() {
@@ -96,6 +101,11 @@ public class MainActivity extends AppCompatActivity {
                 toast.show();
                 associationsFragment = new AssociationsFragment(getApplicationContext(),associations_ActionsOfActivity);
                 associationsFragment.associativeList.ActionOfInitialization(record_id);
+            }
+
+            @Override
+            public void SwitchingToEditing(Record record) {
+                editRecord(record,0);
             }
         };
 
@@ -169,12 +179,14 @@ public class MainActivity extends AppCompatActivity {
         mStartForResult.launch(intent);
     }
 
-    public void LevelUp(View view){
-        //if(associationMode)
-        //    associativeList.ToPreviousLevel();
-        //else
-        //    overviewList.ToPreviousLevel();
-        //overviewList.bdView();
+    public void editRecord(Record record, int object_id){
+        Intent intent = new Intent(getApplicationContext(), EditActivity.class);
+        intent.putExtra("record_id",record.getRecord_id());
+        intent.putExtra("name",record.getName());
+        intent.putExtra("time",record.getTime());
+        intent.putExtra("field_type",record.getField_type());
+        intent.putExtra("object_id",object_id);
+        mStartForResult.launch(intent);
     }
 
     @Override
