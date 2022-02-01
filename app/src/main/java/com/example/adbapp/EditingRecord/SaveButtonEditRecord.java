@@ -6,13 +6,19 @@ public class SaveButtonEditRecord extends SaveButtonEdit{
 
     public SaveButtonEditRecord(Button button){
         this.button = button;
-        setInitText();
+        switchingToLock();
     }
 
     @Override
-    public void switchingToDelete() {
-        super.switchingToDelete();
+    public void switchingToDeleteCurrent() {
+        super.switchingToDeleteCurrent();
         button.setText("Удалить запись");
+    }
+
+    @Override
+    public void switchingToDeleteChain() {
+        super.switchingToDeleteChain();
+        button.setText("Удалить цепочку");
     }
 
     @Override

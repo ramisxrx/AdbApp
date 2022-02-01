@@ -27,13 +27,35 @@
                 android:layout_gravity="start">
             </FrameLayout>
 
+            <RadioGroup
+                android:id="@+id/radios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp">
+
+                <RadioButton
+                    android:id="@+id/deleteCurrent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Удалить только текущую" />
+
+                <RadioButton
+                    android:id="@+id/deleteChain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Удалить всю цепочку" />
+
+            </RadioGroup>
+
             <Button
                 android:id="@+id/saveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:layout_gravity="end"
-                android:text="Добавить новую запись" />
+                android:layout_gravity="end"/>
         </LinearLayout>
     </ScrollView>
 

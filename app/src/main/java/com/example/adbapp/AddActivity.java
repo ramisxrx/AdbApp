@@ -182,6 +182,7 @@ public class AddActivity extends AppCompatActivity {
 
         Intent data = new Intent();
         data.putExtra("id of added record",recordId);
+        data.putExtra("Activity","Add");
         if(cancel) {
             setResult(RESULT_CANCELED,data);
         }else {

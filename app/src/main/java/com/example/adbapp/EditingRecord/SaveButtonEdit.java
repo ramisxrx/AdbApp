@@ -1,5 +1,6 @@
 package com.example.adbapp.EditingRecord;
 
+import android.view.View;
 import android.widget.Button;
 
 public abstract class SaveButtonEdit {
@@ -10,6 +11,12 @@ public abstract class SaveButtonEdit {
 
     public void setActionOnClickSave(ActionOnClickSave actionOnClickSave){
         this.actionOnClickSave = actionOnClickSave;
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                actionOnClickSave.onClick();
+            }
+        });
     }
 
     public void switchingToLock(){
@@ -18,7 +25,11 @@ public abstract class SaveButtonEdit {
             setInitText();
     }
 
-    public void switchingToDelete(){
+    public void switchingToDeleteCurrent(){
+        button.setEnabled(true);
+    }
+
+    public void switchingToDeleteChain(){
         button.setEnabled(true);
     }
 

@@ -52,6 +52,28 @@ public class WriteRequests {
         cv.clear();
     }
 
+    public void UpdateName(int name_id, String _name){
+        cv.put(COLUMN_NAME,_name);
+        db.update(TABLE_NAMES,cv,COLUMN_ID+"="+name_id,null);
+        cv.clear();
+    }
+
+    public void SetCurrentTime(int record_id){
+        cv.put(COLUMN_TIME,System.currentTimeMillis()/1000);
+        db.update(TABLE_RECORDS,cv,COLUMN_ID+"="+record_id,null);
+        cv.clear();
+    }
+
+    public void UpdateParent_id(int record_id,int parent_id){
+        cv.put(COLUMN_PARENT_ID,parent_id);
+        db.update(TABLE_RECORDS,cv,COLUMN_ID+"="+record_id,null);
+        cv.clear();
+    }
+
+    public void DeleteRecord(int record_id){
+        db.delete(TABLE_RECORDS,COLUMN_ID+"=?", new String[]{String.valueOf(record_id)});
+    }
+
     public void Destroy(){
         db.close();
         dataBaseHelper.close();

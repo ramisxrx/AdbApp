@@ -59,11 +59,12 @@ public class MainActivity extends AppCompatActivity {
                 public void onActivityResult(ActivityResult result) {
 
                     if(result.getResultCode() == Activity.RESULT_OK){
-                        if(!associationMode)
-                            overviewFragment.overviewList.UpdateAfterAddNewRecords();
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                "Новая запись добавлена", Toast.LENGTH_SHORT);
-                        toast.show();
+                        Intent intent = result.getData();
+                        String activity = intent.getStringExtra("Activity");
+                        if(activity.equals("Add")) {
+                            if (!associationMode)
+                                overviewFragment.overviewList.UpdateAfterAddNewRecords();
+                        }
                     }
                 }
             });
