@@ -22,6 +22,7 @@ import com.example.adbapp.Container.ParentText;
 import com.example.adbapp.Container.ParentZeroLevel;
 import com.example.adbapp.DataBase.ReadRequests;
 import com.example.adbapp.DataBase.WriteRequests;
+import com.example.adbapp.EditingRecord.ActionOfDeleteChain;
 import com.example.adbapp.EditingRecord.ActionOfDeleteCurrent;
 import com.example.adbapp.EditingRecord.ActionOfUpdate;
 import com.example.adbapp.EditingRecord.ChangingEdit;
@@ -29,12 +30,13 @@ import com.example.adbapp.EditingRecord.Editable;
 import com.example.adbapp.EditingRecord.EditableRecord;
 import com.example.adbapp.EditingRecord.SaveButtonEdit;
 import com.example.adbapp.EditingRecord.SaveButtonEditRecord;
+import com.example.adbapp.EditingRecord.UIActionAtDeleteChain;
 import com.example.adbapp.EditingRecord.UIActionAtDeleteCurrent;
 import com.example.adbapp.EditingRecord.UIActionAtUpdate;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 
-public class EditActivity extends AppCompatActivity implements ChangingEdit, UIActionAtUpdate, UIActionAtDeleteCurrent {
+public class EditActivity extends AppCompatActivity implements ChangingEdit, UIActionAtUpdate, UIActionAtDeleteCurrent, UIActionAtDeleteChain {
 
     FrameLayout frameLayout;
     LayoutInflater inflater;
@@ -80,7 +82,7 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
                 switch (id) {
                     case R.id.deleteCurrent:
                         saveButtonEdit.switchingToDeleteCurrent();
-                        saveMode = "Update";
+                        saveMode = "DeleteCurrent";
                         saveButtonEdit.setActionOnClickSave(new ActionOfDeleteCurrent(editable.getRecord(),
                                 workThread,
                                 writeRequests,
@@ -89,6 +91,12 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
                         break;
                     case R.id.deleteChain:
                         saveButtonEdit.switchingToDeleteChain();
+                        saveMode = "DeleteChain";
+                        saveButtonEdit.setActionOnClickSave(new ActionOfDeleteChain(editable.getRecord(),
+                                workThread,
+                                writeRequests,
+                                readRequests,
+                                EditActivity.this));
                         break;
                     default:
                         break;
@@ -217,10 +225,33 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
     }
 
     @Override
+    public void beforeActionOfDeleteChain() {
+
+    }
+
+    @Override
+    public void afterActionOfDeleteChain() {
+        String message;
+        switch (editable_type) {
+            case TYPE_RECORD:
+                message = "Текущая запись и цепочка удалены";
+                break;
+            default:
+                message = "";
+                break;
+        }
+
+        Toast toast = Toast.makeText(getApplicationContext(),
+                message, Toast.LENGTH_SHORT);
+        toast.show();
+
+        goHome(false);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         workThread.quit();
     }
-
 
 }
