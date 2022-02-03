@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         actionBar = getSupportActionBar();
         if(actionBar!=null) {
             actionBar.setDisplayUseLogoEnabled(true);
@@ -110,14 +111,14 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        overviewFragment = new OverviewFragment(overview_ActionsOfActivity);
+        overviewFragment = new OverviewFragment(overview_ActionsOfActivity,buttonFAB);
+        buttonFAB.setVisibility(View.GONE);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         fragmentTransaction.replace(R.id.container_main,overviewFragment);
         fragmentTransaction.commit();
 
-        buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         buttonFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

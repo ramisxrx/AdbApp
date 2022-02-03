@@ -28,7 +28,6 @@ public class AddActivity extends AppCompatActivity {
     FrameLayout frameLayout;
 
     RecordContainer recordContainer;
-    TypeRecordAdapter typeRecordAdapter;
     AddRecordFragment addRecordFragment;
     AddTextFragment addTextFragment;
     FragmentTransaction fragmentTransaction;
@@ -62,7 +61,6 @@ public class AddActivity extends AppCompatActivity {
         }
 
         recordContainer = new RecordContainer(getApplicationContext(),frameLayout);
-        typeRecordAdapter = new TypeRecordAdapter(getApplicationContext(),R.layout.record_item,typesRecord);
 
         //spinner.setAdapter(typeRecordAdapter);
         /*

@@ -20,6 +20,7 @@ import com.example.adbapp.Container.ParentRecordBase;
 import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.FillingOfList.OverviewListFilling;
 import com.example.adbapp.R;
+import com.example.adbapp.RecordList.OnScrollListenerRecyclerView;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
@@ -46,14 +47,17 @@ public class OverviewFragment extends Fragment {
     FrameLayout frameLayout;
     FloatingActionButton buttonFAB;
 
+    OnScrollListenerRecyclerView onScrollListenerRecyclerView;
     HandlerThreadOfFilling BG_Thread;
     public RecordContainer recordContainer;
     public ParentRecordBase parentRecordBase;
     RecordAdapter recordAdapter;
     public OverviewListFilling overviewList;
+    private FloatingActionButton floatingActionButton;
 
-    public OverviewFragment(ActionsOfActivity actionsOfActivity) {
+    public OverviewFragment(ActionsOfActivity actionsOfActivity,FloatingActionButton floatingActionButton) {
         this.actionsOfActivity = actionsOfActivity;
+        this.floatingActionButton = floatingActionButton;
     }
 
     @Override
@@ -68,6 +72,8 @@ public class OverviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
+
+        onScrollListenerRecyclerView = new OnScrollListenerRecyclerView(floatingActionButton);
 
         frameLayout = (FrameLayout) view.findViewById(R.id.container_parent);
         buttonLevelBack = view.findViewById(R.id.buttonLevelBack);
@@ -118,6 +124,8 @@ public class OverviewFragment extends Fragment {
         recordContainer.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level),0);
         recordAdapter = new RecordAdapter(getContext(), overviewList.records,1, recordClickListener,recordLongClickListener);
         recordList.setAdapter(recordAdapter);
+
+        recordList.addOnScrollListener(onScrollListenerRecyclerView);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(getContext());
         layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);
