@@ -17,9 +17,25 @@ public class OnScrollListenerRecyclerView extends RecyclerView.OnScrollListener 
     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
-        if(dy>0)
+        //if(dy>0)
+            //floatingActionButton.hide();
+        //if(dy<0)
+            //floatingActionButton.show();
+
+        if (dy > 0 ||dy<0 && floatingActionButton.isShown())
+        {
             floatingActionButton.hide();
-        if(dy<0)
+        }
+    }
+
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+
+        if (newState == RecyclerView.SCROLL_STATE_IDLE)
+        {
             floatingActionButton.show();
+        }
+
+        super.onScrollStateChanged(recyclerView, newState);
     }
 }

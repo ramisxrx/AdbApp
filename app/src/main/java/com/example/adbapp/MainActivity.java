@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         };
 
         overviewFragment = new OverviewFragment(overview_ActionsOfActivity,buttonFAB);
-        buttonFAB.setVisibility(View.GONE);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
 

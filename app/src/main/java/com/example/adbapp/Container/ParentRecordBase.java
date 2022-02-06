@@ -5,14 +5,15 @@ import static com.example.adbapp.ContentView.TYPE_RECORD;
 import static com.example.adbapp.ContentView.TYPE_TEXT;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.example.adbapp.ContentView;
-import com.example.adbapp.Interfaces.Fillable;
-import com.example.adbapp.Interfaces.JumpCommand;
+import com.example.adbapp.Interfaces.ActionsPopupMenu;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 
@@ -20,12 +21,16 @@ public class ParentRecordBase {
     private final FrameLayout frameLayout;
     private final LayoutInflater inflater;
     private View view;
+    private final Context context;
+    private ActionsPopupMenu actionsPopupMenu;
 
     ContainerRecord containerRecord;
 
-    public ParentRecordBase(Context context, FrameLayout frameLayout) {
+    public ParentRecordBase(Context context, FrameLayout frameLayout, ActionsPopupMenu actionsPopupMenu) {
+        this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.frameLayout = frameLayout;
+        this.actionsPopupMenu = actionsPopupMenu;
     }
 
     public void FillingContainer(Record record){
@@ -51,6 +56,32 @@ public class ParentRecordBase {
             }
         }
         containerRecord.FillingContainer(record);
+
+        frameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(context, view);
+                popupMenu.inflate(R.menu.popup_menu);
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()){
+                            case R.id.search_associations:
+                                return true;
+
+                            case R.id.edit_record:
+                                actionsPopupMenu.SwitchingToEditing(containerRecord.getRecord());
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+
+                if(containerRecord.getRecord().getField_type()!=TYPE_VIEW_0)
+                    popupMenu.show();
+            }
+        });
     }
 
     public Record getRecord(){

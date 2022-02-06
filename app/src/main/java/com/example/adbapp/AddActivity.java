@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.adbapp.Container.ParentRecordBase;
 import com.example.adbapp.FillingOfList.AddingNewRecord;
 import com.example.adbapp.Fragments.AddRecordFragment;
 import com.example.adbapp.Fragments.AddTextFragment;
@@ -27,6 +28,7 @@ public class AddActivity extends AppCompatActivity {
     Spinner spinner;
     FrameLayout frameLayout;
 
+    public ParentRecordBase parentRecordBase;
     RecordContainer recordContainer;
     AddRecordFragment addRecordFragment;
     AddTextFragment addTextFragment;

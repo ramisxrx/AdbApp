@@ -3,13 +3,16 @@ package com.example.adbapp.Fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 import com.example.adbapp.Container.ParentRecordBase;
 import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.FillingOfList.OverviewListFilling;
+import com.example.adbapp.Interfaces.ActionsPopupMenu;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.OnScrollListenerRecyclerView;
 import com.example.adbapp.RecordList.Record;
@@ -49,15 +53,16 @@ public class OverviewFragment extends Fragment {
 
     OnScrollListenerRecyclerView onScrollListenerRecyclerView;
     HandlerThreadOfFilling BG_Thread;
-    public RecordContainer recordContainer;
     public ParentRecordBase parentRecordBase;
     RecordAdapter recordAdapter;
     public OverviewListFilling overviewList;
     private FloatingActionButton floatingActionButton;
+    private ActionsPopupMenu actionsPopupMenu;
 
-    public OverviewFragment(ActionsOfActivity actionsOfActivity,FloatingActionButton floatingActionButton) {
+    public OverviewFragment(ActionsOfActivity actionsOfActivity,FloatingActionButton floatingActionButton,ActionsPopupMenu actionsPopupMenu) {
         this.actionsOfActivity = actionsOfActivity;
         this.floatingActionButton = floatingActionButton;
+        this.actionsPopupMenu = actionsPopupMenu;
     }
 
     @Override
@@ -79,9 +84,8 @@ public class OverviewFragment extends Fragment {
         buttonLevelBack = view.findViewById(R.id.buttonLevelBack);
         RecyclerView recordList = (RecyclerView) view.findViewById(R.id.list);
         buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
-        recordContainer = new RecordContainer(getContext(),frameLayout);
 
-        parentRecordBase = new ParentRecordBase(getContext(),frameLayout);
+        parentRecordBase = new ParentRecordBase(getContext(),frameLayout,actionsPopupMenu);
 
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
             //addRecord(record.getRecord_id());
@@ -98,15 +102,14 @@ public class OverviewFragment extends Fragment {
         OverviewListFilling.NotifyViews_after notifyViews_after = new OverviewListFilling.NotifyViews_after() {
             @Override
             public void ActionDown() {
-                recordContainer.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level),1);
+                parentRecordBase.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void ToPreviousLevel() {
-                recordContainer.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level),1);
-                //recordList.smoothScrollToPosition(overviewList.selItemCurLevel);
+                parentRecordBase.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
                 recordAdapter.notifyDataSetChanged();
                 recordList.scrollToPosition(overviewList.selItemCurLevel);
                 if(overviewList.cur_level==0)
@@ -121,7 +124,7 @@ public class OverviewFragment extends Fragment {
 
         overviewList = new OverviewListFilling(getContext(),BG_Thread,notifyViews_after);
 
-        recordContainer.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level),0);
+        parentRecordBase.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
         recordAdapter = new RecordAdapter(getContext(), overviewList.records,1, recordClickListener,recordLongClickListener);
         recordList.setAdapter(recordAdapter);
 
