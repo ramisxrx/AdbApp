@@ -33,13 +33,14 @@ import com.example.adbapp.Fragments.AssociationsFragment;
 import com.example.adbapp.Fragments.OverviewFragment;
 import com.example.adbapp.Fragments.RecordContainer;
 import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
+import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ActionsPopupMenu {
 
     ActionBar actionBar;
 
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        overviewFragment = new OverviewFragment(overview_ActionsOfActivity,buttonFAB);
+        overviewFragment = new OverviewFragment(overview_ActionsOfActivity,buttonFAB,this);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
@@ -205,5 +206,15 @@ public class MainActivity extends AppCompatActivity {
 
         //records.clear();
         //overviewList.Destroy();
+    }
+
+    @Override
+    public void CheckingAssociations(Record record) {
+
+    }
+
+    @Override
+    public void SwitchingToEditing(Record record) {
+
     }
 }

@@ -10,10 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import com.example.adbapp.ContentView;
-import com.example.adbapp.Interfaces.ActionsPopupMenu;
+import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 

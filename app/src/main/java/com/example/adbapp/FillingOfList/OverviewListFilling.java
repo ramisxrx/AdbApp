@@ -168,6 +168,10 @@ public class OverviewListFilling extends ListFilling{
         }
     };
 
+    public Record getCurrentParentRecord(){
+        return parentRecordByLevel.get(cur_level);
+    }
+
     private void CheckSelectionOfObjId(int position){
         if(selObjId==0 || selObjId!=objIdList.get(position)){
             selObjId = objIdList.get(position);

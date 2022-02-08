@@ -3,26 +3,22 @@ package com.example.adbapp.Fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.example.adbapp.Container.ParentRecordBase;
-import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.FillingOfList.OverviewListFilling;
-import com.example.adbapp.Interfaces.ActionsPopupMenu;
+import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
+import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenu;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.OnScrollListenerRecyclerView;
 import com.example.adbapp.RecordList.Record;
@@ -30,11 +26,6 @@ import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class OverviewFragment extends Fragment {
 
@@ -86,6 +77,7 @@ public class OverviewFragment extends Fragment {
         buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
 
         parentRecordBase = new ParentRecordBase(getContext(),frameLayout,actionsPopupMenu);
+
 
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
             //addRecord(record.getRecord_id());
@@ -174,6 +166,14 @@ public class OverviewFragment extends Fragment {
         });
 
         buttonFAB.setVisibility(View.VISIBLE);
+
+        frameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RecordPopupMenu recordPopupMenu = new RecordPopupMenu(getContext(),view,overviewList.getCurrentParentRecord(),actionsPopupMenu);
+            }
+        });
+
 
         return view;
     }
