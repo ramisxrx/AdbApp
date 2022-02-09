@@ -32,6 +32,7 @@ import com.example.adbapp.FillingOfList.OverviewListFilling;
 import com.example.adbapp.Fragments.AssociationsFragment;
 import com.example.adbapp.Fragments.OverviewFragment;
 import com.example.adbapp.Fragments.RecordContainer;
+import com.example.adbapp.Interfaces.Associations_ActionsOfActivity;
 import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.RecordList.Record;
@@ -40,7 +41,7 @@ import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MainActivity extends AppCompatActivity implements ActionsPopupMenu {
+public class MainActivity extends AppCompatActivity implements ActionsPopupMenu, Associations_ActionsOfActivity {
 
     ActionBar actionBar;
 
@@ -81,34 +82,19 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu 
             actionBar.setDisplayHomeAsUpEnabled(false);
         }
 
-        AssociationsFragment.ActionsOfActivity associations_ActionsOfActivity = new AssociationsFragment.ActionsOfActivity() {
-            @Override
-            public void SwitchingToAssociationsMode() {
-                if(!associationMode) {
-                    SwitchingMode(true);
-                    Log.d(TAG, "AssociationsFragment.ActionsOfActivity: ");
-                }
-            }
-
-            @Override
-            public void SwitchingToEditing(Record record) {
-                editRecord(record,0);
-            }
-        };
-
         OverviewFragment.ActionsOfActivity overview_ActionsOfActivity = new OverviewFragment.ActionsOfActivity() {
             @Override
             public void CheckingAssociations(int record_id) {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Callback: associationsFragment.associativeList.ActionOfInitialization(record_id)", Toast.LENGTH_SHORT);
-                toast.show();
-                associationsFragment = new AssociationsFragment(getApplicationContext(),associations_ActionsOfActivity);
-                associationsFragment.associativeList.ActionOfInitialization(record_id);
+                //Toast toast = Toast.makeText(getApplicationContext(),
+                //        "Callback: associationsFragment.associativeList.ActionOfInitialization(record_id)", Toast.LENGTH_SHORT);
+                //toast.show();
+                //associationsFragment = new AssociationsFragment(getApplicationContext(),associations_ActionsOfActivity);
+                //associationsFragment.associativeList.ActionOfInitialization(record_id);
             }
 
             @Override
             public void SwitchingToEditing(Record record) {
-                editRecord(record,0);
+                //editRecord(record,0);
             }
         };
 
@@ -123,9 +109,9 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu 
             @Override
             public void onClick(View view) {
                 if(associationMode){
-                    addRecord(associationsFragment.recordContainer.getRecord(),associationsFragment.associativeList.selObjId);
+                    addRecord(associationsFragment.parentContainer.getRecord(),associationsFragment.associativeList.selObjId);
                 }else{
-                    addRecord(overviewFragment.recordContainer.getRecord(),overviewFragment.overviewList.selObjId);
+                    addRecord(overviewFragment.parentContainer.getRecord(),overviewFragment.overviewList.selObjId);
                 }
             }
         });
@@ -210,11 +196,20 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu 
 
     @Override
     public void CheckingAssociations(Record record) {
+        associationsFragment = new AssociationsFragment(getApplicationContext(),this,this);
+        associationsFragment.associativeList.ActionOfInitialization(record.getRecord_id());
+    }
 
+    @Override
+    public void SwitchingToAssociationsMode() {
+        if(!associationMode) {
+            SwitchingMode(true);
+            Log.d(TAG, "AssociationsFragment.ActionsOfActivity: ");
+        }
     }
 
     @Override
     public void SwitchingToEditing(Record record) {
-
+        editRecord(record,0);
     }
 }

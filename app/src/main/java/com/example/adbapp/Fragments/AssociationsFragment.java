@@ -19,7 +19,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.example.adbapp.Container.ContainerRecord;
+import com.example.adbapp.Container.FactoryParentRecord;
 import com.example.adbapp.FillingOfList.AssociativeListFilling;
+import com.example.adbapp.Interfaces.Associations_ActionsOfActivity;
+import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
+import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenu;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
@@ -31,12 +36,9 @@ public class AssociationsFragment extends Fragment {
 
     private static final String TAG = "**AssociationsFragment*";
 
-    public interface ActionsOfActivity{
-        void SwitchingToAssociationsMode();
-        void SwitchingToEditing(Record record);
-    }
 
-    private final ActionsOfActivity actionsOfActivity;
+    private final Associations_ActionsOfActivity actionsOfActivity;
+    private final ActionsPopupMenu actionsPopupMenu;
 
     Button buttonLevelBack;
     FrameLayout frameLayout;
@@ -44,16 +46,18 @@ public class AssociationsFragment extends Fragment {
     FloatingActionButton buttonFAB;
 
     HandlerThreadOfFilling BG_Thread;
-    public RecordContainer recordContainer;
+    public ContainerRecord parentContainer;
+    public FactoryParentRecord factoryParentRecord;
     RecordAdapter recordAdapter;
     public AssociativeListFilling associativeList;
 
     private Context context;
     boolean viewCreated=false;
 
-    public AssociationsFragment(Context context,ActionsOfActivity actionsOfActivity) {
+    public AssociationsFragment(Context context,Associations_ActionsOfActivity actionsOfActivity,ActionsPopupMenu actionsPopupMenu) {
         this.context = context;
         this.actionsOfActivity = actionsOfActivity;
+        this.actionsPopupMenu = actionsPopupMenu;
 
         AssociativeListFilling.NotifyViews_after associativeList_notifyViews_after = new AssociativeListFilling.NotifyViews_after() {
             @Override
@@ -63,7 +67,7 @@ public class AssociationsFragment extends Fragment {
                             "Ассоциации найдены! AssociationFragment", Toast.LENGTH_SHORT);
                     toast.show();
                     if(viewCreated) {
-                        recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),0);
+                        parentContainer = factoryParentRecord.recreateContainer(associativeList.getCurrentParentRecord(),parentContainer);
                         recordAdapter.notifyDataSetChanged();
                     }
                     else
@@ -78,7 +82,7 @@ public class AssociationsFragment extends Fragment {
 
             @Override
             public void ActionDown() {
-                recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),1);
+                parentContainer = factoryParentRecord.recreateContainer(associativeList.getCurrentParentRecord(),parentContainer);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
                 buttonFAB.setVisibility(View.VISIBLE);
@@ -86,7 +90,7 @@ public class AssociationsFragment extends Fragment {
 
             @Override
             public void ActionUp() {
-                recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),1);
+                parentContainer = factoryParentRecord.recreateContainer(associativeList.getCurrentParentRecord(),parentContainer);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
                 buttonFAB.setVisibility(View.VISIBLE);
@@ -94,7 +98,7 @@ public class AssociationsFragment extends Fragment {
 
             @Override
             public void ToPreviousLevel() {
-                recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),1);
+                parentContainer = factoryParentRecord.recreateContainer(associativeList.getCurrentParentRecord(),parentContainer);
                 recordAdapter.notifyDataSetChanged();
                 recordList.scrollToPosition(associativeList.selItemCurLevel);
                 if(associativeList.cur_level==0) {
@@ -125,7 +129,7 @@ public class AssociationsFragment extends Fragment {
         buttonLevelBack = view.findViewById(R.id.buttonLevelBack);
         recordList = (RecyclerView) view.findViewById(R.id.list);
         buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
-        recordContainer = new RecordContainer(getContext(),frameLayout);
+        factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout);
 
         return view;
     }
@@ -148,11 +152,10 @@ public class AssociationsFragment extends Fragment {
                     associativeList.ActionOfInitialization(associativeList.records.get(position).getRecord_id());
                 }
                  */
-                actionsOfActivity.SwitchingToEditing(associativeList.records.get(position));
+                //actionsOfActivity.SwitchingToEditing(associativeList.records.get(position));
             }
         };
-
-        recordContainer.FillingContainer(associativeList.parentRecordByLevel.get(associativeList.cur_level),0);
+        parentContainer = factoryParentRecord.createInitialContainer(associativeList.getCurrentParentRecord());
         recordAdapter = new RecordAdapter(getContext(), associativeList.records,1, recordClickListener,recordLongClickListener);
 
         recordList.setAdapter(recordAdapter);
@@ -211,6 +214,13 @@ public class AssociationsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 associativeList.ToPreviousLevel();
+            }
+        });
+
+        frameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RecordPopupMenu recordPopupMenu = new RecordPopupMenu(getContext(),view,parentContainer.getRecord(),actionsPopupMenu);
             }
         });
 

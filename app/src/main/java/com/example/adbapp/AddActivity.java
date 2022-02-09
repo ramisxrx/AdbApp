@@ -14,7 +14,8 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.adbapp.Container.ParentRecordBase;
+import com.example.adbapp.Container.ContainerRecord;
+import com.example.adbapp.Container.FactoryParentRecord;
 import com.example.adbapp.FillingOfList.AddingNewRecord;
 import com.example.adbapp.Fragments.AddRecordFragment;
 import com.example.adbapp.Fragments.AddTextFragment;
@@ -25,18 +26,15 @@ public class AddActivity extends AppCompatActivity {
 
     Button saveButton;
     ActionBar actionBar;
-    Spinner spinner;
     FrameLayout frameLayout;
 
-    public ParentRecordBase parentRecordBase;
-    RecordContainer recordContainer;
     AddRecordFragment addRecordFragment;
     AddTextFragment addTextFragment;
     FragmentTransaction fragmentTransaction;
+    public FactoryParentRecord factoryParentRecord;
+    public ContainerRecord parentContainer;
 
     private static final String TAG = "**AddActivity**";
-
-    private final String[] typesRecord = { "Запись", "Текст", "Дата" };
 
     AddingNewRecord addingNewRecord;
 
@@ -62,32 +60,14 @@ public class AddActivity extends AppCompatActivity {
             actionBar.setSubtitle("Добавление записи");
         }
 
-        recordContainer = new RecordContainer(getApplicationContext(),frameLayout);
-
-        //spinner.setAdapter(typeRecordAdapter);
-        /*
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Ваш выбор: " + typesRecord[i], Toast.LENGTH_SHORT);
-                toast.show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-         */
+        factoryParentRecord = new FactoryParentRecord(getApplicationContext(),frameLayout);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            recordContainer.FillingContainer(new Record(extras.getInt("record_id"),
-                                                        extras.getString("name"),
-                                                        extras.getLong("time"),
-                                                        extras.getInt("field_type")), 1);
+            parentContainer = factoryParentRecord.createInitialContainer(new Record(extras.getInt("record_id"),
+                    extras.getString("name"),
+                    extras.getLong("time"),
+                    extras.getInt("field_type")));
 
             object_id = extras.getInt("object_id");
         }
@@ -109,7 +89,7 @@ public class AddActivity extends AppCompatActivity {
                 goHome(!addingNewRecord.successAddingNewRecord);
             }
         };
-        addingNewRecord = new AddingNewRecord(getApplicationContext(),object_id,recordContainer.getRecord().getRecord_id(),notifyViews_before,notifyViews_after);
+        addingNewRecord = new AddingNewRecord(getApplicationContext(),object_id,parentContainer.getRecord().getRecord_id(),notifyViews_before,notifyViews_after);
         addingNewRecord.setTypeContent(ContentView.TYPE_RECORD);
     }
 

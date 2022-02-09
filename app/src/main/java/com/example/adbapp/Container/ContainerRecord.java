@@ -14,14 +14,6 @@ public abstract class ContainerRecord {
     protected ContainerRecord(FrameLayout frameLayout, View view){
         this.frameLayout = frameLayout;
         this.view = view;
-        //DeleteOldViewFramelayout();
-        //if(thisIsNewView(view)){
-         //   FindingNewViews();
-        //}
-    }
-
-    private boolean thisIsNewView(View view){
-        return this.view != view || this.view==null;
     }
 
     private void DeleteOldViewFramelayout(){
@@ -42,7 +34,6 @@ public abstract class ContainerRecord {
         if(this.record!=record)
             FindingNewViews();
         setRecord(record);
-       //if(thisIsNewView(view))
         fillView();
         DeleteOldViewFramelayout();
         AddNewViewFramelayout();

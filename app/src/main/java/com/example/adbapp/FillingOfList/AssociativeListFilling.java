@@ -211,6 +211,10 @@ public class AssociativeListFilling extends ListFilling{
         }
     }
 
+    public Record getCurrentParentRecord(){
+        return parentRecordByLevel.get(cur_level);
+    }
+
     public void Destroy(){
         records.clear();
         parentRecordByLevel.clear();

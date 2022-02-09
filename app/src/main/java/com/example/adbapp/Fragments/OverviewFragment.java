@@ -15,7 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
-import com.example.adbapp.Container.ParentRecordBase;
+import com.example.adbapp.Container.ContainerRecord;
+import com.example.adbapp.Container.FactoryParentRecord;
 import com.example.adbapp.FillingOfList.OverviewListFilling;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenu;
@@ -44,11 +45,12 @@ public class OverviewFragment extends Fragment {
 
     OnScrollListenerRecyclerView onScrollListenerRecyclerView;
     HandlerThreadOfFilling BG_Thread;
-    public ParentRecordBase parentRecordBase;
+    public FactoryParentRecord factoryParentRecord;
+    public ContainerRecord parentContainer;
     RecordAdapter recordAdapter;
     public OverviewListFilling overviewList;
     private FloatingActionButton floatingActionButton;
-    private ActionsPopupMenu actionsPopupMenu;
+    private final ActionsPopupMenu actionsPopupMenu;
 
     public OverviewFragment(ActionsOfActivity actionsOfActivity,FloatingActionButton floatingActionButton,ActionsPopupMenu actionsPopupMenu) {
         this.actionsOfActivity = actionsOfActivity;
@@ -76,7 +78,7 @@ public class OverviewFragment extends Fragment {
         RecyclerView recordList = (RecyclerView) view.findViewById(R.id.list);
         buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
 
-        parentRecordBase = new ParentRecordBase(getContext(),frameLayout,actionsPopupMenu);
+        factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout);
 
 
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
@@ -87,21 +89,23 @@ public class OverviewFragment extends Fragment {
             @Override
             public void onRecordLongClick(int position) {
                 //actionsOfActivity.CheckingAssociations(overviewList.records.get(position).getRecord_id());
-                actionsOfActivity.SwitchingToEditing(overviewList.records.get(position));
+                //actionsOfActivity.SwitchingToEditing(overviewList.records.get(position));
             }
         };
 
         OverviewListFilling.NotifyViews_after notifyViews_after = new OverviewListFilling.NotifyViews_after() {
             @Override
             public void ActionDown() {
-                parentRecordBase.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
+                //factoryParentRecord.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
+                parentContainer = factoryParentRecord.recreateContainer(overviewList.getCurrentParentRecord(),parentContainer);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void ToPreviousLevel() {
-                parentRecordBase.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
+                //factoryParentRecord.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
+                parentContainer = factoryParentRecord.recreateContainer(overviewList.getCurrentParentRecord(),parentContainer);
                 recordAdapter.notifyDataSetChanged();
                 recordList.scrollToPosition(overviewList.selItemCurLevel);
                 if(overviewList.cur_level==0)
@@ -116,7 +120,9 @@ public class OverviewFragment extends Fragment {
 
         overviewList = new OverviewListFilling(getContext(),BG_Thread,notifyViews_after);
 
-        parentRecordBase.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
+        factoryParentRecord.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
+        parentContainer = factoryParentRecord.createInitialContainer(overviewList.getCurrentParentRecord());
+
         recordAdapter = new RecordAdapter(getContext(), overviewList.records,1, recordClickListener,recordLongClickListener);
         recordList.setAdapter(recordAdapter);
 
@@ -170,7 +176,7 @@ public class OverviewFragment extends Fragment {
         frameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RecordPopupMenu recordPopupMenu = new RecordPopupMenu(getContext(),view,overviewList.getCurrentParentRecord(),actionsPopupMenu);
+                RecordPopupMenu recordPopupMenu = new RecordPopupMenu(getContext(),view,parentContainer.getRecord(),actionsPopupMenu);
             }
         });
 

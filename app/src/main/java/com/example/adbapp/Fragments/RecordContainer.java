@@ -1,26 +1,14 @@
 package com.example.adbapp.Fragments;
 
 import android.content.Context;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.example.adbapp.Container.ContainerRecord;
-import com.example.adbapp.Container.ParentRecord;
-import com.example.adbapp.Container.ParentRecordBase;
-import com.example.adbapp.ContentView;
-import com.example.adbapp.Interfaces.Fillable;
-import com.example.adbapp.R;
+import com.example.adbapp.Container.FactoryParentRecord;
 import com.example.adbapp.RecordList.Record;
-
-import org.w3c.dom.Text;
-
-import java.util.Date;
 
 public class RecordContainer {
 
@@ -32,7 +20,7 @@ public class RecordContainer {
     private TextView nameView,timeView;
     private TextView textView;
 
-    private ParentRecordBase parentRecordBase;
+    private FactoryParentRecord factoryParentRecord;
 
     public RecordContainer(Context context, FrameLayout frameLayout) {
         this.inflater = LayoutInflater.from(context);
@@ -41,12 +29,12 @@ public class RecordContainer {
                 (FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
 
-        parentRecordBase = new ParentRecordBase(context,frameLayout);
+        factoryParentRecord = new FactoryParentRecord(context,frameLayout);
     }
 
     public void FillingContainer(Record record,int viewType){
 
-        parentRecordBase.FillingContainer(record);
+        factoryParentRecord.FillingContainer(record);
 
         /*
         this.record = record;
@@ -86,6 +74,6 @@ public class RecordContainer {
     }
 
     public Record getRecord(){
-        return parentRecordBase.getRecord();
+        return factoryParentRecord.getRecord();
     }
 }
