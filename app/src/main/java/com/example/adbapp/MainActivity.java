@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.FillingOfList.OverviewListFilling;
+import com.example.adbapp.Fragments.AddTextFragment;
 import com.example.adbapp.Fragments.AssociationsFragment;
 import com.example.adbapp.Fragments.OverviewFragment;
 import com.example.adbapp.Fragments.RecordContainer;
@@ -51,9 +54,13 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
     AssociationsFragment associationsFragment;
     FragmentTransaction fragmentTransaction;
 
+    private MenuItem menuItemSearch, menuItemRecord,menuItemText,menuItemHome;
+    private SearchView searchView;
+    private int searchContent;
+
     private static final String TAG = "**MainActivity**";
 
-    boolean associationMode=false;
+    boolean associationMode=false, searchMode=false;
 
     ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -119,6 +126,33 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_main_menu,menu);
+
+        MenuItem.OnActionExpandListener onActionExpandListener = new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                menuItemRecord.setVisible(true);
+                menuItemText.setVisible(true);
+                return true;
+            }
+        };
+
+        menu.findItem(R.id.search).setOnActionExpandListener(onActionExpandListener);
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+
+        menuItemHome = menu.findItem(R.id.home);
+        menuItemSearch = menu.findItem(R.id.search);
+        menuItemRecord = menu.findItem(R.id.record);
+        menuItemText = menu.findItem(R.id.text);
+
+        menuItemSearch.setVisible(false);
         return true;
     }
 
@@ -126,8 +160,27 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                SwitchingMode(false);
+                if(associationMode)
+                    SwitchingMode(false,searchMode);
+                else
+                    SwitchingMode(false,false);
                 return true;
+
+            case R.id.search:
+                menuItemSearch.setVisible(false);
+                menuItemRecord.setVisible(false);
+                menuItemText.setVisible(false);
+                return true;
+
+            case R.id.record:
+                searchContent = ContentView.TYPE_RECORD;
+                SwitchingMode(false,true);
+                return true;
+            case R.id.text:
+                searchContent = ContentView.TYPE_TEXT;
+                SwitchingMode(false,true);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -138,24 +191,70 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
         super.onResume();
     }
 
-    private void SwitchingMode(boolean associationMode){
+    private void SwitchingMode(boolean associationMode, boolean searchMode){
+        int stateMode=0;
+
+        if(!associationMode && searchMode)
+            stateMode = 1;
+        if(associationMode && !searchMode)
+            stateMode = 2;
+        if(associationMode && searchMode)
+            stateMode = 3;
+
+        switch (stateMode){
+            case 0: // overview mode
+                actionBar.setDisplayHomeAsUpEnabled(false);
+                actionBar.setSubtitle("");
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container_main,overviewFragment);
+                fragmentTransaction.commit();
+                if(this.associationMode){
+                    associationsFragment.onDestroy();
+                    associationsFragment = null;
+                    menuItemSearch.setVisible(true);
+                    menuItemRecord.setVisible(true);
+                    menuItemText.setVisible(true);
+                }
+                break;
+            case 1: // search mode
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                switch (searchContent){
+                    case ContentView.TYPE_RECORD:
+                        actionBar.setSubtitle("Выборка записей");
+                        searchView.setQueryHint("Введите запись");
+                        menuItemSearch.setVisible(true);
+                        break;
+                    case ContentView.TYPE_TEXT:
+                        actionBar.setSubtitle("Выборка текстов");
+                        menuItemSearch.setVisible(false);
+                        break;
+                }
+
+                if(this.associationMode){
+                    menuItemSearch.setVisible(true);
+                    menuItemRecord.setVisible(true);
+                    menuItemText.setVisible(true);
+                }
+                break;
+            default:
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setSubtitle("Режим ассоциаций");
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container_main,associationsFragment);
+                fragmentTransaction.commit();
+
+                menuItemSearch.setVisible(false);
+                menuItemRecord.setVisible(false);
+                menuItemText.setVisible(false);
+                break;
+        }
+
+        //fragmentTransaction.commit();
+
         this.associationMode = associationMode;
-        if(associationMode) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setSubtitle("Режим ассоциаций");
-            fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.container_main,associationsFragment);
-        }
-        else {
-            actionBar.setDisplayHomeAsUpEnabled(false);
-            actionBar.setSubtitle("");
-            fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.container_main,overviewFragment);
-            associationsFragment.onDestroy();
-            associationsFragment = null;
-        }
-        fragmentTransaction.commit();
+        this.searchMode = searchMode;
     }
+
 
     public void addRecord(Record record, int object_id){
         Intent intent = new Intent(getApplicationContext(), AddActivity.class);
@@ -203,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
     @Override
     public void SwitchingToAssociationsMode() {
         if(!associationMode) {
-            SwitchingMode(true);
+            SwitchingMode(true,searchMode);
             Log.d(TAG, "AssociationsFragment.ActionsOfActivity: ");
         }
     }

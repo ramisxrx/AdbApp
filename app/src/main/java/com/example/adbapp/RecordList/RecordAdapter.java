@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adbapp.ContentView;
 import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
+import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
+import com.example.adbapp.PopupMenuOfRecord.ItemPopupMenu;
+import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenu;
 import com.example.adbapp.R;
 
 import java.util.Date;
@@ -32,19 +35,26 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     private final OnRecordClickListener onClickListener;
     private final OnRecordLongClickListener onLongClickListener;
+    private final ActionsPopupMenu actionsPopupMenu=null;
+
+    private boolean allowShowingPopupMenu;
 
     private final LayoutInflater inflater;
+    private final Context context;
     public List<Record> records;
     public int typeView;
     public int posSelItem=-1;
 
 
     public RecordAdapter(Context context, List<Record> records, int typeView, OnRecordClickListener onClickListener,OnRecordLongClickListener onLongClickListener) {
+        this.context = context;
         this.onClickListener = onClickListener;
         this.onLongClickListener = onLongClickListener;
         this.records = records;
         this.typeView = typeView;
         this.inflater = LayoutInflater.from(context);
+
+        this.allowShowingPopupMenu = true;
     }
 
     @Override
@@ -108,6 +118,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
             {
                 // вызываем метод слушателя, передавая ему данные
                 onClickListener.onRecordClick(record, holder.getAdapterPosition());
+                ItemPopupMenu itemPopupMenu = new ItemPopupMenu(context,v,record,actionsPopupMenu,allowShowingPopupMenu);
             }
         });
 
@@ -123,6 +134,10 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     @Override
     public int getItemViewType(int position) {
         return ContentView.getListItemViewType(records.get(position),typeView);
+    }
+
+    public void setAllowShowingPopupMenu(boolean allowShowingPopupMenu) {
+        this.allowShowingPopupMenu = allowShowingPopupMenu;
     }
 
     @Override

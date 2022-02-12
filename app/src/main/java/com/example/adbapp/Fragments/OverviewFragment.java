@@ -61,6 +61,7 @@ public class OverviewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
 
         BG_Thread = new HandlerThreadOfFilling("BG_OverviewFragment");
     }
@@ -68,6 +69,7 @@ public class OverviewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: ");
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
@@ -100,6 +102,7 @@ public class OverviewFragment extends Fragment {
                 parentContainer = factoryParentRecord.recreateContainer(overviewList.getCurrentParentRecord(),parentContainer);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
+                frameLayout.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -168,6 +171,7 @@ public class OverviewFragment extends Fragment {
             public void onClick(View view) {
                 overviewList.ToPreviousLevel();
                 overviewList.bdView();
+                frameLayout.setVisibility(View.GONE);
             }
         });
 
@@ -187,6 +191,7 @@ public class OverviewFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
         overviewList.Destroy();
     }
 }

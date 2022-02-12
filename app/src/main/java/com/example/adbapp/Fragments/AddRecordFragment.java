@@ -138,6 +138,7 @@ public class AddRecordFragment extends Fragment {
         };
 
         recordAdapter = new RecordAdapter(this.getContext(), foundList.records,1, recordClickListener,recordLongClickListener);
+        recordAdapter.setAllowShowingPopupMenu(false);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this.getContext());
