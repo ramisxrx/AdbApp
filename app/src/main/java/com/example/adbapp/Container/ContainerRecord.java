@@ -3,7 +3,6 @@ package com.example.adbapp.Container;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.example.adbapp.Interfaces.Fillable;
 import com.example.adbapp.RecordList.Record;
 
 public abstract class ContainerRecord {

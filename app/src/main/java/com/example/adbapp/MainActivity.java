@@ -41,6 +41,7 @@ import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
+import com.example.adbapp.Search.SearchFragment;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
 
     OverviewFragment overviewFragment;
     AssociationsFragment associationsFragment;
+    SearchFragment searchFragment;
     FragmentTransaction fragmentTransaction;
 
     private MenuItem menuItemSearch, menuItemRecord,menuItemText,menuItemHome;
@@ -132,14 +134,17 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
         MenuItem.OnActionExpandListener onActionExpandListener = new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {
-
+                Log.d(TAG, "onMenuItemActionExpand: ");
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                menuItemSearch.setVisible(true);
                 menuItemRecord.setVisible(true);
                 menuItemText.setVisible(true);
+
+                Log.d(TAG, "onMenuItemActionCollapse: ");
                 return true;
             }
         };
@@ -164,12 +169,15 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                     SwitchingMode(false,searchMode);
                 else
                     SwitchingMode(false,false);
+
+                Log.d(TAG, "onOptionsItemSelected: R.id.home");
                 return true;
 
             case R.id.search:
-                menuItemSearch.setVisible(false);
+                //menuItemSearch.setVisible(false);
                 menuItemRecord.setVisible(false);
                 menuItemText.setVisible(false);
+                Log.d(TAG, "onOptionsItemSelected: R.id.search");
                 return true;
 
             case R.id.record:
@@ -179,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
             case R.id.text:
                 searchContent = ContentView.TYPE_TEXT;
                 SwitchingMode(false,true);
+                Log.d(TAG, "onOptionsItemSelected: R.id.text");
                 return true;
 
             default:
@@ -201,6 +210,8 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
         if(associationMode && searchMode)
             stateMode = 3;
 
+        Log.d(TAG, "SwitchingMode: stateMode="+String.valueOf(stateMode));
+
         switch (stateMode){
             case 0: // overview mode
                 actionBar.setDisplayHomeAsUpEnabled(false);
@@ -208,21 +219,22 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container_main,overviewFragment);
                 fragmentTransaction.commit();
+                menuItemSearch.setVisible(false);
+                menuItemRecord.setVisible(true);
+                menuItemText.setVisible(true);
                 if(this.associationMode){
                     associationsFragment.onDestroy();
                     associationsFragment = null;
-                    menuItemSearch.setVisible(true);
-                    menuItemRecord.setVisible(true);
-                    menuItemText.setVisible(true);
                 }
                 break;
             case 1: // search mode
                 actionBar.setDisplayHomeAsUpEnabled(true);
+                searchFragment = new SearchFragment();
                 switch (searchContent){
                     case ContentView.TYPE_RECORD:
                         actionBar.setSubtitle("Выборка записей");
-                        searchView.setQueryHint("Введите запись");
                         menuItemSearch.setVisible(true);
+                        searchView.setQueryHint("Введите запись");
                         break;
                     case ContentView.TYPE_TEXT:
                         actionBar.setSubtitle("Выборка текстов");

@@ -133,6 +133,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
+        Log.d(TAG, "getItemViewType: ");
         return ContentView.getListItemViewType(records.get(position),typeView);
     }
 

@@ -22,11 +22,11 @@ public class AssociativeListFilling extends ListFilling{
 
     private String TAG = AssociativeListFilling.class.getCanonicalName();
 
-    private HandlerThreadOfFilling workThread;
-    private final NotifyViews_after notifyViews_after;
-    private Cursor cursorInit;
-    private int field_id;
-    private ArrayList<Integer> recordIdByLevels = new ArrayList<>();
+    protected HandlerThreadOfFilling workThread;
+    protected final NotifyViews_after notifyViews_after;
+    protected Cursor cursorInit;
+    protected int field_id;
+    protected ArrayList<Integer> recordIdByLevels = new ArrayList<>();
 
     public boolean selDirection,hasAssociations;
 
@@ -161,7 +161,7 @@ public class AssociativeListFilling extends ListFilling{
         }
     }
 
-    private void FillingInitialList(){
+    protected void FillingInitialList(){
         ClearRecords();
         int k=0;
         for (int i = 0; i < cursorInit.getCount(); i++) {
