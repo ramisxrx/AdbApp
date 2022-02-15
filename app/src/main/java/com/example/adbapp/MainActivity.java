@@ -226,10 +226,14 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                     associationsFragment.onDestroy();
                     associationsFragment = null;
                 }
+                if(this.searchMode){
+                    searchFragment.onDestroy();
+                    searchFragment = null;
+                }
                 break;
             case 1: // search mode
                 actionBar.setDisplayHomeAsUpEnabled(true);
-                searchFragment = new SearchFragment();
+                searchFragment = new SearchFragment(searchContent);
                 switch (searchContent){
                     case ContentView.TYPE_RECORD:
                         actionBar.setSubtitle("Выборка записей");
@@ -241,6 +245,10 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                         menuItemSearch.setVisible(false);
                         break;
                 }
+
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container_main,searchFragment);
+                fragmentTransaction.commit();
 
                 if(this.associationMode){
                     menuItemSearch.setVisible(true);

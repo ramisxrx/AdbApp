@@ -171,7 +171,6 @@ public class OverviewFragment extends Fragment {
             public void onClick(View view) {
                 overviewList.ToPreviousLevel();
                 overviewList.bdView();
-                frameLayout.setVisibility(View.GONE);
             }
         });
 

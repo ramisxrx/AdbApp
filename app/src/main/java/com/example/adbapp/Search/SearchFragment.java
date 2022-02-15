@@ -5,9 +5,11 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +28,8 @@ import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class SearchFragment extends Fragment {
+
+    private static final String TAG = "**SearchFragment*";
 
     Button buttonLevelBack;
     FrameLayout frameLayout;
@@ -76,7 +80,7 @@ public class SearchFragment extends Fragment {
         AssociativeListFilling.NotifyViews_after notifyViews_after = new AssociativeListFilling.NotifyViews_after() {
             @Override
             public void ActionOfInitialization() {
-
+                parentContainer = factoryParentRecord.createInitialContainer(searchList.getCurrentParentRecord());
             }
 
             @Override
@@ -108,7 +112,7 @@ public class SearchFragment extends Fragment {
         };
 
         searchList = new SearchListFilling(getContext(),BG_Thread,notifyViews_after);
-
+        searchList.ActionOfInitialization(_type);
 
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
             //addRecord(record.getRecord_id());
@@ -117,14 +121,7 @@ public class SearchFragment extends Fragment {
         RecordAdapter.OnRecordLongClickListener recordLongClickListener = new RecordAdapter.OnRecordLongClickListener() {
             @Override
             public void onRecordLongClick(int position) {
-                /*
-                if(associativeList.cur_level!=0) {
-                    Log.d(TAG, "onRecordLongClick: ");
-                    Log.d(TAG, "onRecordLongClick: cur_level="+String.valueOf(associativeList.cur_level));
-                    associativeList.ActionOfInitialization(associativeList.records.get(position).getRecord_id());
-                }
-                 */
-                //actionsOfActivity.SwitchingToEditing(associativeList.records.get(position));
+
             }
         };
         recordAdapter = new RecordAdapter(getContext(), searchList.records,1, recordClickListener,recordLongClickListener);
@@ -137,9 +134,58 @@ public class SearchFragment extends Fragment {
 
         recordList.addItemDecoration(new RecordDecoration(searchList.records));
 
-        searchList.ActionOfInitialization(_type);
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
-        parentContainer = factoryParentRecord.createInitialContainer(searchList.getCurrentParentRecord());
+            @Override
+            public int getMovementFlags (RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                int swipeFlags = 0;
+                int dragFlags = 0;
+
+                if(searchList.cur_level==0)
+                    swipeFlags = ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT;
+                else{
+                    if(searchList.selDirection)
+                        swipeFlags = ItemTouchHelper.RIGHT;
+                    else
+                        swipeFlags = ItemTouchHelper.LEFT;
+                }
+
+                return makeMovementFlags(dragFlags,swipeFlags);
+            }
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Log.d(TAG, "onSwiped: ");
+                if(direction==4)
+                    searchList.ActionDown(viewHolder.getAdapterPosition());
+                else
+                    searchList.ActionUp(viewHolder.getAdapterPosition());
+
+                //recordAdapter.notifyDataSetChanged();
+            }
+        };
+
+        ItemTouchHelper touchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        touchHelper.attachToRecyclerView(recordList);
+
+        buttonLevelBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchList.ToPreviousLevel();
+            }
+        });
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        searchList.Destroy();
     }
 
     public void filter(int _type){
