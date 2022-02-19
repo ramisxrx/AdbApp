@@ -36,8 +36,8 @@ public class RecordDecoration extends RecyclerView.ItemDecoration {
             outRect.top = 10;
         }
 
-        outRect.left = 15;
-        outRect.left = 10;
+        //outRect.left = 15;
+        //outRect.left = 10;
     }
 
     @Override

@@ -13,6 +13,7 @@ import android.widget.PopupMenu;
 
 import com.example.adbapp.ContentView;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
+import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 
@@ -21,14 +22,17 @@ public class FactoryParentRecord {
     private final LayoutInflater inflater;
     private View view;
     private final Context context;
-    private ActionsPopupMenu actionsPopupMenu;
+    private final CallPopupMenuContainer callPopupMenuContainer;
+    private boolean visibleImageButton;
 
     ContainerRecord containerRecord;
 
-    public FactoryParentRecord(Context context, FrameLayout frameLayout) {
+    public FactoryParentRecord(Context context, FrameLayout frameLayout, CallPopupMenuContainer callPopupMenuContainer) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.frameLayout = frameLayout;
+        this.callPopupMenuContainer = callPopupMenuContainer;
+        this.visibleImageButton = true;
     }
 
     public void FillingContainer(Record record){
@@ -53,7 +57,7 @@ public class FactoryParentRecord {
                     break;
             }
         }
-        containerRecord.FillingContainer(record);
+        containerRecord.FillingContainer(record,callPopupMenuContainer);
 
     }
 
@@ -66,8 +70,8 @@ public class FactoryParentRecord {
         view = ContentView.getViewParentRecord(inflater,frameLayout,record.getField_type());
         ContainerRecord containerRecord = getContainer(record.getField_type(),view,frameLayout);
 
-        containerRecord.FillingContainer(record);
-
+        containerRecord.FillingContainer(record,callPopupMenuContainer);
+        containerRecord.setVisibleImageButton(visibleImageButton);
         return containerRecord;
     }
 
@@ -76,10 +80,12 @@ public class FactoryParentRecord {
         if (containerRecord.getRecord().getField_type()!=record.getField_type()) {
             view = ContentView.getViewParentRecord(inflater,frameLayout,record.getField_type());
             ContainerRecord newContainerRecord = getContainer(record.getField_type(),view,frameLayout);
-            newContainerRecord.FillingContainer(record);
+            newContainerRecord.FillingContainer(record,callPopupMenuContainer);
+            containerRecord.setVisibleImageButton(visibleImageButton);
             return newContainerRecord;
         }
-        containerRecord.FillingContainer(record);
+        containerRecord.FillingContainer(record,callPopupMenuContainer);
+        containerRecord.setVisibleImageButton(visibleImageButton);
         return containerRecord;
     }
 
@@ -97,8 +103,10 @@ public class FactoryParentRecord {
                 containerRecord = new ParentZeroLevel(view,frameLayout);
                 break;
         }
-
         return containerRecord;
     }
 
+    public void setVisibleImageButton(boolean visibleImageButton) {
+        this.visibleImageButton = visibleImageButton;
+    }
 }

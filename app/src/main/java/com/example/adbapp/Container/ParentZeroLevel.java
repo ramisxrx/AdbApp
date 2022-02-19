@@ -18,9 +18,11 @@ public class ParentZeroLevel extends ContainerRecord{
     }
 
     @Override
-    void FindingNewViews() {
+    protected void FindingNewViews() {
+        super.FindingNewViews();
         nameView = (TextView) view.findViewById(R.id.name);
     }
+
 
     @Override
     void fillView() {

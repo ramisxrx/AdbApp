@@ -18,10 +18,12 @@ public class ParentText extends ContainerRecord {
 
 
     @Override
-    void FindingNewViews() {
+    protected void FindingNewViews() {
+        super.FindingNewViews();
         nameView = (TextView) view.findViewById(R.id.text);
         timeView = (TextView) view.findViewById(R.id.time);
     }
+
 
     @Override
     void fillView() {

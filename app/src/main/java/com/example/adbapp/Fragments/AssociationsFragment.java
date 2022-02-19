@@ -24,6 +24,7 @@ import com.example.adbapp.Container.FactoryParentRecord;
 import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.Interfaces.Associations_ActionsOfActivity;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
+import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenu;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
@@ -32,7 +33,7 @@ import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class AssociationsFragment extends Fragment {
+public class AssociationsFragment extends Fragment implements CallPopupMenuContainer {
 
     private static final String TAG = "**AssociationsFragment*";
 
@@ -129,7 +130,8 @@ public class AssociationsFragment extends Fragment {
         buttonLevelBack = view.findViewById(R.id.buttonLevelBack);
         recordList = (RecyclerView) view.findViewById(R.id.list);
         buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
-        factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout);
+        factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout,this);
+        factoryParentRecord.setVisibleImageButton(false);
 
         return view;
     }
@@ -244,5 +246,10 @@ public class AssociationsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         associativeList.Destroy();
+    }
+
+    @Override
+    public void callPopupMenuContainer(View view) {
+
     }
 }

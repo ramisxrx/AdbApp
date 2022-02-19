@@ -4,7 +4,6 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,33 +15,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.adbapp.FillingOfList.AssociativeListFilling;
-import com.example.adbapp.FillingOfList.OverviewListFilling;
-import com.example.adbapp.Fragments.AddTextFragment;
 import com.example.adbapp.Fragments.AssociationsFragment;
 import com.example.adbapp.Fragments.OverviewFragment;
-import com.example.adbapp.Fragments.RecordContainer;
 import com.example.adbapp.Interfaces.Associations_ActionsOfActivity;
-import com.example.adbapp.ItemTouchHelper.SimpleItemTouchHelperCallback;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.RecordList.Record;
-import com.example.adbapp.RecordList.RecordAdapter;
-import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Search.SearchFragment;
-import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity implements ActionsPopupMenu, Associations_ActionsOfActivity {

@@ -20,6 +20,7 @@ import com.example.adbapp.Container.ContainerRecord;
 import com.example.adbapp.Container.FactoryParentRecord;
 import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.FillingOfList.SearchListFilling;
+import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
@@ -27,7 +28,7 @@ import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements CallPopupMenuContainer {
 
     private static final String TAG = "**SearchFragment*";
 
@@ -66,7 +67,7 @@ public class SearchFragment extends Fragment {
         buttonLevelBack = view.findViewById(R.id.buttonLevelBack);
         recordList = (RecyclerView) view.findViewById(R.id.list);
         buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
-        factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout);
+        factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout,this);
 
         return view;
     }
@@ -190,5 +191,10 @@ public class SearchFragment extends Fragment {
 
     public void filter(int _type){
         parentContainer = factoryParentRecord.createInitialContainer(new Record(0,"РЕЗУЛЬТАТ ФИЛЬТРАЦИИ:",0,0));
+    }
+
+    @Override
+    public void callPopupMenuContainer(View view) {
+
     }
 }

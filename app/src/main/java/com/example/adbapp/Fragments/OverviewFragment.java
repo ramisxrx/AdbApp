@@ -19,6 +19,7 @@ import com.example.adbapp.Container.ContainerRecord;
 import com.example.adbapp.Container.FactoryParentRecord;
 import com.example.adbapp.FillingOfList.OverviewListFilling;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
+import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenu;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.OnScrollListenerRecyclerView;
@@ -28,9 +29,14 @@ import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class OverviewFragment extends Fragment {
+public class OverviewFragment extends Fragment implements CallPopupMenuContainer {
 
     private static final String TAG = "**OverviewFragment**";
+
+    @Override
+    public void callPopupMenuContainer(View view) {
+        RecordPopupMenu recordPopupMenu = new RecordPopupMenu(getContext(),view,parentContainer.getRecord(),actionsPopupMenu);
+    }
 
     public interface ActionsOfActivity{
         void CheckingAssociations(int record_id);
@@ -80,7 +86,7 @@ public class OverviewFragment extends Fragment {
         RecyclerView recordList = (RecyclerView) view.findViewById(R.id.list);
         buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
 
-        factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout);
+        factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout,this);
 
 
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
@@ -127,6 +133,7 @@ public class OverviewFragment extends Fragment {
         parentContainer = factoryParentRecord.createInitialContainer(overviewList.getCurrentParentRecord());
 
         recordAdapter = new RecordAdapter(getContext(), overviewList.records,1, recordClickListener,recordLongClickListener);
+        recordAdapter.setActionsPopupMenu(actionsPopupMenu);
         recordList.setAdapter(recordAdapter);
 
         recordList.addOnScrollListener(onScrollListenerRecyclerView);
@@ -175,14 +182,6 @@ public class OverviewFragment extends Fragment {
         });
 
         buttonFAB.setVisibility(View.VISIBLE);
-
-        frameLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RecordPopupMenu recordPopupMenu = new RecordPopupMenu(getContext(),view,parentContainer.getRecord(),actionsPopupMenu);
-            }
-        });
-
 
         return view;
     }

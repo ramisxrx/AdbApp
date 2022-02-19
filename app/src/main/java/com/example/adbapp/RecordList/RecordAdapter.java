@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextClock;
 import android.widget.TextView;
 
@@ -35,7 +36,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     private final OnRecordClickListener onClickListener;
     private final OnRecordLongClickListener onLongClickListener;
-    private final ActionsPopupMenu actionsPopupMenu=null;
+    private ActionsPopupMenu actionsPopupMenu=null;
 
     private boolean allowShowingPopupMenu;
 
@@ -118,7 +119,6 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
             {
                 // вызываем метод слушателя, передавая ему данные
                 onClickListener.onRecordClick(record, holder.getAdapterPosition());
-                ItemPopupMenu itemPopupMenu = new ItemPopupMenu(context,v,record,actionsPopupMenu,allowShowingPopupMenu);
             }
         });
 
@@ -129,6 +129,16 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                 return true;
             }
         });
+
+        if(allowShowingPopupMenu && record.getField_type()==ContentView.TYPE_RECORD){
+            holder.imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ItemPopupMenu itemPopupMenu = new ItemPopupMenu(context,view,record,actionsPopupMenu,allowShowingPopupMenu);
+                }
+            });
+        }
+
     }
 
     @Override
@@ -139,6 +149,10 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     public void setAllowShowingPopupMenu(boolean allowShowingPopupMenu) {
         this.allowShowingPopupMenu = allowShowingPopupMenu;
+    }
+
+    public void setActionsPopupMenu(ActionsPopupMenu actionsPopupMenu) {
+        this.actionsPopupMenu = actionsPopupMenu;
     }
 
     @Override
@@ -161,12 +175,13 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView nameView, timeView;
         final TextView textView;
+        final ImageButton imageButton;
         ViewHolder(View view){
             super(view);
             nameView = (TextView) view.findViewById(R.id.name);
             timeView = (TextView) view.findViewById(R.id.time);
             textView = (TextView) view.findViewById(R.id.text);
-
+            imageButton = (ImageButton) view.findViewById(R.id.imageButton);
         }
     }
 

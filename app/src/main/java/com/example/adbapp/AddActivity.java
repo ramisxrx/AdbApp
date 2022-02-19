@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.adbapp.Container.ContainerRecord;
@@ -19,10 +18,10 @@ import com.example.adbapp.Container.FactoryParentRecord;
 import com.example.adbapp.FillingOfList.AddingNewRecord;
 import com.example.adbapp.Fragments.AddRecordFragment;
 import com.example.adbapp.Fragments.AddTextFragment;
-import com.example.adbapp.Fragments.RecordContainer;
+import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.RecordList.Record;
 
-public class AddActivity extends AppCompatActivity {
+public class AddActivity extends AppCompatActivity implements CallPopupMenuContainer {
 
     Button saveButton;
     ActionBar actionBar;
@@ -60,7 +59,8 @@ public class AddActivity extends AppCompatActivity {
             actionBar.setSubtitle("Добавление записи");
         }
 
-        factoryParentRecord = new FactoryParentRecord(getApplicationContext(),frameLayout);
+        factoryParentRecord = new FactoryParentRecord(getApplicationContext(),frameLayout,this);
+        factoryParentRecord.setVisibleImageButton(false);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -170,5 +170,10 @@ public class AddActivity extends AppCompatActivity {
         }
         addingNewRecord.Destroy();
         finish();
+    }
+
+    @Override
+    public void callPopupMenuContainer(View view) {
+
     }
 }

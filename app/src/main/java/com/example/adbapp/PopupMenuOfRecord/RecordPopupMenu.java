@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 
+import com.example.adbapp.ContentView;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 
@@ -24,7 +25,15 @@ public class RecordPopupMenu{
         this.actionsPopupMenu = actionsPopupMenu;
 
         PopupMenu popupMenu = new PopupMenu(context, view);
-        popupMenu.inflate(R.menu.popup_menu);
+
+        if(record.getField_type() == ContentView.TYPE_RECORD)
+            popupMenu.inflate(R.menu.popup_menu);
+
+        if(record.getField_type() == ContentView.TYPE_TEXT)
+            popupMenu.inflate(R.menu.popup_menu_only_edit);
+
+        if(record.getField_type() == TYPE_VIEW_0)
+            popupMenu.inflate(R.menu.popup_menu_only_add);
 
         popupMenu.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -42,8 +51,7 @@ public class RecordPopupMenu{
             }
         });
 
-        if(record.getField_type()!=TYPE_VIEW_0)
-            popupMenu.show();
+        popupMenu.show();
 
     }
 

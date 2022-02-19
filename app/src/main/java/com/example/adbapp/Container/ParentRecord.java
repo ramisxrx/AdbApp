@@ -21,10 +21,12 @@ public class ParentRecord extends ContainerRecord {
 
 
     @Override
-    void FindingNewViews() {
+    protected void FindingNewViews() {
+        super.FindingNewViews();
         nameView = (TextView) view.findViewById(R.id.name);
         timeView = (TextView) view.findViewById(R.id.time);
     }
+
 
     @Override
     void fillView() {
