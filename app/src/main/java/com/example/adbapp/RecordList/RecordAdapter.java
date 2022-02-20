@@ -130,13 +130,17 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
             }
         });
 
-        if(allowShowingPopupMenu && record.getField_type()==ContentView.TYPE_RECORD){
-            holder.imageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ItemPopupMenu itemPopupMenu = new ItemPopupMenu(context,view,record,actionsPopupMenu,allowShowingPopupMenu);
-                }
-            });
+        if(record.getField_type()==ContentView.TYPE_RECORD){
+            if(allowShowingPopupMenu){
+                holder.imageButton.setVisibility(View.VISIBLE);
+                holder.imageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ItemPopupMenu itemPopupMenu = new ItemPopupMenu(context,view,record,actionsPopupMenu,allowShowingPopupMenu);
+                    }
+                });
+            }else
+                holder.imageButton.setVisibility(View.GONE);
         }
 
     }

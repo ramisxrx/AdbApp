@@ -58,7 +58,6 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
     public AssociationsFragment(Context context,Associations_ActionsOfActivity actionsOfActivity,ActionsPopupMenu actionsPopupMenu) {
         this.context = context;
         this.actionsOfActivity = actionsOfActivity;
-        this.actionsPopupMenu = actionsPopupMenu;
 
         AssociativeListFilling.NotifyViews_after associativeList_notifyViews_after = new AssociativeListFilling.NotifyViews_after() {
             @Override
@@ -68,7 +67,10 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
                             "Ассоциации найдены! AssociationFragment", Toast.LENGTH_SHORT);
                     toast.show();
                     if(viewCreated) {
+                        Log.d(TAG, "ActionOfInitialization: viewCreated= "+String.valueOf(viewCreated));
                         parentContainer = factoryParentRecord.recreateContainer(associativeList.getCurrentParentRecord(),parentContainer);
+                        parentContainer.setVisibleImageButton(false);
+                        recordAdapter.setAllowShowingPopupMenu(false);
                         recordAdapter.notifyDataSetChanged();
                     }
                     else
@@ -84,6 +86,8 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
             @Override
             public void ActionDown() {
                 parentContainer = factoryParentRecord.recreateContainer(associativeList.getCurrentParentRecord(),parentContainer);
+                parentContainer.setVisibleImageButton(true);
+                recordAdapter.setAllowShowingPopupMenu(true);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
                 buttonFAB.setVisibility(View.VISIBLE);
@@ -92,6 +96,8 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
             @Override
             public void ActionUp() {
                 parentContainer = factoryParentRecord.recreateContainer(associativeList.getCurrentParentRecord(),parentContainer);
+                parentContainer.setVisibleImageButton(true);
+                recordAdapter.setAllowShowingPopupMenu(true);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
                 buttonFAB.setVisibility(View.VISIBLE);
@@ -100,17 +106,30 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
             @Override
             public void ToPreviousLevel() {
                 parentContainer = factoryParentRecord.recreateContainer(associativeList.getCurrentParentRecord(),parentContainer);
-                recordAdapter.notifyDataSetChanged();
-                recordList.scrollToPosition(associativeList.selItemCurLevel);
                 if(associativeList.cur_level==0) {
+                    parentContainer.setVisibleImageButton(false);
+                    recordAdapter.setAllowShowingPopupMenu(false);
                     buttonLevelBack.setVisibility(View.GONE);
                     buttonFAB.setVisibility(View.GONE);
                 }
+                recordAdapter.notifyDataSetChanged();
+                recordList.scrollToPosition(associativeList.selItemCurLevel);
             }
         };
 
         BG_Thread = new HandlerThreadOfFilling("BG_AssociationsFragment");
         associativeList = new AssociativeListFilling(this.context,BG_Thread,associativeList_notifyViews_after);
+        this.actionsPopupMenu = new ActionsPopupMenu() {
+            @Override
+            public void CheckingAssociations(Record record) {
+                associativeList.ActionOfInitialization(record.getRecord_id());
+            }
+
+            @Override
+            public void SwitchingToEditing(Record record) {
+                actionsPopupMenu.SwitchingToEditing(record);
+            }
+        };
     }
 
     @Override
@@ -159,7 +178,7 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
         };
         parentContainer = factoryParentRecord.createInitialContainer(associativeList.getCurrentParentRecord());
         recordAdapter = new RecordAdapter(getContext(), associativeList.records,1, recordClickListener,recordLongClickListener);
-
+        recordAdapter.setActionsPopupMenu(actionsPopupMenu);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(getContext());
@@ -209,7 +228,7 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
         touchHelper.attachToRecyclerView(recordList);
 
         buttonFAB.setVisibility(View.GONE);
-
+        recordAdapter.setAllowShowingPopupMenu(false);
         recordAdapter.notifyDataSetChanged();
 
         buttonLevelBack.setOnClickListener(new View.OnClickListener() {
@@ -250,6 +269,6 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
 
     @Override
     public void callPopupMenuContainer(View view) {
-
+        RecordPopupMenu recordPopupMenu = new RecordPopupMenu(getContext(), view, parentContainer.getRecord(), actionsPopupMenu);
     }
 }

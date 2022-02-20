@@ -68,6 +68,7 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
         recordList = (RecyclerView) view.findViewById(R.id.list);
         buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
         factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout,this);
+        factoryParentRecord.setVisibleImageButton(false);
 
         return view;
     }

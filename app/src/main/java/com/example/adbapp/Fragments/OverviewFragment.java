@@ -129,7 +129,7 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
 
         overviewList = new OverviewListFilling(getContext(),BG_Thread,notifyViews_after);
 
-        factoryParentRecord.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
+        //factoryParentRecord.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
         parentContainer = factoryParentRecord.createInitialContainer(overviewList.getCurrentParentRecord());
 
         recordAdapter = new RecordAdapter(getContext(), overviewList.records,1, recordClickListener,recordLongClickListener);
