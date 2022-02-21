@@ -11,9 +11,11 @@ public class SearchListFilling extends AssociativeListFilling{
 
     private String TAG = SearchListFilling.class.getCanonicalName();
 
+    private String searchString;
+
     public SearchListFilling(Context context, HandlerThreadOfFilling workThread, NotifyViews_after notifyViews_after) {
         super(context, workThread, notifyViews_after);
-
+        this.searchString = "";
     }
 
     @Override
@@ -23,7 +25,8 @@ public class SearchListFilling extends AssociativeListFilling{
         workThread.bg_operations(new Runnable() {
             @Override
             public void run() {
-                cursorInit = readRequests.getRecords_6(_type);
+                ClearRecords();
+                cursorInit = readRequests.getRecords_7(searchString,_type);
                 cur_level = 0;
                 parentRecordByLevel.add(cur_level,new Record(0,"РЕЗУЛЬТАТ ФИЛЬТРАЦИИ:",0,0));
                 objIdList.clear();
@@ -41,4 +44,9 @@ public class SearchListFilling extends AssociativeListFilling{
             }
         });
     }
+
+    public void setSearchString(String searchString){
+        this.searchString = searchString;
+    }
+
 }

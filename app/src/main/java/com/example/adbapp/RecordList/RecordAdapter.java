@@ -39,6 +39,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     private ActionsPopupMenu actionsPopupMenu=null;
 
     private boolean allowShowingPopupMenu;
+    private boolean imageButtonUsed;
 
     private final LayoutInflater inflater;
     private final Context context;
@@ -55,6 +56,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         this.typeView = typeView;
         this.inflater = LayoutInflater.from(context);
 
+        this.imageButtonUsed = true;
         this.allowShowingPopupMenu = true;
     }
 
@@ -130,7 +132,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
             }
         });
 
-        if(record.getField_type()==ContentView.TYPE_RECORD){
+        if(imageButtonUsed && record.getField_type()==ContentView.TYPE_RECORD){
             if(allowShowingPopupMenu){
                 holder.imageButton.setVisibility(View.VISIBLE);
                 holder.imageButton.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +151,10 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public int getItemViewType(int position) {
         Log.d(TAG, "getItemViewType: ");
         return ContentView.getListItemViewType(records.get(position),typeView);
+    }
+
+    public void setImageButtonUsed(boolean imageButtonUsed){
+        this.imageButtonUsed = imageButtonUsed;
     }
 
     public void setAllowShowingPopupMenu(boolean allowShowingPopupMenu) {

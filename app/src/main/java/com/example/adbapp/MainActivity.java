@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentTransaction;
@@ -215,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                 break;
             case 1: // search mode
                 actionBar.setDisplayHomeAsUpEnabled(true);
-                searchFragment = new SearchFragment(searchContent);
+                searchFragment = new SearchFragment(searchContent,this,searchView);
                 switch (searchContent){
                     case ContentView.TYPE_RECORD:
                         actionBar.setSubtitle("Выборка записей");

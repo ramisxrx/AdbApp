@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.example.adbapp.Container.ContainerRecord;
 import com.example.adbapp.Container.FactoryParentRecord;
 import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.FillingOfList.SearchListFilling;
+import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
@@ -31,6 +33,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class SearchFragment extends Fragment implements CallPopupMenuContainer {
 
     private static final String TAG = "**SearchFragment*";
+
+    private final ActionsPopupMenu actionsPopupMenu;
 
     Button buttonLevelBack;
     FrameLayout frameLayout;
@@ -45,10 +49,14 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
     public FactoryParentRecord factoryParentRecord;
     public ContainerRecord parentContainer;
 
+    private SearchView searchView;
+
     int _type;
 
-    public SearchFragment(int _type) {
+    public SearchFragment(int _type, ActionsPopupMenu actionsPopupMenu,SearchView searchView) {
         this._type = _type;
+        this.actionsPopupMenu = actionsPopupMenu;
+        this.searchView = searchView;
     }
 
     @Override
@@ -83,6 +91,7 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
             @Override
             public void ActionOfInitialization() {
                 parentContainer = factoryParentRecord.createInitialContainer(searchList.getCurrentParentRecord());
+                recordAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -114,6 +123,20 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
         };
 
         searchList = new SearchListFilling(getContext(),BG_Thread,notifyViews_after);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchList.setSearchString(newText);
+                searchList.ActionOfInitialization(_type);
+                return false;
+            }
+        });
         searchList.ActionOfInitialization(_type);
 
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
@@ -127,7 +150,7 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
             }
         };
         recordAdapter = new RecordAdapter(getContext(), searchList.records,1, recordClickListener,recordLongClickListener);
-
+        recordAdapter.setActionsPopupMenu(actionsPopupMenu);
         recordList.setAdapter(recordAdapter);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(getContext());
