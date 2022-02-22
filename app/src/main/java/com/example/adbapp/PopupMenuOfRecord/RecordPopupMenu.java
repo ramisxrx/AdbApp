@@ -16,24 +16,18 @@ public class RecordPopupMenu{
 
     private Context context;
     private View view;
-    private Record record;
+    protected Record record;
     private final ActionsPopupMenu actionsPopupMenu;
+    protected PopupMenu popupMenu;
 
     public RecordPopupMenu(Context context,View view,Record record,ActionsPopupMenu actionsPopupMenu) {
         this.context = context;
         this.record = record;
         this.actionsPopupMenu = actionsPopupMenu;
 
-        PopupMenu popupMenu = new PopupMenu(context, view);
+        popupMenu = new PopupMenu(context, view);
 
-        if(record.getField_type() == ContentView.TYPE_RECORD)
-            popupMenu.inflate(R.menu.popup_menu);
-
-        if(record.getField_type() == ContentView.TYPE_TEXT)
-            popupMenu.inflate(R.menu.popup_menu_only_edit);
-
-        if(record.getField_type() == TYPE_VIEW_0)
-            popupMenu.inflate(R.menu.popup_menu_only_add);
+        selectionInflate();
 
         popupMenu.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -52,7 +46,17 @@ public class RecordPopupMenu{
         });
 
         popupMenu.show();
+    }
 
+    protected void selectionInflate(){
+        if(record.getField_type() == ContentView.TYPE_RECORD)
+            popupMenu.inflate(R.menu.popup_menu);
+
+        if(record.getField_type() == ContentView.TYPE_TEXT)
+            popupMenu.inflate(R.menu.popup_menu_only_edit);
+
+        if(record.getField_type() == TYPE_VIEW_0)
+            popupMenu.inflate(R.menu.popup_menu_only_add);
     }
 
 }

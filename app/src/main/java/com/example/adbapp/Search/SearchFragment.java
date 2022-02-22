@@ -23,6 +23,7 @@ import com.example.adbapp.FillingOfList.AssociativeListFilling;
 import com.example.adbapp.FillingOfList.SearchListFilling;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
+import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenuAssociations;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
@@ -76,7 +77,6 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
         recordList = (RecyclerView) view.findViewById(R.id.list);
         buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
         factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout,this);
-        factoryParentRecord.setVisibleImageButton(false);
 
         return view;
     }
@@ -105,6 +105,10 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
             @Override
             public void ActionUp() {
                 parentContainer = factoryParentRecord.recreateContainer(searchList.getCurrentParentRecord(),parentContainer);
+                if(searchList.getCurrentParentRecord().getRecord_id()==0)
+                    parentContainer.setVisibleImageButton(false);
+                else
+                    parentContainer.setVisibleImageButton(true);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
                 buttonFAB.setVisibility(View.VISIBLE);
@@ -116,6 +120,7 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
                 recordAdapter.notifyDataSetChanged();
                 recordList.scrollToPosition(searchList.selItemCurLevel);
                 if(searchList.cur_level==0) {
+                    parentContainer.setVisibleImageButton(false);
                     buttonLevelBack.setVisibility(View.GONE);
                     buttonFAB.setVisibility(View.GONE);
                 }
@@ -219,6 +224,6 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
 
     @Override
     public void callPopupMenuContainer(View view) {
-
+        new RecordPopupMenuAssociations(getContext(), view, parentContainer.getRecord(), actionsPopupMenu);
     }
 }

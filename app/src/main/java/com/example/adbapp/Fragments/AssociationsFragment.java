@@ -26,6 +26,7 @@ import com.example.adbapp.Interfaces.Associations_ActionsOfActivity;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenu;
+import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenuAssociations;
 import com.example.adbapp.R;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
@@ -96,7 +97,10 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
             @Override
             public void ActionUp() {
                 parentContainer = factoryParentRecord.recreateContainer(associativeList.getCurrentParentRecord(),parentContainer);
-                parentContainer.setVisibleImageButton(true);
+                if(associativeList.getCurrentParentRecord().getRecord_id()==0)
+                    parentContainer.setVisibleImageButton(false);
+                else
+                    parentContainer.setVisibleImageButton(true);
                 recordAdapter.setAllowShowingPopupMenu(true);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
@@ -269,6 +273,6 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
 
     @Override
     public void callPopupMenuContainer(View view) {
-        RecordPopupMenu recordPopupMenu = new RecordPopupMenu(getContext(), view, parentContainer.getRecord(), actionsPopupMenu);
+        new RecordPopupMenuAssociations(getContext(), view, parentContainer.getRecord(), actionsPopupMenu);
     }
 }

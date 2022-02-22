@@ -108,7 +108,6 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
                 parentContainer = factoryParentRecord.recreateContainer(overviewList.getCurrentParentRecord(),parentContainer);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
-                frameLayout.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -124,6 +123,12 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
             @Override
             public void UpdateAfterAddNewRecords() {
                 recordAdapter.notifyItemInserted(overviewList.records.size());
+            }
+
+            @Override
+            public void UpdateAfterUpdateDeleteRecords() {
+                parentContainer = factoryParentRecord.recreateContainer(overviewList.getCurrentParentRecord(),parentContainer);
+                recordAdapter.notifyDataSetChanged();
             }
         };
 
@@ -184,6 +189,14 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
         buttonFAB.setVisibility(View.VISIBLE);
 
         return view;
+    }
+
+    public void UpdateAfterUpdating(){
+        overviewList.UpdateAfterUpdateDeleteRecords(true);
+    }
+
+    public void UpdateAfterDeleting(){
+        overviewList.UpdateAfterUpdateDeleteRecords(false);
     }
 
     @Override

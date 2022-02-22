@@ -139,7 +139,7 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
     private void goHome(boolean cancel){
         Intent data = new Intent();
         data.putExtra("Activity","Edit");
-        data.putExtra("Save","Edit");
+        data.putExtra("SaveMode",saveMode);
         if(cancel) {
             setResult(RESULT_CANCELED,data);
         }else {

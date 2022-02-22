@@ -59,6 +59,13 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                             if (!associationMode)
                                 overviewFragment.overviewList.UpdateAfterAddNewRecords();
                         }
+                        if(activity.equals("Edit")){
+                            String saveMode = intent.getStringExtra("SaveMode");
+                            if(saveMode.equals("Update"))
+                                overviewFragment.UpdateAfterUpdating();
+                            else
+                                overviewFragment.UpdateAfterDeleting();
+                        }
                     }
                 }
             });

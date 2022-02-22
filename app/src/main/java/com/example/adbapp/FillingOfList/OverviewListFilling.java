@@ -17,6 +17,7 @@ public class OverviewListFilling extends ListFilling{
         void ActionDown();
         void ToPreviousLevel();
         void UpdateAfterAddNewRecords();
+        void UpdateAfterUpdateDeleteRecords();
     }
 
     private String TAG = OverviewListFilling.class.getCanonicalName();
@@ -123,6 +124,47 @@ public class OverviewListFilling extends ListFilling{
                     @Override
                     public void run() {
                         notifyViews_after.UpdateAfterAddNewRecords();
+                    }
+                });
+            }
+        });
+    }
+
+    public void UpdateAfterUpdateDeleteRecords(boolean updating){
+
+        workThread.bg_operations(new Runnable() {
+            @Override
+            public void run() {
+
+                Log.d(TAG, "UpdateAfterUpdateDeleteRecords: parentIdByLevels="+String.valueOf(parentIdByLevels.get(cur_level)));
+
+                selItemCurLevel = selItemByLevels.get(cur_level);
+                selItemByLevels.remove(cur_level);
+                parentIdByLevels.remove(cur_level);
+                parentRecordByLevel.remove(cur_level);
+                cur_level--;
+
+                if(cur_level==0){
+                    cmd_cursorInit=true;
+                    FillingInitialList();
+                }else {
+                    cursor = readRequests.getRecords(selObjId);
+                    FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+                }
+
+                if(updating){
+                    cur_level++;
+                    selItemByLevels.add(cur_level,selItemCurLevel);
+                    parentIdByLevels.add(cur_level,records.get(selItemCurLevel).getRecord_id());
+                    parentRecordByLevel.add(cur_level, records.get(selItemCurLevel));
+
+                    FillingOtherLevelToDown(parentIdByLevels.get(cur_level));
+                }
+
+                workThread.ui_operations(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyViews_after.UpdateAfterUpdateDeleteRecords();
                     }
                 });
             }

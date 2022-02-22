@@ -35,32 +35,6 @@ public class FactoryParentRecord {
         this.visibleImageButton = true;
     }
 
-    public void FillingContainer(Record record){
-        if (containerRecord==null || containerRecord.getRecord().getField_type()!=record.getField_type()) {
-
-            view = ContentView.getViewParentRecord(inflater,frameLayout,record.getField_type());
-
-            switch (record.getField_type()) {
-                case TYPE_VIEW_0:
-                    containerRecord = new ParentZeroLevel(view,frameLayout);
-                    break;
-
-                case TYPE_RECORD:
-                    containerRecord = new ParentRecord(view, frameLayout);
-                    break;
-
-                case TYPE_TEXT:
-                    containerRecord = new ParentText(view, frameLayout);
-                    break;
-                default:
-
-                    break;
-            }
-        }
-        containerRecord.FillingContainer(record,callPopupMenuContainer);
-
-    }
-
     public Record getRecord(){
         return containerRecord.getRecord();
     }
