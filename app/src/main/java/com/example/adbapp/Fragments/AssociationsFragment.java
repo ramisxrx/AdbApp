@@ -125,6 +125,11 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
         associativeList = new AssociativeListFilling(this.context,BG_Thread,associativeList_notifyViews_after);
         this.actionsPopupMenu = new ActionsPopupMenu() {
             @Override
+            public void SwitchingToAddRecord() {
+
+            }
+
+            @Override
             public void CheckingAssociations(Record record) {
                 associativeList.ActionOfInitialization(record.getRecord_id());
             }
@@ -239,13 +244,6 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
             @Override
             public void onClick(View view) {
                 associativeList.ToPreviousLevel();
-            }
-        });
-
-        frameLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RecordPopupMenu recordPopupMenu = new RecordPopupMenu(getContext(),view,parentContainer.getRecord(),actionsPopupMenu);
             }
         });
 

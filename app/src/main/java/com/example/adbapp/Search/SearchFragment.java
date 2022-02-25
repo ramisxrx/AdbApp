@@ -91,12 +91,14 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
             @Override
             public void ActionOfInitialization() {
                 parentContainer = factoryParentRecord.createInitialContainer(searchList.getCurrentParentRecord());
+                parentContainer.setVisibleImageButton(false);
                 recordAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void ActionDown() {
                 parentContainer = factoryParentRecord.recreateContainer(searchList.getCurrentParentRecord(),parentContainer);
+                parentContainer.setVisibleImageButton(true);
                 recordAdapter.notifyDataSetChanged();
                 buttonLevelBack.setVisibility(View.VISIBLE);
                 buttonFAB.setVisibility(View.VISIBLE);

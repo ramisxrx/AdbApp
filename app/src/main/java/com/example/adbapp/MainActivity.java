@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                menuItemSearch.setVisible(false);
                 menuItemSearch.setVisible(true);
                 menuItemRecord.setVisible(true);
                 menuItemText.setVisible(true);
@@ -301,6 +302,11 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
 
         //records.clear();
         //overviewList.Destroy();
+    }
+
+    @Override
+    public void SwitchingToAddRecord() {
+        addRecord(overviewFragment.parentContainer.getRecord(),overviewFragment.overviewList.selObjId);
     }
 
     @Override

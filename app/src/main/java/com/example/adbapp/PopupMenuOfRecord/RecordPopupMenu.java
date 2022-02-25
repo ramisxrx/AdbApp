@@ -33,6 +33,10 @@ public class RecordPopupMenu{
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()){
+                    case R.id.add_record:
+                        actionsPopupMenu.SwitchingToAddRecord();
+                        return true;
+
                     case R.id.search_associations:
                         actionsPopupMenu.CheckingAssociations(record);
                         return true;
