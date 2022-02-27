@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.example.adbapp.Container.ContainerRecord;
@@ -27,15 +26,22 @@ import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
+import com.example.adbapp.ToPreviousLevel.ActionsClickFAB;
+import com.example.adbapp.ToPreviousLevel.FAB_ToPreviousLevel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class OverviewFragment extends Fragment implements CallPopupMenuContainer {
+public class OverviewFragment extends Fragment implements CallPopupMenuContainer, ActionsClickFAB {
 
     private static final String TAG = "**OverviewFragment**";
 
     @Override
     public void callPopupMenuContainer(View view) {
         RecordPopupMenu recordPopupMenu = new RecordPopupMenu(getContext(),view,parentContainer.getRecord(),actionsPopupMenu);
+    }
+
+    @Override
+    public void ToPreviousLevel() {
+        overviewList.ToPreviousLevel();
     }
 
     public interface ActionsOfActivity{
@@ -45,9 +51,7 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
 
     private final ActionsOfActivity actionsOfActivity;
 
-    Button buttonLevelBack;
     FrameLayout frameLayout;
-    FloatingActionButton buttonFAB;
 
     OnScrollListenerRecyclerView onScrollListenerRecyclerView;
     HandlerThreadOfFilling BG_Thread;
@@ -57,11 +61,15 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
     public OverviewListFilling overviewList;
     private FloatingActionButton floatingActionButton;
     private final ActionsPopupMenu actionsPopupMenu;
+    private final FAB_ToPreviousLevel fab_toPreviousLevel;
 
-    public OverviewFragment(ActionsOfActivity actionsOfActivity,FloatingActionButton floatingActionButton,ActionsPopupMenu actionsPopupMenu) {
+    public OverviewFragment(ActionsOfActivity actionsOfActivity, FloatingActionButton floatingActionButton, ActionsPopupMenu actionsPopupMenu, FAB_ToPreviousLevel fab_toPreviousLevel) {
         this.actionsOfActivity = actionsOfActivity;
         this.floatingActionButton = floatingActionButton;
         this.actionsPopupMenu = actionsPopupMenu;
+        this.fab_toPreviousLevel = fab_toPreviousLevel;
+
+        fab_toPreviousLevel.setActionsOnClick(this);
     }
 
     @Override
@@ -79,45 +87,37 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
-        onScrollListenerRecyclerView = new OnScrollListenerRecyclerView(floatingActionButton);
+        onScrollListenerRecyclerView = new OnScrollListenerRecyclerView(fab_toPreviousLevel);
 
         frameLayout = (FrameLayout) view.findViewById(R.id.container_parent);
-        buttonLevelBack = view.findViewById(R.id.buttonLevelBack);
         RecyclerView recordList = (RecyclerView) view.findViewById(R.id.list);
-        buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
 
         factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout,this);
-
+        fab_toPreviousLevel.actionsAfterInitialization();
 
         RecordAdapter.OnRecordClickListener recordClickListener = (record, position) -> {
-            //addRecord(record.getRecord_id());
         };
 
         RecordAdapter.OnRecordLongClickListener recordLongClickListener = new RecordAdapter.OnRecordLongClickListener() {
             @Override
             public void onRecordLongClick(int position) {
-                //actionsOfActivity.CheckingAssociations(overviewList.records.get(position).getRecord_id());
-                //actionsOfActivity.SwitchingToEditing(overviewList.records.get(position));
             }
         };
 
         OverviewListFilling.NotifyViews_after notifyViews_after = new OverviewListFilling.NotifyViews_after() {
             @Override
             public void ActionDown() {
-                //factoryParentRecord.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
                 parentContainer = factoryParentRecord.recreateContainer(overviewList.getCurrentParentRecord(),parentContainer);
                 recordAdapter.notifyDataSetChanged();
-                buttonLevelBack.setVisibility(View.VISIBLE);
+                fab_toPreviousLevel.actionsAfterActionsDown();
             }
 
             @Override
             public void ToPreviousLevel() {
-                //factoryParentRecord.FillingContainer(overviewList.parentRecordByLevel.get(overviewList.cur_level));
                 parentContainer = factoryParentRecord.recreateContainer(overviewList.getCurrentParentRecord(),parentContainer);
                 recordAdapter.notifyDataSetChanged();
                 recordList.scrollToPosition(overviewList.selItemCurLevel);
-                if(overviewList.cur_level==0)
-                    buttonLevelBack.setVisibility(View.GONE);
+                fab_toPreviousLevel.actionsAfterToPreviousLevel(overviewList.cur_level==0);
             }
 
             @Override
@@ -170,23 +170,11 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
                 Log.d(TAG, "onSwiped: ");
 
                 overviewList.ActionDown(viewHolder.getAdapterPosition());
-
-                //recordAdapter.notifyDataSetChanged();
             }
         };
 
         ItemTouchHelper touchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         touchHelper.attachToRecyclerView(recordList);
-
-        buttonLevelBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                overviewList.ToPreviousLevel();
-                overviewList.bdView();
-            }
-        });
-
-        buttonFAB.setVisibility(View.VISIBLE);
 
         return view;
     }

@@ -3,14 +3,15 @@ package com.example.adbapp.RecordList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.adbapp.ToPreviousLevel.FAB_ToPreviousLevel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class OnScrollListenerRecyclerView extends RecyclerView.OnScrollListener {
 
-    FloatingActionButton floatingActionButton;
+    private final FAB_ToPreviousLevel fab_toPreviousLevel;
 
-    public OnScrollListenerRecyclerView(FloatingActionButton floatingActionButton){
-        this.floatingActionButton = floatingActionButton;
+    public OnScrollListenerRecyclerView(FAB_ToPreviousLevel fab_toPreviousLevel){
+        this.fab_toPreviousLevel = fab_toPreviousLevel;
     }
 
     @Override
@@ -22,9 +23,9 @@ public class OnScrollListenerRecyclerView extends RecyclerView.OnScrollListener 
         //if(dy<0)
             //floatingActionButton.show();
 
-        if (dy > 0 ||dy<0 && floatingActionButton.isShown())
+        if (dy > 0 ||dy<0 && fab_toPreviousLevel.isShown())
         {
-            floatingActionButton.hide();
+            fab_toPreviousLevel.hideAtScroll();
         }
     }
 
@@ -33,7 +34,7 @@ public class OnScrollListenerRecyclerView extends RecyclerView.OnScrollListener 
 
         if (newState == RecyclerView.SCROLL_STATE_IDLE)
         {
-            floatingActionButton.show();
+            fab_toPreviousLevel.showAtScroll();
         }
 
         super.onScrollStateChanged(recyclerView, newState);

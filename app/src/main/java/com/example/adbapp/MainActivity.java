@@ -15,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentTransaction;
@@ -26,6 +25,7 @@ import com.example.adbapp.Interfaces.Associations_ActionsOfActivity;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.Search.SearchFragment;
+import com.example.adbapp.ToPreviousLevel.FAB_ToPreviousLevel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity implements ActionsPopupMenu, Associations_ActionsOfActivity {
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
     AssociationsFragment associationsFragment;
     SearchFragment searchFragment;
     FragmentTransaction fragmentTransaction;
+    FAB_ToPreviousLevel fab_toPreviousLevel;
 
     private MenuItem menuItemSearch, menuItemRecord,menuItemText,menuItemHome;
     private SearchView searchView;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+        fab_toPreviousLevel = new FAB_ToPreviousLevel(buttonFAB);
         actionBar = getSupportActionBar();
         if(actionBar!=null) {
             actionBar.setDisplayUseLogoEnabled(true);
@@ -97,23 +99,13 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
             }
         };
 
-        overviewFragment = new OverviewFragment(overview_ActionsOfActivity,buttonFAB,this);
+        overviewFragment = new OverviewFragment(overview_ActionsOfActivity,buttonFAB,this, fab_toPreviousLevel);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         fragmentTransaction.replace(R.id.container_main,overviewFragment);
         fragmentTransaction.commit();
 
-        buttonFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(associationMode){
-                    addRecord(associationsFragment.parentContainer.getRecord(),associationsFragment.associativeList.selObjId);
-                }else{
-                    addRecord(overviewFragment.parentContainer.getRecord(),overviewFragment.overviewList.selObjId);
-                }
-            }
-        });
     }
 
     @Override
