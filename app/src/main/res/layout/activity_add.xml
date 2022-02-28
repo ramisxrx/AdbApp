@@ -16,7 +16,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
     </FrameLayout>
 
     <FrameLayout
@@ -31,35 +30,19 @@
 
         app:layout_constraintTop_toBottomOf="@+id/container_parent"
         app:layout_constraintVertical_bias="0.039">
-
     </FrameLayout>
 
     <Button
         android:id="@+id/saveButton"
         android:layout_width="200dp"
         android:layout_height="52dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
-        android:onClick="save"
         android:text="Добавить новую запись"
         android:enabled="false"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
-        android:onClick="back"
-        android:text="Назад"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1"
         app:layout_constraintBottom_toBottomOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

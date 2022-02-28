@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
@@ -99,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
             }
         };
 
-        overviewFragment = new OverviewFragment(overview_ActionsOfActivity,buttonFAB,this, fab_toPreviousLevel);
+        overviewFragment = new OverviewFragment(overview_ActionsOfActivity,this, fab_toPreviousLevel);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                 break;
             case 1: // search mode
                 actionBar.setDisplayHomeAsUpEnabled(true);
-                searchFragment = new SearchFragment(searchContent,this,searchView);
+                searchFragment = new SearchFragment(searchContent,this,searchView, fab_toPreviousLevel);
                 switch (searchContent){
                     case ContentView.TYPE_RECORD:
                         actionBar.setSubtitle("Выборка записей");
@@ -303,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
 
     @Override
     public void CheckingAssociations(Record record) {
-        associationsFragment = new AssociationsFragment(getApplicationContext(),this,this);
+        associationsFragment = new AssociationsFragment(getApplicationContext(),this,this, fab_toPreviousLevel);
         associationsFragment.associativeList.ActionOfInitialization(record.getRecord_id());
     }
 

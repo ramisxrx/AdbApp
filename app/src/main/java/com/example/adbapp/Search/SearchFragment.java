@@ -25,45 +25,48 @@ import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenuAssociations;
 import com.example.adbapp.R;
+import com.example.adbapp.RecordList.OnScrollListenerRecyclerView;
 import com.example.adbapp.RecordList.Record;
 import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.Threads.HandlerThreadOfFilling;
+import com.example.adbapp.ToPreviousLevel.ActionsClickFAB;
+import com.example.adbapp.ToPreviousLevel.FAB_ToPreviousLevel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class SearchFragment extends Fragment implements CallPopupMenuContainer {
+public class SearchFragment extends Fragment implements CallPopupMenuContainer, ActionsClickFAB {
 
     private static final String TAG = "**SearchFragment*";
 
     private final ActionsPopupMenu actionsPopupMenu;
 
-    Button buttonLevelBack;
     FrameLayout frameLayout;
     RecyclerView recordList;
-    FloatingActionButton buttonFAB;
-
     HandlerThreadOfFilling BG_Thread;
     SearchListFilling searchList;
-
     RecordAdapter recordAdapter;
 
     public FactoryParentRecord factoryParentRecord;
     public ContainerRecord parentContainer;
 
-    private SearchView searchView;
+    private final SearchView searchView;
+    private final FAB_ToPreviousLevel fab_toPreviousLevel;
+    private OnScrollListenerRecyclerView onScrollListenerRecyclerView;
 
     int _type;
 
-    public SearchFragment(int _type, ActionsPopupMenu actionsPopupMenu,SearchView searchView) {
+    public SearchFragment(int _type, ActionsPopupMenu actionsPopupMenu, SearchView searchView, FAB_ToPreviousLevel fab_toPreviousLevel) {
         this._type = _type;
         this.actionsPopupMenu = actionsPopupMenu;
         this.searchView = searchView;
+        this.fab_toPreviousLevel = fab_toPreviousLevel;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        fab_toPreviousLevel.setActionsOnClick(this);
     }
 
     @Override
@@ -73,9 +76,7 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
         // использую макет overview так как одинаково
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
         frameLayout = (FrameLayout) view.findViewById(R.id.container_parent);
-        buttonLevelBack = view.findViewById(R.id.buttonLevelBack);
         recordList = (RecyclerView) view.findViewById(R.id.list);
-        buttonFAB = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
         factoryParentRecord = new FactoryParentRecord(getContext(),frameLayout,this);
 
         return view;
@@ -92,6 +93,7 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
             public void ActionOfInitialization() {
                 parentContainer = factoryParentRecord.createInitialContainer(searchList.getCurrentParentRecord());
                 parentContainer.setVisibleImageButton(false);
+                fab_toPreviousLevel.actionsAfterInitialization();
                 recordAdapter.notifyDataSetChanged();
             }
 
@@ -99,9 +101,8 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
             public void ActionDown() {
                 parentContainer = factoryParentRecord.recreateContainer(searchList.getCurrentParentRecord(),parentContainer);
                 parentContainer.setVisibleImageButton(true);
+                fab_toPreviousLevel.actionsAfterActionsDown();
                 recordAdapter.notifyDataSetChanged();
-                buttonLevelBack.setVisibility(View.VISIBLE);
-                buttonFAB.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -111,9 +112,8 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
                     parentContainer.setVisibleImageButton(false);
                 else
                     parentContainer.setVisibleImageButton(true);
+                fab_toPreviousLevel.actionsAfterActionsUp();
                 recordAdapter.notifyDataSetChanged();
-                buttonLevelBack.setVisibility(View.VISIBLE);
-                buttonFAB.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -123,8 +123,7 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
                 recordList.scrollToPosition(searchList.selItemCurLevel);
                 if(searchList.cur_level==0) {
                     parentContainer.setVisibleImageButton(false);
-                    buttonLevelBack.setVisibility(View.GONE);
-                    buttonFAB.setVisibility(View.GONE);
+                    fab_toPreviousLevel.actionsAfterToPreviousLevel(true);
                 }
             }
         };
@@ -204,14 +203,6 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
 
         ItemTouchHelper touchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         touchHelper.attachToRecyclerView(recordList);
-
-        buttonLevelBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                searchList.ToPreviousLevel();
-            }
-        });
-
     }
 
     @Override
@@ -227,5 +218,10 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer {
     @Override
     public void callPopupMenuContainer(View view) {
         new RecordPopupMenuAssociations(getContext(), view, parentContainer.getRecord(), actionsPopupMenu);
+    }
+
+    @Override
+    public void ToPreviousLevel() {
+        searchList.ToPreviousLevel();
     }
 }

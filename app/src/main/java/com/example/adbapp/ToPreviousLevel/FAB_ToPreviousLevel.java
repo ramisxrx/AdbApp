@@ -27,14 +27,17 @@ public class FAB_ToPreviousLevel {
 
     public void actionsAfterInitialization(){
         floatingActionButton.hide();
+        allowShow = false;
     }
 
     public void actionsAfterActionsDown(){
         floatingActionButton.show();
+        allowShow = true;
     }
 
     public void actionsAfterActionsUp(){
         floatingActionButton.show();
+        allowShow = true;
     }
 
     public void actionsAfterToPreviousLevel(boolean hideButton){

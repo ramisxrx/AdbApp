@@ -20,18 +20,22 @@ import com.example.adbapp.Fragments.AddRecordFragment;
 import com.example.adbapp.Fragments.AddTextFragment;
 import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.RecordList.Record;
+import com.example.adbapp.ToPreviousLevel.FAB_ToPreviousLevel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AddActivity extends AppCompatActivity implements CallPopupMenuContainer {
 
     Button saveButton;
     ActionBar actionBar;
     FrameLayout frameLayout;
+    FloatingActionButton buttonFAB;
 
     AddRecordFragment addRecordFragment;
     AddTextFragment addTextFragment;
     FragmentTransaction fragmentTransaction;
     public FactoryParentRecord factoryParentRecord;
     public ContainerRecord parentContainer;
+    FAB_ToPreviousLevel fab_toPreviousLevel;
 
     private static final String TAG = "**AddActivity**";
 
@@ -44,10 +48,11 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         saveButton = (Button) findViewById(R.id.saveButton);
-        //spinner = findViewById(R.id.spinner);
         frameLayout = (FrameLayout) findViewById(R.id.container_parent);
+        buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+        fab_toPreviousLevel = new FAB_ToPreviousLevel(buttonFAB);
 
-        addRecordFragment = new AddRecordFragment();
+        addRecordFragment = new AddRecordFragment(fab_toPreviousLevel, ContentView.TYPE_RECORD);
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.container_add,addRecordFragment);
         fragmentTransaction.commit();
@@ -152,10 +157,6 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
 
 
         addingNewRecord.Save();
-    }
-
-    public void back(View view){
-        goHome(true);
     }
 
     private void goHome(boolean cancel){

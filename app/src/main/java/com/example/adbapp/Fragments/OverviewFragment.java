@@ -53,23 +53,19 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
 
     FrameLayout frameLayout;
 
-    OnScrollListenerRecyclerView onScrollListenerRecyclerView;
     HandlerThreadOfFilling BG_Thread;
     public FactoryParentRecord factoryParentRecord;
     public ContainerRecord parentContainer;
     RecordAdapter recordAdapter;
     public OverviewListFilling overviewList;
-    private FloatingActionButton floatingActionButton;
     private final ActionsPopupMenu actionsPopupMenu;
     private final FAB_ToPreviousLevel fab_toPreviousLevel;
+    private OnScrollListenerRecyclerView onScrollListenerRecyclerView;
 
-    public OverviewFragment(ActionsOfActivity actionsOfActivity, FloatingActionButton floatingActionButton, ActionsPopupMenu actionsPopupMenu, FAB_ToPreviousLevel fab_toPreviousLevel) {
+    public OverviewFragment(ActionsOfActivity actionsOfActivity,ActionsPopupMenu actionsPopupMenu, FAB_ToPreviousLevel fab_toPreviousLevel) {
         this.actionsOfActivity = actionsOfActivity;
-        this.floatingActionButton = floatingActionButton;
         this.actionsPopupMenu = actionsPopupMenu;
         this.fab_toPreviousLevel = fab_toPreviousLevel;
-
-        fab_toPreviousLevel.setActionsOnClick(this);
     }
 
     @Override
@@ -78,6 +74,7 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
         Log.d(TAG, "onCreate: ");
 
         BG_Thread = new HandlerThreadOfFilling("BG_OverviewFragment");
+        fab_toPreviousLevel.setActionsOnClick(this);
     }
 
     @Override
