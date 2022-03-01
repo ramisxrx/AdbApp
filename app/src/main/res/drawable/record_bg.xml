@@ -4,7 +4,7 @@
         android:state_focused="false"
         android:state_selected="true">
         <shape android:shape="rectangle">
-            <solid android:color="#E85454"/>
+            <solid android:color="#E85B5B"/>
             <corners android:radius="10dp"/>
         </shape>
     </item>
@@ -12,7 +12,7 @@
         android:state_focused="false"
         android:state_selected="false">
         <shape android:shape="rectangle">
-            <solid android:color="#F40808"/>
+            <solid android:color="#F3A0A0"/>
             <corners android:radius="10dp"/>
         </shape>
     </item>

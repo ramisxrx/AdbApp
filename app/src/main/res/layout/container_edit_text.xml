@@ -21,7 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:textColor="@color/black"
-        android:singleLine="true"
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"
         app:layout_constraintTop_toBottomOf="@+id/time"
         app:layout_constraintStart_toStartOf="parent"/>
 

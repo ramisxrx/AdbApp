@@ -30,6 +30,7 @@ import com.example.adbapp.EditingRecord.Editable;
 import com.example.adbapp.EditingRecord.EditableRecord;
 import com.example.adbapp.EditingRecord.SaveButtonEdit;
 import com.example.adbapp.EditingRecord.SaveButtonEditRecord;
+import com.example.adbapp.EditingRecord.SaveButtonEditText;
 import com.example.adbapp.EditingRecord.UIActionAtDeleteChain;
 import com.example.adbapp.EditingRecord.UIActionAtDeleteCurrent;
 import com.example.adbapp.EditingRecord.UIActionAtUpdate;
@@ -112,6 +113,11 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
                     editable = new EditableRecord();
                     saveButtonEdit = new SaveButtonEditRecord(saveButton);
                     break;
+                case TYPE_TEXT:
+                    actionBar.setSubtitle("Редактирование текста");
+                    editable = new EditableRecord();
+                    saveButtonEdit = new SaveButtonEditText(saveButton);
+                    break;
                 default:
 
                     break;
@@ -188,6 +194,9 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
             case TYPE_RECORD:
                 message = "Запись обновлена";
                 break;
+            case TYPE_TEXT:
+                message = "Текст обновлен";
+                break;
             default:
                 message = "";
                 break;
@@ -212,6 +221,9 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
             case TYPE_RECORD:
                 message = "Текущая запись удалена";
                 break;
+            case TYPE_TEXT:
+                message = "Текущий текст удален";
+                break;
             default:
                 message = "";
                 break;
@@ -235,6 +247,9 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
         switch (editable_type) {
             case TYPE_RECORD:
                 message = "Текущая запись и цепочка удалены";
+                break;
+            case TYPE_TEXT:
+                message = "Текущий текст и цепочка удалены";
                 break;
             default:
                 message = "";

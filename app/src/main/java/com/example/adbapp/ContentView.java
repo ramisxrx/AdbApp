@@ -92,6 +92,10 @@ public class ContentView{
                 view = layoutInflater.inflate(R.layout.container_edit_record, parent, false);
                 Log.d(TAG, "getViewEditableRecord: record");
                 break;
+            case TYPE_TEXT:
+                view = layoutInflater.inflate(R.layout.container_edit_text, parent, false);
+                Log.d(TAG, "getViewEditableRecord: text");
+                break;
             default:
                 view = null;
                 break;

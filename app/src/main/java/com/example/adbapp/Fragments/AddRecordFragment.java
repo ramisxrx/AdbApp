@@ -24,6 +24,7 @@ import com.example.adbapp.RecordList.RecordAdapter;
 import com.example.adbapp.RecordList.RecordDecoration;
 import com.example.adbapp.ToPreviousLevel.ActionsClickFAB;
 import com.example.adbapp.ToPreviousLevel.FAB_ToPreviousLevel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AddRecordFragment extends Fragment implements ActionsClickFAB {
 
@@ -31,8 +32,8 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
 
     EditText nameBox;
     RecyclerView recordList;
-    Button buttonLevelBack;
     Button saveButton;
+    FloatingActionButton buttonFAB;
     RecordAdapter recordAdapter;
     RecordAdapter.OnRecordClickListener recordClickListener;
 
@@ -42,12 +43,11 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
     public String name_ToAdd;
     public int field_id_ToAdd=0;
 
-    private final FAB_ToPreviousLevel fab_toPreviousLevel;
+    private FAB_ToPreviousLevel fab_toPreviousLevel;
     private OnScrollListenerRecyclerView onScrollListenerRecyclerView;
     private int _type;
 
-    public AddRecordFragment(FAB_ToPreviousLevel fab_toPreviousLevel, int _type){
-        this.fab_toPreviousLevel = fab_toPreviousLevel;
+    public AddRecordFragment(int _type){
         this._type = _type;
     }
 
@@ -65,8 +65,13 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
 
         nameBox = (EditText) view.findViewById(R.id.name);
         recordList = (RecyclerView) view.findViewById(R.id.list);
-        buttonLevelBack = (Button) view.findViewById(R.id.buttonLevelBack);
         saveButton = (Button) getActivity().findViewById(R.id.saveButton);
+        buttonFAB = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
+
+        fab_toPreviousLevel = new FAB_ToPreviousLevel(buttonFAB);
+        fab_toPreviousLevel.setActionsOnClick(this);
+
+        onScrollListenerRecyclerView = new OnScrollListenerRecyclerView(fab_toPreviousLevel);
 
         FoundListFilling.NotifyViews_after FoundList_notifyViews_after = new FoundListFilling.NotifyViews_after() {
             @Override
@@ -154,7 +159,9 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
 
         recordAdapter = new RecordAdapter(this.getContext(), foundList.records,1, recordClickListener,recordLongClickListener);
         recordAdapter.setImageButtonUsed(false);
+        recordAdapter.setAllowShowingPopupMenu(false);
         recordList.setAdapter(recordAdapter);
+        recordList.addOnScrollListener(onScrollListenerRecyclerView);
 
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this.getContext());
         layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);

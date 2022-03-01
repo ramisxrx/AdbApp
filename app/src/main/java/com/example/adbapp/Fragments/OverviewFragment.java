@@ -105,6 +105,7 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
             @Override
             public void ActionDown() {
                 parentContainer = factoryParentRecord.recreateContainer(overviewList.getCurrentParentRecord(),parentContainer);
+                recordAdapter.posSelItem = -1;
                 recordAdapter.notifyDataSetChanged();
                 fab_toPreviousLevel.actionsAfterActionsDown();
             }
@@ -112,6 +113,7 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
             @Override
             public void ToPreviousLevel() {
                 parentContainer = factoryParentRecord.recreateContainer(overviewList.getCurrentParentRecord(),parentContainer);
+                recordAdapter.posSelItem = overviewList.selItemCurLevel;
                 recordAdapter.notifyDataSetChanged();
                 recordList.scrollToPosition(overviewList.selItemCurLevel);
                 fab_toPreviousLevel.actionsAfterToPreviousLevel(overviewList.cur_level==0);

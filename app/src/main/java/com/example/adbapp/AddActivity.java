@@ -28,14 +28,12 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
     Button saveButton;
     ActionBar actionBar;
     FrameLayout frameLayout;
-    FloatingActionButton buttonFAB;
 
     AddRecordFragment addRecordFragment;
     AddTextFragment addTextFragment;
     FragmentTransaction fragmentTransaction;
     public FactoryParentRecord factoryParentRecord;
     public ContainerRecord parentContainer;
-    FAB_ToPreviousLevel fab_toPreviousLevel;
 
     private static final String TAG = "**AddActivity**";
 
@@ -49,10 +47,8 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
         setContentView(R.layout.activity_add);
         saveButton = (Button) findViewById(R.id.saveButton);
         frameLayout = (FrameLayout) findViewById(R.id.container_parent);
-        buttonFAB = (FloatingActionButton) findViewById(R.id.floatingActionButton);
-        fab_toPreviousLevel = new FAB_ToPreviousLevel(buttonFAB);
 
-        addRecordFragment = new AddRecordFragment(fab_toPreviousLevel, ContentView.TYPE_RECORD);
+        addRecordFragment = new AddRecordFragment(ContentView.TYPE_RECORD);
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.container_add,addRecordFragment);
         fragmentTransaction.commit();
@@ -96,6 +92,25 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
         };
         addingNewRecord = new AddingNewRecord(getApplicationContext(),object_id,parentContainer.getRecord().getRecord_id(),notifyViews_before,notifyViews_after);
         addingNewRecord.setTypeContent(ContentView.TYPE_RECORD);
+
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (addingNewRecord.getTypeContent()){
+                    case ContentView.TYPE_RECORD:
+                        addingNewRecord.setParametersToAdd(addRecordFragment.field_id_ToAdd,addRecordFragment.name_ToAdd);
+                        break;
+                    case ContentView.TYPE_TEXT:
+                        addingNewRecord.setParametersToAdd(addTextFragment.field_id_ToAdd,addTextFragment.name_ToAdd);
+                        break;
+                    default:
+                        break;
+                }
+                addingNewRecord.Save();
+            }
+        });
+
     }
 
     @Override
@@ -141,22 +156,6 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
     public void onResume() {
         super.onResume();
 
-    }
-
-    public void save(View view){
-        switch (addingNewRecord.getTypeContent()){
-            case ContentView.TYPE_RECORD:
-                addingNewRecord.setParametersToAdd(addRecordFragment.field_id_ToAdd,addRecordFragment.name_ToAdd);
-                break;
-            case ContentView.TYPE_TEXT:
-                addingNewRecord.setParametersToAdd(addTextFragment.field_id_ToAdd,addTextFragment.name_ToAdd);
-                break;
-            default:
-                break;
-        }
-
-
-        addingNewRecord.Save();
     }
 
     private void goHome(boolean cancel){

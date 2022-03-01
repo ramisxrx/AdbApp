@@ -71,30 +71,11 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public void onBindViewHolder(RecordAdapter.ViewHolder holder, int position) {
         Record record = records.get(position);
 
+        holder.itemView.setSelected(position==posSelItem);
+
         switch (getItemViewType(position)){
-            case ContentView.TYPE_VIEW_0:
-                holder.nameView.setText(record.getName());
-
-                if(position==posSelItem) {
-                    holder.itemView.setSelected(true);
-                }
-                else {
-                    holder.itemView.setSelected(false);
-                }
-
-                Log.d(TAG, "onBindViewHolder: field");
-                break;
-
             case ContentView.TYPE_RECORD+ContentView.FOUND_TYPE_BIAS:
                 holder.nameView.setText(record.getName());
-
-                if(position==posSelItem) {
-                    holder.itemView.setSelected(true);
-                }
-                else {
-                    holder.itemView.setSelected(false);
-                }
-
                 Log.d(TAG, "onBindViewHolder: found_record");
                 break;
 
@@ -112,7 +93,6 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
                 break;
         }
-
 
         // обработка нажатия
         holder.itemView.setOnClickListener(new View.OnClickListener(){

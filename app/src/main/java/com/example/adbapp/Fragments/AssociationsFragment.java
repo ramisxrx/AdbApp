@@ -75,6 +75,7 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
                         parentContainer.setVisibleImageButton(false);
                         recordAdapter.setAllowShowingPopupMenu(false);
                         fab_toPreviousLevel.actionsAfterInitialization();
+                        recordAdapter.posSelItem = -1;
                         recordAdapter.notifyDataSetChanged();
                     }
                     else
@@ -92,6 +93,7 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
                 parentContainer.setVisibleImageButton(true);
                 recordAdapter.setAllowShowingPopupMenu(true);
                 fab_toPreviousLevel.actionsAfterActionsDown();
+                recordAdapter.posSelItem = -1;
                 recordAdapter.notifyDataSetChanged();
             }
 
@@ -104,6 +106,7 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
                     parentContainer.setVisibleImageButton(true);
                 recordAdapter.setAllowShowingPopupMenu(true);
                 fab_toPreviousLevel.actionsAfterActionsUp();
+                recordAdapter.posSelItem = -1;
                 recordAdapter.notifyDataSetChanged();
             }
 
@@ -115,6 +118,7 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
                     recordAdapter.setAllowShowingPopupMenu(false);
                     fab_toPreviousLevel.actionsAfterToPreviousLevel(true);
                 }
+                recordAdapter.posSelItem = associativeList.selItemCurLevel;
                 recordAdapter.notifyDataSetChanged();
                 recordList.scrollToPosition(associativeList.selItemCurLevel);
             }

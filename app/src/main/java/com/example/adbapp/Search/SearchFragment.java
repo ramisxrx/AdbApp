@@ -94,6 +94,7 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer, 
                 parentContainer = factoryParentRecord.createInitialContainer(searchList.getCurrentParentRecord());
                 parentContainer.setVisibleImageButton(false);
                 fab_toPreviousLevel.actionsAfterInitialization();
+                recordAdapter.posSelItem = -1;
                 recordAdapter.notifyDataSetChanged();
             }
 
@@ -102,6 +103,7 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer, 
                 parentContainer = factoryParentRecord.recreateContainer(searchList.getCurrentParentRecord(),parentContainer);
                 parentContainer.setVisibleImageButton(true);
                 fab_toPreviousLevel.actionsAfterActionsDown();
+                recordAdapter.posSelItem = -1;
                 recordAdapter.notifyDataSetChanged();
             }
 
@@ -113,12 +115,14 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer, 
                 else
                     parentContainer.setVisibleImageButton(true);
                 fab_toPreviousLevel.actionsAfterActionsUp();
+                recordAdapter.posSelItem = -1;
                 recordAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void ToPreviousLevel() {
                 parentContainer = factoryParentRecord.recreateContainer(searchList.getCurrentParentRecord(),parentContainer);
+                recordAdapter.posSelItem = searchList.selItemCurLevel;
                 recordAdapter.notifyDataSetChanged();
                 recordList.scrollToPosition(searchList.selItemCurLevel);
                 if(searchList.cur_level==0) {
