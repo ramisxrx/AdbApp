@@ -78,8 +78,19 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
         AddingNewRecord.NotifyViews_before notifyViews_before = new AddingNewRecord.NotifyViews_before() {
             @Override
             public void Save() {
+                String message = "";
+                switch (addingNewRecord.getTypeContent()){
+                    case ContentView.TYPE_RECORD:
+                        message = "Добавление новой записи...";
+                        break;
+                    case ContentView.TYPE_TEXT:
+                        message = "Добавление нового текста...";
+                        break;
+                    default:
+                        break;
+                }
                 Toast toast = Toast.makeText(getApplicationContext(),
-                        "Добавление новой записи...", Toast.LENGTH_SHORT);
+                        message, Toast.LENGTH_SHORT);
                 toast.show();
             }
         };

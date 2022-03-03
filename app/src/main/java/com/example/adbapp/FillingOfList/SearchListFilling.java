@@ -28,6 +28,7 @@ public class SearchListFilling extends AssociativeListFilling{
                 ClearRecords();
                 cursorInit = readRequests.getRecords_7(searchString,_type);
                 cur_level = 0;
+                parentRecordByLevel.clear();
                 parentRecordByLevel.add(cur_level,new Record(0,"РЕЗУЛЬТАТ ФИЛЬТРАЦИИ:",0,0));
                 objIdList.clear();
                 while (cursorInit.moveToNext())

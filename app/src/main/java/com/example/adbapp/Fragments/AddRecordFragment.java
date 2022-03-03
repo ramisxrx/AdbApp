@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -30,6 +32,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
 
     private static final String TAG = "**AddRecordFragment**";
 
+    FrameLayout frameLayout;
     EditText nameBox;
     RecyclerView recordList;
     Button saveButton;
@@ -37,6 +40,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
     RecordAdapter recordAdapter;
     RecordAdapter.OnRecordClickListener recordClickListener;
 
+    View viewAddidable;
 
     FoundListFilling foundList;
 
@@ -46,6 +50,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
     private FAB_ToPreviousLevel fab_toPreviousLevel;
     private OnScrollListenerRecyclerView onScrollListenerRecyclerView;
     private int _type;
+    private String stringAddContent;
 
     public AddRecordFragment(int _type){
         this._type = _type;
@@ -63,10 +68,13 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_record, container, false);
 
+        frameLayout = (FrameLayout) view.findViewById(R.id.container_addidable);
         nameBox = (EditText) view.findViewById(R.id.name);
         recordList = (RecyclerView) view.findViewById(R.id.list);
         saveButton = (Button) getActivity().findViewById(R.id.saveButton);
         buttonFAB = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
+
+        viewAddidable = ContentView.getViewEditableRecord(inflater,frameLayout,_type);
 
         fab_toPreviousLevel = new FAB_ToPreviousLevel(buttonFAB);
         fab_toPreviousLevel.setActionsOnClick(this);
@@ -108,16 +116,8 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
 
         foundList = new FoundListFilling(this.getContext(),FoundList_notifyViews_after, ContentView.TYPE_RECORD);
 
-        nameBox.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {}
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                foundList.ActionOfSearch(s);
-                name_ToAdd = nameBox.getText().toString();
-
-                saveButton.setEnabled(name_ToAdd.length()>0);
-            }
-        });
+        initContainer();
+        setListener();
 
         RecordAdapter.OnRecordLongClickListener recordLongClickListener = new RecordAdapter.OnRecordLongClickListener() {
             @Override
@@ -148,7 +148,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
                     }
 
                     if (field_id_ToAdd == 0)
-                        saveButton.setText("Добавить новый запись");
+                        saveButton.setText(stringAddContent);
                     else
                         saveButton.setText("Добавить ассоциацию");
 
@@ -210,6 +210,43 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
         touchHelper.attachToRecyclerView(recordList);
 
         return view;
+    }
+
+    private void setStringAddContent(String stringAddContent){
+        this.stringAddContent = stringAddContent;
+    }
+
+    protected void initContainer(){
+        TextView textView = viewAddidable.findViewById(R.id.time);
+        textView.setVisibility(View.GONE);
+
+        nameBox = viewAddidable.findViewById(R.id.name);
+        frameLayout.addView(viewAddidable);
+        setStringAddContent("Добавить новую запись");
+        saveButton.setText(stringAddContent);
+    }
+
+    protected void setListener(){
+        nameBox.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                foundList.ActionOfSearch(s);
+                name_ToAdd = nameBox.getText().toString();
+
+                if(name_ToAdd.length()>0)
+                    saveButton.setEnabled(true);
+                else
+                    resetSelection();
+            }
+        });
+    }
+
+    private void resetSelection(){
+        field_id_ToAdd = 0;
+        recordAdapter.posSelItem = -1;
+        saveButton.setText(stringAddContent);
+        saveButton.setEnabled(false);
     }
 
     @Override
