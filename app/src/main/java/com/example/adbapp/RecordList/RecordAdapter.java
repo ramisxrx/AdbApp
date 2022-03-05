@@ -81,12 +81,12 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
             case ContentView.TYPE_RECORD:
                 holder.nameView.setText(record.getName());
-                holder.timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));
+                holder.timeView.setText(ContentView.getDateTime(record.getTime()));
                 Log.d(TAG, "onBindViewHolder: record");
                 break;
             case ContentView.TYPE_TEXT:
                 holder.textView.setText(record.getName());
-                holder.timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));
+                holder.timeView.setText(ContentView.getDateTime(record.getTime()));
                 Log.d(TAG, "onBindViewHolder: text");
                 break;
             default:

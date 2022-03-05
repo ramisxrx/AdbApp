@@ -215,10 +215,6 @@ public class SearchFragment extends Fragment implements CallPopupMenuContainer, 
         searchList.Destroy();
     }
 
-    public void filter(int _type){
-        parentContainer = factoryParentRecord.createInitialContainer(new Record(0,"РЕЗУЛЬТАТ ФИЛЬТРАЦИИ:",0,0));
-    }
-
     @Override
     public void callPopupMenuContainer(View view) {
         new RecordPopupMenuAssociations(getContext(), view, parentContainer.getRecord(), actionsPopupMenu);

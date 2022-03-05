@@ -13,15 +13,14 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.example.adbapp.AddingRecord.AddDateFragment;
 import com.example.adbapp.Container.ContainerRecord;
 import com.example.adbapp.Container.FactoryParentRecord;
-import com.example.adbapp.FillingOfList.AddingNewRecord;
-import com.example.adbapp.Fragments.AddRecordFragment;
-import com.example.adbapp.Fragments.AddTextFragment;
+import com.example.adbapp.AddingRecord.AddingNewRecord;
+import com.example.adbapp.AddingRecord.AddRecordFragment;
+import com.example.adbapp.AddingRecord.AddTextFragment;
 import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.RecordList.Record;
-import com.example.adbapp.ToPreviousLevel.FAB_ToPreviousLevel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AddActivity extends AppCompatActivity implements CallPopupMenuContainer {
 
@@ -132,13 +131,14 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
         switch (item.getItemId()) {
             case android.R.id.home:
                 goHome(true);
                 return true;
-            case R.id.item1:
+            case R.id.record:
                 if(addingNewRecord.getTypeContent()!=ContentView.TYPE_RECORD){
-                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    //fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container_add,addRecordFragment);
                     fragmentTransaction.commit();
                     addingNewRecord.setTypeContent(ContentView.TYPE_RECORD);
@@ -146,15 +146,30 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
                     saveButton.setEnabled(false);
                 }
                 return true;
-            case R.id.item2:
+            case R.id.text:
                 if(addingNewRecord.getTypeContent()!=ContentView.TYPE_TEXT){
                     if(addTextFragment==null)
                         addTextFragment = new AddTextFragment();
-                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    //fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container_add,addTextFragment);
                     fragmentTransaction.commit();
                     addingNewRecord.setTypeContent(ContentView.TYPE_TEXT);
                     actionBar.setSubtitle("Добавление текста");
+                    saveButton.setEnabled(false);
+                    addRecordFragment.onDestroy();
+                    addRecordFragment = null;
+                }
+                return true;
+            case R.id.date:
+                if(addingNewRecord.getTypeContent()!=ContentView.TYPE_DATE){
+                    if(addTextFragment!=null)
+                        addTextFragment = null;
+                    //fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    addRecordFragment = new AddDateFragment(ContentView.TYPE_DATE);
+                    fragmentTransaction.replace(R.id.container_add,addRecordFragment);
+                    fragmentTransaction.commit();
+                    addingNewRecord.setTypeContent(ContentView.TYPE_DATE);
+                    actionBar.setSubtitle("Добавление даты");
                     saveButton.setEnabled(false);
                 }
                 return true;

@@ -1,4 +1,4 @@
-package com.example.adbapp.Fragments;
+package com.example.adbapp.AddingRecord;
 
 import android.os.Bundle;
 

@@ -1,4 +1,4 @@
-package com.example.adbapp.FillingOfList;
+package com.example.adbapp.AddingRecord;
 
 import android.content.Context;
 import android.database.Cursor;

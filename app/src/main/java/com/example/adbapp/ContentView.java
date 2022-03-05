@@ -96,6 +96,10 @@ public class ContentView{
                 view = layoutInflater.inflate(R.layout.container_edit_text, parent, false);
                 Log.d(TAG, "getViewEditableRecord: text");
                 break;
+            case TYPE_DATE:
+                view = layoutInflater.inflate(R.layout.container_edit_date, parent, false);
+                Log.d(TAG, "getViewEditableRecord: date");
+                break;
             default:
                 view = null;
                 break;
@@ -121,4 +125,14 @@ public class ContentView{
     public static String getDateTime(long time){
         return getDateTimeFormat().format(new Date(time*1000));
     }
+
+    private static SimpleDateFormat getDateFormatForDates(){
+        return new SimpleDateFormat("dd MMMM yyyy HH:mm"+ "", Locale.US);
+    }
+    /*
+    public static String getDateForDates(String date){
+        return getDateFormatForDates().format(new Date(date));
+    }
+
+     */
 }

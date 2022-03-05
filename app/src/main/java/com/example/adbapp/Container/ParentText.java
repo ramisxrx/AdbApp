@@ -28,6 +28,6 @@ public class ParentText extends ContainerRecord {
     @Override
     void fillView() {
         nameView.setText(record.getName());
-        timeView.setText(ContentView.getDateTimeFormat().format(new Date(record.getTime()*1000)));
+        timeView.setText(ContentView.getDateTime(record.getTime()));
     }
 }

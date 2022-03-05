@@ -1,4 +1,4 @@
-package com.example.adbapp.Fragments;
+package com.example.adbapp.AddingRecord;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -30,7 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AddRecordFragment extends Fragment implements ActionsClickFAB {
 
-    private static final String TAG = "**AddRecordFragment**";
+    protected static final String TAG = "**AddRecordFragment**";
 
     FrameLayout frameLayout;
     EditText nameBox;
@@ -49,8 +49,8 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
 
     private FAB_ToPreviousLevel fab_toPreviousLevel;
     private OnScrollListenerRecyclerView onScrollListenerRecyclerView;
-    private int _type;
-    private String stringAddContent;
+    private final int _type;
+    protected String stringAddContent;
 
     public AddRecordFragment(int _type){
         this._type = _type;
@@ -75,6 +75,8 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
         buttonFAB = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
 
         viewAddidable = ContentView.getViewEditableRecord(inflater,frameLayout,_type);
+        TextView textView = viewAddidable.findViewById(R.id.time);
+        textView.setVisibility(View.GONE);
 
         fab_toPreviousLevel = new FAB_ToPreviousLevel(buttonFAB);
         fab_toPreviousLevel.setActionsOnClick(this);
@@ -114,7 +116,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
             }
         };
 
-        foundList = new FoundListFilling(this.getContext(),FoundList_notifyViews_after, ContentView.TYPE_RECORD);
+        foundList = new FoundListFilling(this.getContext(),FoundList_notifyViews_after,_type);
 
         initContainer();
         setListener();
@@ -212,17 +214,14 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
         return view;
     }
 
-    private void setStringAddContent(String stringAddContent){
-        this.stringAddContent = stringAddContent;
+    protected void setStringAddContent(){
+        stringAddContent = "Добавить новую запись";
     }
 
     protected void initContainer(){
-        TextView textView = viewAddidable.findViewById(R.id.time);
-        textView.setVisibility(View.GONE);
-
         nameBox = viewAddidable.findViewById(R.id.name);
         frameLayout.addView(viewAddidable);
-        setStringAddContent("Добавить новую запись");
+        setStringAddContent();
         saveButton.setText(stringAddContent);
     }
 
@@ -250,8 +249,8 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
         foundList.Destroy();
     }
 
