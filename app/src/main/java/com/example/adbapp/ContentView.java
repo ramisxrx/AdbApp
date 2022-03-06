@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.example.adbapp.RecordList.Record;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.zip.Inflater;
@@ -127,12 +128,11 @@ public class ContentView{
     }
 
     private static SimpleDateFormat getDateFormatForDates(){
-        return new SimpleDateFormat("dd MMMM yyyy HH:mm"+ "", Locale.US);
-    }
-    /*
-    public static String getDateForDates(String date){
-        return getDateFormatForDates().format(new Date(date));
+        return new SimpleDateFormat("dd MMMM yyyy"+ "", Locale.US);
     }
 
-     */
+    public static String getDateForDates(Date date){
+        return getDateFormatForDates().format(date);
+    }
+
 }

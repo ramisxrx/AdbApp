@@ -144,13 +144,13 @@ public class FoundListFilling extends ListFilling{
         }
     }
 
-    public void ActionOfSearch(CharSequence charsequence){
+    public void ActionOfSearch(String string){
 
         workThread.bg_operations(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "ActionOfSearch: bg_operations:charsequence="+charsequence);
-                FillingFoundList(charsequence);
+                Log.d(TAG, "ActionOfSearch: bg_operations:string="+string);
+                FillingFoundList(string);
 
                 workThread.ui_operations(new Runnable() {
                     @Override
@@ -166,14 +166,14 @@ public class FoundListFilling extends ListFilling{
 
 
 
-    private void FillingFoundList(CharSequence charsequence){
+    private void FillingFoundList(String string){
         Cursor cursorSearch;
         fields.clear();
         cur_level=-1;
 
-        if(charsequence.length()>0) {
-            Log.d(TAG, "FillingFoundList: charsequence.length()="+String.valueOf(charsequence.length()));
-            cursorSearch = readRequests.getFields(charsequence.toString(),searchingType);
+        if(string.length()>0) {
+            Log.d(TAG, "FillingFoundList: string.length()="+String.valueOf(string.length()));
+            cursorSearch = readRequests.getFields(string,searchingType);
 
             while (cursorSearch.moveToNext()) {
                 Log.d(TAG, "FillingFoundList: cursorSearch.moveToNext()");

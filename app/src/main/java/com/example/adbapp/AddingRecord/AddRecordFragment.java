@@ -69,7 +69,6 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
         View view = inflater.inflate(R.layout.fragment_add_record, container, false);
 
         frameLayout = (FrameLayout) view.findViewById(R.id.container_addidable);
-        nameBox = (EditText) view.findViewById(R.id.name);
         recordList = (RecyclerView) view.findViewById(R.id.list);
         saveButton = (Button) getActivity().findViewById(R.id.saveButton);
         buttonFAB = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
@@ -77,7 +76,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
         viewAddidable = ContentView.getViewEditableRecord(inflater,frameLayout,_type);
         TextView textView = viewAddidable.findViewById(R.id.time);
         textView.setVisibility(View.GONE);
-
+        frameLayout.addView(viewAddidable);
         fab_toPreviousLevel = new FAB_ToPreviousLevel(buttonFAB);
         fab_toPreviousLevel.setActionsOnClick(this);
 
@@ -220,7 +219,6 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
 
     protected void initContainer(){
         nameBox = viewAddidable.findViewById(R.id.name);
-        frameLayout.addView(viewAddidable);
         setStringAddContent();
         saveButton.setText(stringAddContent);
     }
@@ -230,7 +228,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
             public void afterTextChanged(Editable s) {}
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                foundList.ActionOfSearch(s);
+                foundList.ActionOfSearch(s.toString());
                 name_ToAdd = nameBox.getText().toString();
 
                 if(name_ToAdd.length()>0)
