@@ -33,7 +33,10 @@ public class AddDateFragment extends AddRecordFragment{
 
     @Override
     protected void setListener() {
-        datePicker.init(2020, 02, 01, new DatePicker.OnDateChangedListener() {
+        Calendar c = Calendar.getInstance();
+        Date date = c.getTime();
+        foundList.ActionOfSearch(ContentView.getDateForDates(date));
+        datePicker.init(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
                 Calendar calendar = Calendar.getInstance();
@@ -43,7 +46,6 @@ public class AddDateFragment extends AddRecordFragment{
                 foundList.ActionOfSearch(ContentView.getDateForDates(date));
 
                 name_ToAdd = ContentView.getDateForDates(date);
-                name_ToAdd = "Здесь должно быть дата!";
             }
         });
     }

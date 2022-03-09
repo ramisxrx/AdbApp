@@ -45,7 +45,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
     FoundListFilling foundList;
 
     public String name_ToAdd;
-    public int field_id_ToAdd=0;
+    public int field_id_ToAdd;
 
     private FAB_ToPreviousLevel fab_toPreviousLevel;
     private OnScrollListenerRecyclerView onScrollListenerRecyclerView;
@@ -87,6 +87,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
             public void ActionOfSearch() {
                 fab_toPreviousLevel.actionsAfterInitialization();
                 recordAdapter.typeView = 0;
+                recordAdapter.posSelItem = -1;
                 recordAdapter.notifyDataSetChanged();
             }
 
@@ -229,6 +230,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 foundList.ActionOfSearch(s.toString());
+
                 name_ToAdd = nameBox.getText().toString();
 
                 if(name_ToAdd.length()>0)

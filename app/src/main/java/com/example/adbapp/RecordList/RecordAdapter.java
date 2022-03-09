@@ -73,15 +73,14 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
         holder.itemView.setSelected(position==posSelItem);
 
-        switch (getItemViewType(position)){
-            case ContentView.TYPE_RECORD+ContentView.FOUND_TYPE_BIAS:
-                holder.nameView.setText(record.getName());
-                Log.d(TAG, "onBindViewHolder: found_record");
-                break;
+        if(typeView==0)
+            holder.timeView.setVisibility(View.GONE);
 
+        switch (getItemViewType(position)){
             case ContentView.TYPE_RECORD:
                 holder.nameView.setText(record.getName());
-                holder.timeView.setText(ContentView.getDateTime(record.getTime()));
+                if(typeView!=0)
+                    holder.timeView.setText(ContentView.getDateTime(record.getTime()));
                 Log.d(TAG, "onBindViewHolder: record");
                 break;
             case ContentView.TYPE_TEXT:
@@ -90,8 +89,9 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                 Log.d(TAG, "onBindViewHolder: text");
                 break;
             case ContentView.TYPE_DATE:
-                holder.textView.setText(record.getName());
-                holder.timeView.setText(ContentView.getDateTime(record.getTime()));
+                holder.nameView.setText(record.getName());
+                if(typeView!=0)
+                    holder.timeView.setText(ContentView.getDateTime(record.getTime()));
                 Log.d(TAG, "onBindViewHolder: date");
                 break;
             default:
@@ -117,7 +117,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
             }
         });
 
-        if(imageButtonUsed && record.getField_type()==ContentView.TYPE_RECORD){
+        if(record.getField_type()==ContentView.TYPE_RECORD ||
+                record.getField_type()==ContentView.TYPE_DATE){
             if(allowShowingPopupMenu){
                 holder.imageButton.setVisibility(View.VISIBLE);
                 holder.imageButton.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +136,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     @Override
     public int getItemViewType(int position) {
         Log.d(TAG, "getItemViewType: ");
-        return ContentView.getListItemViewType(records.get(position),typeView);
+        //return ContentView.getListItemViewType(records.get(position),typeView);
+        return records.get(position).getField_type();
     }
 
     public void setImageButtonUsed(boolean imageButtonUsed){

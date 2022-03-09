@@ -42,6 +42,7 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
     @Override
     public void ToPreviousLevel() {
         overviewList.ToPreviousLevel();
+        overviewList.bdView();
     }
 
     public interface ActionsOfActivity{

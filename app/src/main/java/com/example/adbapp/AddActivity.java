@@ -102,11 +102,17 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
         };
         addingNewRecord = new AddingNewRecord(getApplicationContext(),object_id,parentContainer.getRecord().getRecord_id(),notifyViews_before,notifyViews_after);
         addingNewRecord.setTypeContent(ContentView.TYPE_RECORD);
-
+        addingNewRecord.setParametersToAdd(addRecordFragment.field_id_ToAdd,addRecordFragment.name_ToAdd);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(addingNewRecord.getTypeContent()==ContentView.TYPE_RECORD ||
+                    addingNewRecord.getTypeContent()==ContentView.TYPE_DATE)
+                    addingNewRecord.setParametersToAdd(addRecordFragment.field_id_ToAdd,addRecordFragment.name_ToAdd);
+                else
+                    addingNewRecord.setParametersToAdd(addTextFragment.field_id_ToAdd,addTextFragment.name_ToAdd);
+
                 addingNewRecord.Save();
             }
         });
@@ -129,23 +135,21 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
             case R.id.record:
                 if(addingNewRecord.getTypeContent()!=ContentView.TYPE_RECORD){
                     //fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    addRecordFragment = new AddRecordFragment(ContentView.TYPE_RECORD);
                     fragmentTransaction.replace(R.id.container_add,addRecordFragment);
                     fragmentTransaction.commit();
                     addingNewRecord.setTypeContent(ContentView.TYPE_RECORD);
-                    addingNewRecord.setParametersToAdd(addRecordFragment.field_id_ToAdd,addRecordFragment.name_ToAdd);
                     actionBar.setSubtitle("Добавление записи");
                     saveButton.setEnabled(false);
                 }
                 return true;
             case R.id.text:
                 if(addingNewRecord.getTypeContent()!=ContentView.TYPE_TEXT){
-                    if(addTextFragment==null)
-                        addTextFragment = new AddTextFragment();
+                    addTextFragment = new AddTextFragment();
                     //fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container_add,addTextFragment);
                     fragmentTransaction.commit();
                     addingNewRecord.setTypeContent(ContentView.TYPE_TEXT);
-                    addingNewRecord.setParametersToAdd(addTextFragment.field_id_ToAdd,addTextFragment.name_ToAdd);
                     actionBar.setSubtitle("Добавление текста");
                     saveButton.setEnabled(false);
                     addRecordFragment.onDestroy();
@@ -157,11 +161,10 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
                     if(addTextFragment!=null)
                         addTextFragment = null;
                     //fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    AddDateFragment addDateFragment = new AddDateFragment(ContentView.TYPE_DATE);
-                    fragmentTransaction.replace(R.id.container_add,addDateFragment);
+                    addRecordFragment = new AddDateFragment(ContentView.TYPE_DATE);
+                    fragmentTransaction.replace(R.id.container_add,addRecordFragment);
                     fragmentTransaction.commit();
                     addingNewRecord.setTypeContent(ContentView.TYPE_DATE);
-                    addingNewRecord.setParametersToAdd(addDateFragment.field_id_ToAdd,addDateFragment.name_ToAdd);
                     actionBar.setSubtitle("Добавление даты");
                     saveButton.setEnabled(false);
                 }

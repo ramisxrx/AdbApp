@@ -53,6 +53,10 @@ public class ContentView{
                 view = layoutInflater.inflate(R.layout.text_item, parent, false);
                 Log.d(TAG, "onCreateView: text_item");
                 break;
+            case TYPE_DATE:
+                view = layoutInflater.inflate(R.layout.date_item, parent, false);
+                Log.d(TAG, "onCreateView: date_item");
+                break;
 
             default:
                 view = null;
@@ -120,7 +124,7 @@ public class ContentView{
     }
 
     public static SimpleDateFormat getDateTimeFormat(){
-        return new SimpleDateFormat("dd-MM-yyyy HH:mm"+ "", Locale.US);
+        return new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
     }
 
     public static String getDateTime(long time){
@@ -128,7 +132,7 @@ public class ContentView{
     }
 
     private static SimpleDateFormat getDateFormatForDates(){
-        return new SimpleDateFormat("dd MMMM yyyy"+ "", Locale.US);
+        return new SimpleDateFormat("dd MMMM yyyy", new Locale("ru"));
     }
 
     public static String getDateForDates(Date date){
