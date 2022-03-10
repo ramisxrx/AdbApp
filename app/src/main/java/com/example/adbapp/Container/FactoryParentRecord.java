@@ -1,5 +1,6 @@
 package com.example.adbapp.Container;
 
+import static com.example.adbapp.ContentView.TYPE_DATE;
 import static com.example.adbapp.ContentView.TYPE_VIEW_0;
 import static com.example.adbapp.ContentView.TYPE_RECORD;
 import static com.example.adbapp.ContentView.TYPE_TEXT;
@@ -72,6 +73,10 @@ public class FactoryParentRecord {
 
             case TYPE_TEXT:
                 containerRecord = new ParentText(view, frameLayout);
+                break;
+
+            case TYPE_DATE:
+                containerRecord = new ParentRecord(view, frameLayout);
                 break;
             default:
                 containerRecord = new ParentZeroLevel(view,frameLayout);

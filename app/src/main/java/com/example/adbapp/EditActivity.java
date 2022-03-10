@@ -1,5 +1,6 @@
 package com.example.adbapp;
 
+import static com.example.adbapp.ContentView.TYPE_DATE;
 import static com.example.adbapp.ContentView.TYPE_RECORD;
 import static com.example.adbapp.ContentView.TYPE_TEXT;
 import static com.example.adbapp.ContentView.TYPE_VIEW_0;
@@ -27,8 +28,10 @@ import com.example.adbapp.EditingRecord.ActionOfDeleteCurrent;
 import com.example.adbapp.EditingRecord.ActionOfUpdate;
 import com.example.adbapp.EditingRecord.ChangingEdit;
 import com.example.adbapp.EditingRecord.Editable;
+import com.example.adbapp.EditingRecord.EditableDate;
 import com.example.adbapp.EditingRecord.EditableRecord;
 import com.example.adbapp.EditingRecord.SaveButtonEdit;
+import com.example.adbapp.EditingRecord.SaveButtonEditDate;
 import com.example.adbapp.EditingRecord.SaveButtonEditRecord;
 import com.example.adbapp.EditingRecord.SaveButtonEditText;
 import com.example.adbapp.EditingRecord.UIActionAtDeleteChain;
@@ -106,7 +109,7 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
 
         if (extras != null) {
             editable_type = extras.getInt("field_type");
-            viewEditable = ContentView.getViewEditableRecord(inflater,frameLayout,extras.getInt("field_type"));
+            viewEditable = ContentView.getViewEditableRecord(inflater,frameLayout,editable_type);
             switch (extras.getInt("field_type")) {
                 case TYPE_RECORD:
                     actionBar.setSubtitle("Редактирование записи");
@@ -117,6 +120,11 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
                     actionBar.setSubtitle("Редактирование текста");
                     editable = new EditableRecord();
                     saveButtonEdit = new SaveButtonEditText(saveButton);
+                    break;
+                case TYPE_DATE:
+                    actionBar.setSubtitle("Редактирование даты");
+                    editable = new EditableDate();
+                    saveButtonEdit = new SaveButtonEditDate(saveButton);
                     break;
                 default:
 
@@ -197,6 +205,9 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
             case TYPE_TEXT:
                 message = "Текст обновлен";
                 break;
+            case TYPE_DATE:
+                message = "Дата обновлена";
+                break;
             default:
                 message = "";
                 break;
@@ -224,6 +235,9 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
             case TYPE_TEXT:
                 message = "Текущий текст удален";
                 break;
+            case TYPE_DATE:
+                message = "Текущая дата удалена";
+                break;
             default:
                 message = "";
                 break;
@@ -250,6 +264,9 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
                 break;
             case TYPE_TEXT:
                 message = "Текущий текст и цепочка удалены";
+                break;
+            case TYPE_DATE:
+                message = "Текущая дата и цепочка удалены";
                 break;
             default:
                 message = "";

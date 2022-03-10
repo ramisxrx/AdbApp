@@ -29,9 +29,9 @@ public abstract class Editable {
     }
 
     public void FillingContainer(){
+        frameLayout.addView(view);
         findingViews();
         fillView();
-        frameLayout.addView(view);
     }
 
     public int getRecord_id(){

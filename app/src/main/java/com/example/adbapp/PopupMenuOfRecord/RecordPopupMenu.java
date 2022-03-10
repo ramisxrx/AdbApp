@@ -53,11 +53,12 @@ public class RecordPopupMenu{
     }
 
     protected void selectionInflate(){
-        if(record.getField_type() == ContentView.TYPE_RECORD)
+        if(record.getField_type() == ContentView.TYPE_RECORD ||
+           record.getField_type() == ContentView.TYPE_DATE)
             popupMenu.inflate(R.menu.popup_menu);
 
         if(record.getField_type() == ContentView.TYPE_TEXT)
-            popupMenu.inflate(R.menu.popup_menu_only_edit);
+            popupMenu.inflate(R.menu.popup_menu_add_edit);
 
         if(record.getField_type() == TYPE_VIEW_0)
             popupMenu.inflate(R.menu.popup_menu_only_add);

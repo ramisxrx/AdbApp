@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.example.adbapp.RecordList.Record;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -82,6 +83,10 @@ public class ContentView{
                 view = layoutInflater.inflate(R.layout.container_text, parent, false);
                 Log.d(TAG, "getViewParentRecord: text");
                 break;
+            case TYPE_DATE:
+                view = layoutInflater.inflate(R.layout.record_item, parent, false);
+                Log.d(TAG, "getViewParentRecord: date");
+                break;
             default:
                 view = null;
                 break;
@@ -137,6 +142,16 @@ public class ContentView{
 
     public static String getDateForDates(Date date){
         return getDateFormatForDates().format(date);
+    }
+
+    public static Date getDateForDates(String date) {
+        try {
+            return getDateFormatForDates().parse(date);
+        } catch (ParseException e){
+            e.printStackTrace();
+            Calendar c = Calendar.getInstance();
+            return c.getTime();
+        }
     }
 
 }
