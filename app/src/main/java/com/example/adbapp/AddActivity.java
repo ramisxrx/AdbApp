@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.example.adbapp.AddingRecord.AddDateFragment;
+import com.example.adbapp.AddingRecord.AddTimeFragment;
 import com.example.adbapp.Container.ContainerRecord;
 import com.example.adbapp.Container.FactoryParentRecord;
 import com.example.adbapp.AddingRecord.AddingNewRecord;
@@ -85,6 +86,12 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
                     case ContentView.TYPE_TEXT:
                         message = "Добавление нового текста...";
                         break;
+                    case ContentView.TYPE_DATE:
+                        message = "Добавление новой даты...";
+                        break;
+                    case ContentView.TYPE_TIME:
+                        message = "Добавление нового времени...";
+                        break;
                     default:
                         break;
                 }
@@ -108,7 +115,8 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
             @Override
             public void onClick(View view) {
                 if(addingNewRecord.getTypeContent()==ContentView.TYPE_RECORD ||
-                    addingNewRecord.getTypeContent()==ContentView.TYPE_DATE)
+                    addingNewRecord.getTypeContent()==ContentView.TYPE_DATE ||
+                    addingNewRecord.getTypeContent()==ContentView.TYPE_TIME)
                     addingNewRecord.setParametersToAdd(addRecordFragment.field_id_ToAdd,addRecordFragment.name_ToAdd);
                 else
                     addingNewRecord.setParametersToAdd(addTextFragment.field_id_ToAdd,addTextFragment.name_ToAdd);
@@ -152,8 +160,10 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
                     addingNewRecord.setTypeContent(ContentView.TYPE_TEXT);
                     actionBar.setSubtitle("Добавление текста");
                     saveButton.setEnabled(false);
-                    addRecordFragment.onDestroy();
-                    addRecordFragment = null;
+                    if(addRecordFragment!=null) {
+                        addRecordFragment.onDestroy();
+                        addRecordFragment = null;
+                    }
                 }
                 return true;
             case R.id.date:
@@ -166,6 +176,19 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
                     fragmentTransaction.commit();
                     addingNewRecord.setTypeContent(ContentView.TYPE_DATE);
                     actionBar.setSubtitle("Добавление даты");
+                    saveButton.setEnabled(false);
+                }
+                return true;
+            case R.id.time:
+                if(addingNewRecord.getTypeContent()!=ContentView.TYPE_TIME){
+                    if(addTextFragment!=null)
+                        addTextFragment = null;
+                    //fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    addRecordFragment = new AddTimeFragment(ContentView.TYPE_TIME);
+                    fragmentTransaction.replace(R.id.container_add,addRecordFragment);
+                    fragmentTransaction.commit();
+                    addingNewRecord.setTypeContent(ContentView.TYPE_TIME);
+                    actionBar.setSubtitle("Добавление времени");
                     saveButton.setEnabled(false);
                 }
                 return true;

@@ -1,6 +1,7 @@
 package com.example.adbapp.EditingRecord;
 
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,7 +36,6 @@ public class EditableDate extends Editable{
                 changing(ContentView.getDateForDates(date),record.getName());
             }
         });
-
     }
 
     @Override

@@ -58,6 +58,10 @@ public class ContentView{
                 view = layoutInflater.inflate(R.layout.date_item, parent, false);
                 Log.d(TAG, "onCreateView: date_item");
                 break;
+            case TYPE_TIME:
+                view = layoutInflater.inflate(R.layout.time_item, parent, false);
+                Log.d(TAG, "onCreateView: time_item");
+                break;
 
             default:
                 view = null;
@@ -84,8 +88,12 @@ public class ContentView{
                 Log.d(TAG, "getViewParentRecord: text");
                 break;
             case TYPE_DATE:
-                view = layoutInflater.inflate(R.layout.record_item, parent, false);
+                view = layoutInflater.inflate(R.layout.date_item, parent, false);
                 Log.d(TAG, "getViewParentRecord: date");
+                break;
+            case TYPE_TIME:
+                view = layoutInflater.inflate(R.layout.time_item, parent, false);
+                Log.d(TAG, "getViewParentRecord: time");
                 break;
             default:
                 view = null;
@@ -109,6 +117,10 @@ public class ContentView{
             case TYPE_DATE:
                 view = layoutInflater.inflate(R.layout.container_edit_date, parent, false);
                 Log.d(TAG, "getViewEditableRecord: date");
+                break;
+            case TYPE_TIME:
+                view = layoutInflater.inflate(R.layout.container_edit_time, parent, false);
+                Log.d(TAG, "getViewEditableRecord: time");
                 break;
             default:
                 view = null;
@@ -137,7 +149,7 @@ public class ContentView{
     }
 
     private static SimpleDateFormat getDateFormatForDates(){
-        return new SimpleDateFormat("dd MMMM yyyy", new Locale("ru"));
+        return new SimpleDateFormat("dd MMMM yyyy года", new Locale("ru"));
     }
 
     public static String getDateForDates(Date date){
@@ -152,6 +164,14 @@ public class ContentView{
             Calendar c = Calendar.getInstance();
             return c.getTime();
         }
+    }
+
+    private static SimpleDateFormat getTimeFormatForTimes(){
+        return new SimpleDateFormat("HH:mm", new Locale("ru"));
+    }
+
+    public static String getTimeForTimes(Date date){
+        return getTimeFormatForTimes().format(date);
     }
 
 }

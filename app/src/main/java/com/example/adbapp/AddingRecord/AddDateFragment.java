@@ -36,6 +36,7 @@ public class AddDateFragment extends AddRecordFragment{
         Calendar c = Calendar.getInstance();
         Date date = c.getTime();
         foundList.ActionOfSearch(ContentView.getDateForDates(date));
+        name_ToAdd = ContentView.getDateForDates(date);
         datePicker.init(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
@@ -44,7 +45,6 @@ public class AddDateFragment extends AddRecordFragment{
                 Date date = calendar.getTime();
 
                 foundList.ActionOfSearch(ContentView.getDateForDates(date));
-
                 name_ToAdd = ContentView.getDateForDates(date);
             }
         });

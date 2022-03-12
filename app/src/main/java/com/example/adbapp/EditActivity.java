@@ -58,6 +58,7 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
 
     int editable_type;
     String saveMode;
+    Record editableRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,16 +139,22 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
             goHome(true);
         }
 
-        editable.Initialization(new Record(extras.getInt("record_id"),
-                                           extras.getString("name"),
-                                           extras.getLong("time"),
-                                           extras.getInt("field_type")),
-                                viewEditable,
-                                frameLayout,
-                     this);
+        editableRecord = new Record(extras.getInt("record_id"),
+                extras.getString("name"),
+                extras.getLong("time"),
+                extras.getInt("field_type"));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        editable.Initialization(editableRecord,
+                viewEditable,
+                frameLayout,
+                this);
 
         editable.FillingContainer();
-
     }
 
     private void goHome(boolean cancel){
