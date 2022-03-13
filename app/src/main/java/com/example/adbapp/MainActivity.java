@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
     FragmentTransaction fragmentTransaction;
     FAB_ToPreviousLevel fab_toPreviousLevel;
 
-    private MenuItem menuItemSearch, menuItemRecord,menuItemText,menuItemDate,menuItemHome;
+    private MenuItem menuItemSearch, menuItemRecord,menuItemText,menuItemDate,menuItemTime,menuItemHome;
     private SearchView searchView;
     private int searchContent;
 
@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                 menuItemRecord.setVisible(true);
                 menuItemText.setVisible(true);
                 menuItemDate.setVisible(true);
+                menuItemTime.setVisible(true);
 
                 Log.d(TAG, "onMenuItemActionCollapse: ");
                 return true;
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
         menuItemRecord = menu.findItem(R.id.record);
         menuItemText = menu.findItem(R.id.text);
         menuItemDate = menu.findItem(R.id.date);
+        menuItemTime = menu.findItem(R.id.time);
 
         menuItemSearch.setVisible(false);
         return true;
@@ -162,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                 menuItemRecord.setVisible(false);
                 menuItemText.setVisible(false);
                 menuItemDate.setVisible(false);
+                menuItemTime.setVisible(false);
                 Log.d(TAG, "onOptionsItemSelected: R.id.search");
                 return true;
 
@@ -176,6 +179,10 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                 return true;
             case R.id.date:
                 searchContent = ContentView.TYPE_DATE;
+                SwitchingMode(false,true);
+                return true;
+            case R.id.time:
+                searchContent = ContentView.TYPE_TIME;
                 SwitchingMode(false,true);
                 return true;
 
@@ -238,6 +245,11 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                         menuItemSearch.setVisible(true);
                         searchView.setQueryHint("Введите дату");
                         break;
+                    case ContentView.TYPE_TIME:
+                        actionBar.setSubtitle("Выборка времени");
+                        menuItemSearch.setVisible(true);
+                        searchView.setQueryHint("Введите время");
+                        break;
                 }
 
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -249,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                     menuItemRecord.setVisible(true);
                     menuItemText.setVisible(true);
                     menuItemDate.setVisible(true);
+                    menuItemTime.setVisible(true);
                 }
                 break;
             default:
@@ -262,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                 menuItemRecord.setVisible(false);
                 menuItemText.setVisible(false);
                 menuItemDate.setVisible(false);
+                menuItemTime.setVisible(false);
                 break;
         }
 

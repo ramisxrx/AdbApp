@@ -54,7 +54,8 @@ public class RecordPopupMenu{
 
     protected void selectionInflate(){
         if(record.getField_type() == ContentView.TYPE_RECORD ||
-           record.getField_type() == ContentView.TYPE_DATE)
+           record.getField_type() == ContentView.TYPE_DATE ||
+           record.getField_type() == ContentView.TYPE_TIME)
             popupMenu.inflate(R.menu.popup_menu);
 
         if(record.getField_type() == ContentView.TYPE_TEXT)

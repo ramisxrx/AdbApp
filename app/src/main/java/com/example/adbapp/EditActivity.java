@@ -3,6 +3,7 @@ package com.example.adbapp;
 import static com.example.adbapp.ContentView.TYPE_DATE;
 import static com.example.adbapp.ContentView.TYPE_RECORD;
 import static com.example.adbapp.ContentView.TYPE_TEXT;
+import static com.example.adbapp.ContentView.TYPE_TIME;
 import static com.example.adbapp.ContentView.TYPE_VIEW_0;
 
 import androidx.appcompat.app.ActionBar;
@@ -30,10 +31,12 @@ import com.example.adbapp.EditingRecord.ChangingEdit;
 import com.example.adbapp.EditingRecord.Editable;
 import com.example.adbapp.EditingRecord.EditableDate;
 import com.example.adbapp.EditingRecord.EditableRecord;
+import com.example.adbapp.EditingRecord.EditableTime;
 import com.example.adbapp.EditingRecord.SaveButtonEdit;
 import com.example.adbapp.EditingRecord.SaveButtonEditDate;
 import com.example.adbapp.EditingRecord.SaveButtonEditRecord;
 import com.example.adbapp.EditingRecord.SaveButtonEditText;
+import com.example.adbapp.EditingRecord.SaveButtonEditTime;
 import com.example.adbapp.EditingRecord.UIActionAtDeleteChain;
 import com.example.adbapp.EditingRecord.UIActionAtDeleteCurrent;
 import com.example.adbapp.EditingRecord.UIActionAtUpdate;
@@ -127,6 +130,11 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
                     editable = new EditableDate();
                     saveButtonEdit = new SaveButtonEditDate(saveButton);
                     break;
+                case TYPE_TIME:
+                    actionBar.setSubtitle("Редактирование времени");
+                    editable = new EditableTime();
+                    saveButtonEdit = new SaveButtonEditTime(saveButton);
+                    break;
                 default:
 
                     break;
@@ -215,6 +223,9 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
             case TYPE_DATE:
                 message = "Дата обновлена";
                 break;
+            case TYPE_TIME:
+                message = "Время обновлена";
+                break;
             default:
                 message = "";
                 break;
@@ -245,6 +256,9 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
             case TYPE_DATE:
                 message = "Текущая дата удалена";
                 break;
+            case TYPE_TIME:
+                message = "Текущее время удалена";
+                break;
             default:
                 message = "";
                 break;
@@ -274,6 +288,9 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
                 break;
             case TYPE_DATE:
                 message = "Текущая дата и цепочка удалены";
+                break;
+            case TYPE_TIME:
+                message = "Текущее время и цепочка удалены";
                 break;
             default:
                 message = "";

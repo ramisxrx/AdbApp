@@ -17,7 +17,10 @@ public class RecordPopupMenuAssociations extends RecordPopupMenu{
     @Override
     protected void selectionInflate() {
         if(record.getField_type() == ContentView.TYPE_RECORD ||
-            record.getField_type() == ContentView.TYPE_DATE)
+           record.getField_type() == ContentView.TYPE_DATE ||
+           record.getField_type() == ContentView.TYPE_TIME)
+
             popupMenu.inflate(R.menu.item_popup_menu);
+
     }
 }

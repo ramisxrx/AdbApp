@@ -124,7 +124,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         });
 
         if(record.getField_type()==ContentView.TYPE_RECORD ||
-                record.getField_type()==ContentView.TYPE_DATE){
+            record.getField_type()==ContentView.TYPE_DATE ||
+            record.getField_type()==ContentView.TYPE_TIME){
             if(allowShowingPopupMenu){
                 holder.imageButton.setVisibility(View.VISIBLE);
                 holder.imageButton.setOnClickListener(new View.OnClickListener() {

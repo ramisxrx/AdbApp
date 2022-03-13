@@ -167,11 +167,21 @@ public class ContentView{
     }
 
     private static SimpleDateFormat getTimeFormatForTimes(){
-        return new SimpleDateFormat("HH:mm", new Locale("ru"));
+        return new SimpleDateFormat(" HH:mm", new Locale("ru"));
     }
 
     public static String getTimeForTimes(Date date){
         return getTimeFormatForTimes().format(date);
+    }
+
+    public static Date getTimeForTimes(String date) {
+        try {
+            return getTimeFormatForTimes().parse(date);
+        } catch (ParseException e){
+            e.printStackTrace();
+            Calendar c = Calendar.getInstance();
+            return c.getTime();
+        }
     }
 
 }

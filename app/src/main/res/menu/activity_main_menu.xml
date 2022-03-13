@@ -24,5 +24,10 @@
         android:title="Дата"
         app:showAsAction="never">
     </item>
+    <item
+        android:id="@+id/time"
+        android:title="Время"
+        app:showAsAction="never">
+    </item>
 
 </menu>
