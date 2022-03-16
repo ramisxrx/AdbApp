@@ -21,4 +21,9 @@
         android:title="Время"
         app:showAsAction="never">
     </item>
+    <item
+        android:id="@+id/photo"
+        android:title="Фото"
+        app:showAsAction="never">
+    </item>
 </menu>

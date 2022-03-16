@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.example.adbapp.AddingRecord.AddDateFragment;
+import com.example.adbapp.AddingRecord.AddPhotoFragment;
 import com.example.adbapp.AddingRecord.AddTimeFragment;
 import com.example.adbapp.Container.ContainerRecord;
 import com.example.adbapp.Container.FactoryParentRecord;
@@ -116,8 +117,11 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
             public void onClick(View view) {
                 if(addingNewRecord.getTypeContent()==ContentView.TYPE_RECORD ||
                     addingNewRecord.getTypeContent()==ContentView.TYPE_DATE ||
-                    addingNewRecord.getTypeContent()==ContentView.TYPE_TIME)
+                    addingNewRecord.getTypeContent()==ContentView.TYPE_TIME ||
+                    addingNewRecord.getTypeContent()==ContentView.TYPE_PHOTO)
+
                     addingNewRecord.setParametersToAdd(addRecordFragment.field_id_ToAdd,addRecordFragment.name_ToAdd);
+
                 else
                     addingNewRecord.setParametersToAdd(addTextFragment.field_id_ToAdd,addTextFragment.name_ToAdd);
 
@@ -189,6 +193,19 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
                     fragmentTransaction.commit();
                     addingNewRecord.setTypeContent(ContentView.TYPE_TIME);
                     actionBar.setSubtitle("Добавление времени");
+                    saveButton.setEnabled(false);
+                }
+                return true;
+            case R.id.photo:
+                if(addingNewRecord.getTypeContent()!=ContentView.TYPE_PHOTO){
+                    if(addTextFragment!=null)
+                        addTextFragment = null;
+                    //fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    addRecordFragment = new AddPhotoFragment(ContentView.TYPE_PHOTO);
+                    fragmentTransaction.replace(R.id.container_add,addRecordFragment);
+                    fragmentTransaction.commit();
+                    addingNewRecord.setTypeContent(ContentView.TYPE_PHOTO);
+                    actionBar.setSubtitle("Добавление фото");
                     saveButton.setEnabled(false);
                 }
                 return true;

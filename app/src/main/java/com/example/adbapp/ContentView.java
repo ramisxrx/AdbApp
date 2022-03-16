@@ -24,7 +24,7 @@ public class ContentView{
     public static final int TYPE_TEXT = 2; // для мнострочного текста
     public static final int TYPE_DATE = 3; // для даты
     public static final int TYPE_TIME = 4; // для времени
-    public static final int TYPE_VIEW_5 = 5; // для даты и времени
+    public static final int TYPE_PHOTO = 5; // для фото
     public static final int TYPE_VIEW_6 = 6; // для номера телефона
     public static final int TYPE_VIEW_7 = 7; // для фото
 
@@ -121,6 +121,10 @@ public class ContentView{
             case TYPE_TIME:
                 view = layoutInflater.inflate(R.layout.container_edit_time, parent, false);
                 Log.d(TAG, "getViewEditableRecord: time");
+                break;
+            case TYPE_PHOTO:
+                view = layoutInflater.inflate(R.layout.container_edit_photo, parent, false);
+                Log.d(TAG, "getViewEditableRecord: photo");
                 break;
             default:
                 view = null;
