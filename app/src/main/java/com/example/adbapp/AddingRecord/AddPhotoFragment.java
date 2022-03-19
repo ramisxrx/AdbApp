@@ -44,7 +44,7 @@ public class AddPhotoFragment extends AddRecordFragment{
         buttonGallery = viewAddidable.findViewById(R.id.buttonGallery);
         setStringAddContent();
         saveButton.setText(stringAddContent);
-        saveButton.setEnabled(true);
+        saveButton.setEnabled(false);
     }
 
     @Override
@@ -74,14 +74,15 @@ public class AddPhotoFragment extends AddRecordFragment{
                     if(result.getResultCode() == Activity.RESULT_OK && result.getData() != null){
                         Intent intent = result.getData();
                         Uri selImage = intent.getData();
-                        //imageView.setImageURI(selImage);
-
-                        String stringUri = String.valueOf(selImage);
-                        selImage = Uri.parse(stringUri);
                         imageView.setImageURI(selImage);
 
+                        foundList.ActionOfSearch(String.valueOf(selImage));
+                        name_ToAdd = String.valueOf(selImage);
+                        saveButton.setEnabled(true);
+
                         Log.d(TAG, "onActivityResult: URI="+String.valueOf(selImage));
-                    }
+                    }else
+                        saveButton.setEnabled(false);
                 }
             });
 }

@@ -1,12 +1,14 @@
 package com.example.adbapp.RecordList;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
@@ -100,6 +102,12 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                     holder.timeView.setText(ContentView.getDateTime(record.getTime()));
                 Log.d(TAG, "onBindViewHolder: time");
                 break;
+            case ContentView.TYPE_PHOTO:
+                holder.imageView.setImageURI(Uri.parse(record.getName()));
+                if(typeView!=0)
+                    //holder.timeView.setText(ContentView.getDateTime(record.getTime()));
+                Log.d(TAG, "onBindViewHolder: time");
+                break;
             default:
 
                 break;
@@ -125,7 +133,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
         if(record.getField_type()==ContentView.TYPE_RECORD ||
             record.getField_type()==ContentView.TYPE_DATE ||
-            record.getField_type()==ContentView.TYPE_TIME){
+            record.getField_type()==ContentView.TYPE_TIME ||
+            record.getField_type()==ContentView.TYPE_PHOTO){
             if(allowShowingPopupMenu){
                 holder.imageButton.setVisibility(View.VISIBLE);
                 holder.imageButton.setOnClickListener(new View.OnClickListener() {
@@ -180,12 +189,14 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         final TextView nameView, timeView;
         final TextView textView;
         final ImageButton imageButton;
+        final ImageView imageView;
         ViewHolder(View view){
             super(view);
             nameView = (TextView) view.findViewById(R.id.name);
             timeView = (TextView) view.findViewById(R.id.time);
             textView = (TextView) view.findViewById(R.id.text);
             imageButton = (ImageButton) view.findViewById(R.id.imageButton);
+            imageView = view.findViewById(R.id.imageView);
         }
     }
 

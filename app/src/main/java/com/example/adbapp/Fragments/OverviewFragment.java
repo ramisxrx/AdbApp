@@ -99,6 +99,7 @@ public class OverviewFragment extends Fragment implements CallPopupMenuContainer
         RecordAdapter.OnRecordLongClickListener recordLongClickListener = new RecordAdapter.OnRecordLongClickListener() {
             @Override
             public void onRecordLongClick(int position) {
+                recordAdapter.notifyItemChanged(position);
             }
         };
 

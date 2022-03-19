@@ -93,6 +93,9 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
                     case ContentView.TYPE_TIME:
                         message = "Добавление нового времени...";
                         break;
+                    case ContentView.TYPE_PHOTO:
+                        message = "Добавление нового фото...";
+                        break;
                     default:
                         break;
                 }

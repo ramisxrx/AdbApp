@@ -62,7 +62,10 @@ public class ContentView{
                 view = layoutInflater.inflate(R.layout.time_item, parent, false);
                 Log.d(TAG, "onCreateView: time_item");
                 break;
-
+            case TYPE_PHOTO:
+                view = layoutInflater.inflate(R.layout.photo_item, parent, false);
+                Log.d(TAG, "onCreateView: photo_item");
+                break;
             default:
                 view = null;
                 break;
@@ -94,6 +97,10 @@ public class ContentView{
             case TYPE_TIME:
                 view = layoutInflater.inflate(R.layout.time_item, parent, false);
                 Log.d(TAG, "getViewParentRecord: time");
+                break;
+            case TYPE_PHOTO:
+                view = layoutInflater.inflate(R.layout.photo_item, parent, false);
+                Log.d(TAG, "getViewParentRecord: photo");
                 break;
             default:
                 view = null;
