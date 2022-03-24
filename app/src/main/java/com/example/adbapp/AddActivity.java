@@ -24,6 +24,9 @@ import com.example.adbapp.AddingRecord.AddTextFragment;
 import com.example.adbapp.PopupMenuOfRecord.CallPopupMenuContainer;
 import com.example.adbapp.RecordList.Record;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AddActivity extends AppCompatActivity implements CallPopupMenuContainer {
 
     Button saveButton;
@@ -39,6 +42,7 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
     private static final String TAG = "**AddActivity**";
 
     AddingNewRecord addingNewRecord;
+    private List<MenuItem> list;
 
     int recordId, object_id;
 
@@ -137,6 +141,14 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.activity_add_menu, menu);
+        list = new ArrayList<>();
+        list.add(menu.findItem(R.id.photo));
+        list.add(menu.findItem(R.id.text));
+        list.add(menu.findItem(R.id.date));
+        list.add(menu.findItem(R.id.time));
+        list.get(0).setVisible(false);
+        if(parentContainer.getRecord().getRecord_id()==0)
+            setDisableMenus();
         return true;
     }
 
@@ -220,7 +232,6 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
     @Override
     public void onResume() {
         super.onResume();
-
     }
 
     private void goHome(boolean cancel){
@@ -240,5 +251,11 @@ public class AddActivity extends AppCompatActivity implements CallPopupMenuConta
     @Override
     public void callPopupMenuContainer(View view) {
 
+    }
+
+    private void setDisableMenus(){
+        for (MenuItem m:list) {
+            m.setEnabled(false);
+        }
     }
 }

@@ -18,7 +18,7 @@ public class RecordList {
 
     protected void AddNewItemInRecords(Cursor cursor){
         Record record = new Record(cursor.getInt(0),cursor.getString(2),cursor.getLong(3),cursor.getInt(4),cursor.getInt(1));
-
+        record.setParent_id(cursor.getInt(1));
         records.add(record);
     }
 
