@@ -2,6 +2,7 @@ package com.example.adbapp.ToPreviousLevel;
 
 import android.view.View;
 
+import com.example.adbapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class FAB_ToPreviousLevel {
@@ -31,11 +32,13 @@ public class FAB_ToPreviousLevel {
     }
 
     public void actionsAfterActionsDown(){
+        floatingActionButton.setImageResource(R.drawable.ic_undo_24);
         floatingActionButton.show();
         allowShow = true;
     }
 
     public void actionsAfterActionsUp(){
+        floatingActionButton.setImageResource(R.drawable.ic_redo_24);
         floatingActionButton.show();
         allowShow = true;
     }
