@@ -79,6 +79,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
         frameLayout.addView(viewAddidable);
         fab_toPreviousLevel = new FAB_ToPreviousLevel(buttonFAB);
         fab_toPreviousLevel.setActionsOnClick(this);
+        fab_toPreviousLevel.actionsAfterInitialization();
 
         onScrollListenerRecyclerView = new OnScrollListenerRecyclerView(fab_toPreviousLevel);
 
