@@ -77,6 +77,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
         if(typeView==0)
             holder.timeView.setVisibility(View.GONE);
+        else
+            holder.timeView.setVisibility(View.VISIBLE);
 
         switch (getItemViewType(position)){
             case ContentView.TYPE_RECORD:

@@ -96,6 +96,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
             public void ActionDown() {
                 fab_toPreviousLevel.actionsAfterActionsDown();
                 recordAdapter.typeView = 1;
+                recordAdapter.posSelItem = -1;
                 recordAdapter.notifyDataSetChanged();
             }
 
@@ -103,6 +104,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
             public void ActionUp() {
                 fab_toPreviousLevel.actionsAfterActionsUp();
                 recordAdapter.typeView = 1;
+                recordAdapter.posSelItem = -1;
                 recordAdapter.notifyDataSetChanged();
             }
 
@@ -112,6 +114,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
                     fab_toPreviousLevel.actionsAfterToPreviousLevel(true);
                     recordAdapter.typeView = 0;
                 }
+                recordAdapter.posSelItem = foundList.selItemCurLevel;
                 recordAdapter.notifyDataSetChanged();
                 recordList.scrollToPosition(foundList.selItemCurLevel);
             }
@@ -197,7 +200,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 if(foundList.cur_level==-1) {
-                    recordAdapter.posSelItem = viewHolder.getAdapterPosition();
+                    //recordAdapter.posSelItem = viewHolder.getAdapterPosition();
                     field_id_ToAdd = foundList.records.get(viewHolder.getAdapterPosition()).getRecord_id();
                     saveButton.setText("Добавить ассоциацию");
                 }
