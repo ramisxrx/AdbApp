@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -73,12 +74,16 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
     public void onBindViewHolder(RecordAdapter.ViewHolder holder, int position) {
         Record record = records.get(position);
 
-        holder.itemView.setSelected(position==posSelItem);
-
-        if(typeView==0)
+        if(typeView==0) {
             holder.timeView.setVisibility(View.GONE);
-        else
+            holder.checkBox.setVisibility(View.VISIBLE);
+            holder.checkBox.setChecked(position==posSelItem);
+        }
+        else {
             holder.timeView.setVisibility(View.VISIBLE);
+            holder.itemView.setSelected(position==posSelItem);
+            holder.checkBox.setVisibility(View.GONE);
+        }
 
         switch (getItemViewType(position)){
             case ContentView.TYPE_RECORD:
@@ -132,6 +137,14 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
                 return true;
             }
         });
+
+        if(typeView==0)
+            holder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onClickListener.onRecordClick(record, holder.getAdapterPosition());
+                }
+            });
 
         if(record.getField_type()==ContentView.TYPE_RECORD ||
             record.getField_type()==ContentView.TYPE_DATE ||
@@ -192,6 +205,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         final TextView textView;
         final ImageButton imageButton;
         final ImageView imageView;
+        final CheckBox checkBox;
         ViewHolder(View view){
             super(view);
             nameView = (TextView) view.findViewById(R.id.name);
@@ -199,6 +213,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
             textView = (TextView) view.findViewById(R.id.text);
             imageButton = (ImageButton) view.findViewById(R.id.imageButton);
             imageView = view.findViewById(R.id.imageView);
+            checkBox = view.findViewById(R.id.checkBox);
         }
     }
 

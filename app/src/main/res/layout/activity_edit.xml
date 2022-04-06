@@ -43,12 +43,14 @@
                     android:id="@+id/deleteCurrent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:buttonTint="@color/purple_700"
                     android:text="Удалить только текущую" />
 
                 <RadioButton
                     android:id="@+id/deleteChain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:buttonTint="@color/purple_700"
                     android:text="Удалить всю цепочку" />
 
             </RadioGroup>
