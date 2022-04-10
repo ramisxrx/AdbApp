@@ -184,6 +184,18 @@ public class ReadRequests {
         return cursor;
     }
 
+    public Cursor getRecords_8(int field_id){
+        Cursor cursor;
+
+        cursor = db.rawQuery("SELECT "
+                +COLUMN_ID+
+                " FROM "+
+                TABLE_RECORDS+
+                " WHERE "+COLUMN_FIELD_ID+"=?", new String[]{String.valueOf(field_id)});
+
+        return cursor;
+    }
+
     public Cursor getFieldId(int record_id){
         Cursor cursor;
 
@@ -205,6 +217,18 @@ public class ReadRequests {
                 TABLE_RECORDS+" INNER JOIN "+TABLE_FIELDS+" ON "+TABLE_RECORDS+"."+COLUMN_FIELD_ID+"="+TABLE_FIELDS+"."+COLUMN_ID+
                 " INNER JOIN "+TABLE_NAMES+" ON "+TABLE_FIELDS+"."+COLUMN_NAME_ID+"="+TABLE_NAMES+"."+COLUMN_ID+
                 " WHERE "+TABLE_RECORDS+"."+COLUMN_ID+"=?", new String[]{String.valueOf(record_id)});
+
+        return cursor;
+    }
+
+    public Cursor getName_id_2(int field_id){
+        Cursor cursor;
+
+        cursor = db.rawQuery("SELECT "
+                +COLUMN_NAME_ID+
+                " FROM "+
+                TABLE_FIELDS+
+                " WHERE "+COLUMN_ID+"=?", new String[]{String.valueOf(field_id)});
 
         return cursor;
     }

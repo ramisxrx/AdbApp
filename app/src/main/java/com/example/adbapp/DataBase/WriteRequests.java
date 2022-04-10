@@ -74,6 +74,14 @@ public class WriteRequests {
         db.delete(TABLE_RECORDS,COLUMN_ID+"=?", new String[]{String.valueOf(record_id)});
     }
 
+    public void DeleteField(int field_id){
+        db.delete(TABLE_FIELDS,COLUMN_ID+"=?", new String[]{String.valueOf(field_id)});
+    }
+
+    public void DeleteName(int name_id){
+        db.delete(TABLE_NAMES,COLUMN_ID+"=?", new String[]{String.valueOf(name_id)});
+    }
+
     public void Destroy(){
         db.close();
         dataBaseHelper.close();

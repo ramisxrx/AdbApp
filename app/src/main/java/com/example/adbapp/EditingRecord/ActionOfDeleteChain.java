@@ -44,12 +44,14 @@ public class ActionOfDeleteChain implements ActionOnClickSave{
 
                 ArrayList<Integer> list_2 = new ArrayList<>();
 
-                writeRequests.DeleteRecord(record.getRecord_id());
+                //writeRequests.DeleteRecord(record.getRecord_id());
+                DeleteRecord(record.getRecord_id());
 
                 Cursor cursor = readRequests.getRecord_id(record.getParent_id());
 
-                while (cursor.moveToNext())
-                    list_2.add(cursor.getInt(0));
+                //while (cursor.moveToNext())
+                //    list_2.add(cursor.getInt(0));
+                list_2.add(record.getRecord_id());
 
                 while (!list_2.isEmpty()){
                     ArrayList<Integer> list_1 = (ArrayList<Integer>) list_2.clone();
@@ -58,7 +60,10 @@ public class ActionOfDeleteChain implements ActionOnClickSave{
                         cursor = readRequests.getRecord_id(recordId);
                         while (cursor.moveToNext()) {
                             list_2.add(cursor.getInt(0));
-                            writeRequests.DeleteRecord(cursor.getInt(0));
+
+                            //writeRequests.DeleteRecord(cursor.getInt(0));
+                            DeleteRecord(cursor.getInt(0));
+
                         }
                     }
                 }
@@ -73,4 +78,24 @@ public class ActionOfDeleteChain implements ActionOnClickSave{
             }
         });
     }
+
+    private void DeleteRecord(int recordId){
+        Cursor cursor = readRequests.getFieldId(recordId);
+        cursor.moveToFirst();
+        int fieldId = cursor.getInt(0);
+
+        writeRequests.DeleteRecord(recordId);
+
+        cursor = readRequests.getRecords_8(fieldId);
+        if(!cursor.moveToFirst())
+            DeleteField(fieldId);
+    }
+
+    private void DeleteField(int fieldId){
+        Cursor cursor = readRequests.getName_id_2(fieldId);
+        cursor.moveToFirst();
+        writeRequests.DeleteField(fieldId);
+        writeRequests.DeleteName(cursor.getInt(0));
+    }
+
 }

@@ -46,7 +46,21 @@ public class ActionOfDeleteCurrent implements ActionOnClickSave{
                 while(cursor.moveToNext()){
                     writeRequests.UpdateParent_id(cursor.getInt(0),record.getParent_id());
                 }
+
+                DeleteRecord(record.getRecord_id());
+
+                /*
+                cursor = readRequests.getFieldId(record.getRecord_id());
+                cursor.moveToFirst();
+                int fieldId = cursor.getInt(0);
+
                 writeRequests.DeleteRecord(record.getRecord_id());
+
+                cursor = readRequests.getRecords_8(fieldId);
+                if(!cursor.moveToFirst())
+                    DeleteField(fieldId);
+
+                 */
 
                 workThread.ui_operations(new Runnable() {
                     @Override
@@ -56,7 +70,25 @@ public class ActionOfDeleteCurrent implements ActionOnClickSave{
                 });
             }
         });
-
-
     }
+
+    private void DeleteRecord(int recordId){
+        Cursor cursor = readRequests.getFieldId(recordId);
+        cursor.moveToFirst();
+        int fieldId = cursor.getInt(0);
+
+        writeRequests.DeleteRecord(recordId);
+
+        cursor = readRequests.getRecords_8(fieldId);
+        if(!cursor.moveToFirst())
+            DeleteField(fieldId);
+    }
+
+    private void DeleteField(int fieldId){
+        Cursor cursor = readRequests.getName_id_2(fieldId);
+        cursor.moveToFirst();
+        writeRequests.DeleteField(fieldId);
+        writeRequests.DeleteName(cursor.getInt(0));
+    }
+
 }
