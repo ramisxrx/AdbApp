@@ -1,5 +1,6 @@
 package com.example.adbapp.EditingRecord;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -12,6 +13,7 @@ public abstract class Editable {
     protected FrameLayout frameLayout;
     private ChangingEdit changingEdit;
     protected String initValue;
+    protected Context context;
 
     abstract void fillView();
 
@@ -32,6 +34,9 @@ public abstract class Editable {
         findingViews();
         fillView();
         frameLayout.addView(view);
+    }
+    public void setContext(Context context){
+        this.context = context;
     }
 
     public int getRecord_id(){

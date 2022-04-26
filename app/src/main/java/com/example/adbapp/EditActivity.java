@@ -128,6 +128,7 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
                 case TYPE_DATE:
                     actionBar.setSubtitle("Редактирование даты");
                     editable = new EditableDate();
+                    editable.setContext(EditActivity.this);
                     saveButtonEdit = new SaveButtonEditDate(saveButton);
                     break;
                 case TYPE_TIME:
