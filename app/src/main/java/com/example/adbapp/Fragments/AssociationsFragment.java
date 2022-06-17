@@ -67,7 +67,7 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
             public void ActionOfInitialization() {
                 if(associativeList.hasAssociations) {
                     Toast toast = Toast.makeText(context,
-                            "Ассоциации найдены! AssociationFragment", Toast.LENGTH_SHORT);
+                            "Ассоциации найдены!", Toast.LENGTH_SHORT);
                     toast.show();
                     if(viewCreated) {
                         Log.d(TAG, "ActionOfInitialization: viewCreated= "+String.valueOf(viewCreated));
@@ -82,7 +82,7 @@ public class AssociationsFragment extends Fragment implements CallPopupMenuConta
                         actionsOfActivity.SwitchingToAssociationsMode();
                 }else{
                     Toast toast = Toast.makeText(context,
-                            "Ассоциации НЕ найдены! AssociationFragment", Toast.LENGTH_SHORT);
+                            "Ассоциации НЕ найдены!", Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }

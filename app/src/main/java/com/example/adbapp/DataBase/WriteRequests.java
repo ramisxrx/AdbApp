@@ -52,6 +52,12 @@ public class WriteRequests {
         cv.clear();
     }
 
+    public void UpdateNameIdOfFields(int _id,int name_id){
+        cv.put(COLUMN_NAME_ID,name_id);
+        db.update(TABLE_FIELDS,cv,COLUMN_ID+"="+_id,null);
+        cv.clear();
+    }
+
     public void UpdateName(int name_id, String _name){
         cv.put(COLUMN_NAME,_name);
         db.update(TABLE_NAMES,cv,COLUMN_ID+"="+name_id,null);

@@ -122,8 +122,7 @@ public class ContentView{
                 Log.d(TAG, "getViewEditableRecord: text");
                 break;
             case TYPE_DATE:
-                //view = layoutInflater.inflate(R.layout.container_edit_date, parent, false);
-                view = layoutInflater.inflate(R.layout.container_edit_dialog, parent, false);
+                view = layoutInflater.inflate(R.layout.container_edit_date, parent, false);
                 Log.d(TAG, "getViewEditableRecord: date");
                 break;
             case TYPE_TIME:

@@ -215,9 +215,6 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container_main,overviewFragment);
                 fragmentTransaction.commit();
-                menuItemSearch.setVisible(false);
-                menuItemRecord.setVisible(true);
-                menuItemText.setVisible(true);
                 if(this.associationMode){
                     associationsFragment.onDestroy();
                     associationsFragment = null;
@@ -226,6 +223,11 @@ public class MainActivity extends AppCompatActivity implements ActionsPopupMenu,
                     searchFragment.onDestroy();
                     searchFragment = null;
                 }
+                menuItemSearch.setVisible(false);
+                menuItemRecord.setVisible(true);
+                menuItemText.setVisible(true);
+                menuItemDate.setVisible(true);
+                menuItemTime.setVisible(true);
                 break;
             case 1: // search mode
                 actionBar.setDisplayHomeAsUpEnabled(true);
