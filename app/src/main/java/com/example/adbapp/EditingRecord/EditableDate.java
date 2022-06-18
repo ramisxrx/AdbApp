@@ -16,7 +16,6 @@ import java.util.Date;
 
 public class EditableDate extends Editable{
     private TextView timeView,nameView;
-    private DatePicker datePicker;
 
     public EditableDate(){
     }

@@ -1,5 +1,7 @@
 package com.example.adbapp.EditingRecord;
 
+import android.app.TimePickerDialog;
+import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -11,8 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class EditableTime extends Editable{
-    private TextView timeView;
-    private TimePicker timePicker;
+    private TextView timeView,nameView;
 
     public EditableTime(){
     }
@@ -24,9 +25,9 @@ public class EditableTime extends Editable{
         Calendar c = Calendar.getInstance();
         c.setTime(ContentView.getTimeForTimes(record.getName()));
 
+        /*
         timePicker.setCurrentHour(c.get(c.HOUR_OF_DAY));
         timePicker.setCurrentMinute(c.get(c.MINUTE));
-
         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
             public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
@@ -38,11 +39,35 @@ public class EditableTime extends Editable{
             }
         });
 
+         */
+        nameView.setText(record.getName());
+        TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(2000,01,01,hourOfDay,minute);
+                Date date = calendar.getTime();
+                nameView.setText(ContentView.getTimeForTimes(date));
+                changing(ContentView.getTimeForTimes(date),record.getName());
+            }
+        };
+
+        nameView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new TimePickerDialog(context,
+                        timeSetListener,
+                        c.get(Calendar.HOUR_OF_DAY),
+                        c.get(Calendar.MINUTE),
+                        true).show();
+            }
+        });
+
     }
 
     @Override
     void findingViews() {
-        timePicker = view.findViewById(R.id.timePicker);
+        nameView = (TextView) view.findViewById(R.id.name);
         timeView = (TextView) view.findViewById(R.id.time);
     }
 

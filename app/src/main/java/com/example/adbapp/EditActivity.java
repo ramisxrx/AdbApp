@@ -113,7 +113,7 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
 
         if (extras != null) {
             editable_type = extras.getInt("field_type");
-            viewEditable = ContentView.getViewEditableRecord(inflater,frameLayout,editable_type);
+            viewEditable = ContentView.getViewEditableRecord(inflater,frameLayout,editable_type,false);
             switch (extras.getInt("field_type")) {
                 case TYPE_RECORD:
                     actionBar.setSubtitle("Редактирование записи");
@@ -128,7 +128,6 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
                 case TYPE_DATE:
                     actionBar.setSubtitle("Редактирование даты");
                     editable = new EditableDate();
-                    editable.setContext(EditActivity.this);
                     saveButtonEdit = new SaveButtonEditDate(saveButton);
                     break;
                 case TYPE_TIME:
@@ -147,6 +146,7 @@ public class EditActivity extends AppCompatActivity implements ChangingEdit, UIA
             toast.show();
             goHome(true);
         }
+        editable.setContext(EditActivity.this);
 
         editableRecord = new Record(extras.getInt("record_id"),
                 extras.getString("name"),

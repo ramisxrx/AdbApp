@@ -110,7 +110,7 @@ public class ContentView{
         return view;
     }
 
-    public static View getViewEditableRecord(LayoutInflater layoutInflater,ViewGroup parent, int viewType){
+    public static View getViewEditableRecord(LayoutInflater layoutInflater,ViewGroup parent, int viewType, boolean isAdd){
         View view;
         switch(viewType){
             case TYPE_RECORD:
@@ -122,11 +122,17 @@ public class ContentView{
                 Log.d(TAG, "getViewEditableRecord: text");
                 break;
             case TYPE_DATE:
-                view = layoutInflater.inflate(R.layout.container_edit_date, parent, false);
+                if(isAdd)
+                    view = layoutInflater.inflate(R.layout.container_edit_date, parent, false);
+                else
+                    view = layoutInflater.inflate(R.layout.container_edit_dialog, parent, false);
                 Log.d(TAG, "getViewEditableRecord: date");
                 break;
             case TYPE_TIME:
-                view = layoutInflater.inflate(R.layout.container_edit_time, parent, false);
+                if(isAdd)
+                    view = layoutInflater.inflate(R.layout.container_edit_time, parent, false);
+                else
+                    view = layoutInflater.inflate(R.layout.container_edit_dialog, parent, false);
                 Log.d(TAG, "getViewEditableRecord: time");
                 break;
             case TYPE_PHOTO:

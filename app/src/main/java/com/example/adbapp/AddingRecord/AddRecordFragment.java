@@ -73,7 +73,7 @@ public class AddRecordFragment extends Fragment implements ActionsClickFAB {
         saveButton = (Button) getActivity().findViewById(R.id.saveButton);
         buttonFAB = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
 
-        viewAddidable = ContentView.getViewEditableRecord(inflater,frameLayout,_type);
+        viewAddidable = ContentView.getViewEditableRecord(inflater,frameLayout,_type,true);
         TextView textView = viewAddidable.findViewById(R.id.time);
         textView.setVisibility(View.GONE);
         frameLayout.addView(viewAddidable);
