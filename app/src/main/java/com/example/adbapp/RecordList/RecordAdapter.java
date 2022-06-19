@@ -7,22 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextClock;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adbapp.ContentView;
-import com.example.adbapp.ItemTouchHelper.ItemTouchHelperAdapter;
+import com.example.adbapp.Interfaces.ItemTouchHelperAdapter;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.PopupMenuOfRecord.ItemPopupMenu;
-import com.example.adbapp.PopupMenuOfRecord.RecordPopupMenu;
 import com.example.adbapp.R;
 
-import java.util.Date;
 import java.util.List;
 
 public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder> implements ItemTouchHelperAdapter {

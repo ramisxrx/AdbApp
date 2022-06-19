@@ -1,16 +1,11 @@
 package com.example.adbapp.Container;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.adbapp.ContentView;
-import com.example.adbapp.Interfaces.JumpCommand;
 import com.example.adbapp.R;
-import com.example.adbapp.RecordList.Record;
-
-import java.util.Date;
 
 public class ParentRecord extends ContainerRecord {
     private TextView nameView,timeView;

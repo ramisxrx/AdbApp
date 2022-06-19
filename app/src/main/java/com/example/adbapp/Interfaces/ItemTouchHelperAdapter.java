@@ -1,4 +1,4 @@
-package com.example.adbapp.ItemTouchHelper;
+package com.example.adbapp.Interfaces;
 
 public interface ItemTouchHelperAdapter {
 
