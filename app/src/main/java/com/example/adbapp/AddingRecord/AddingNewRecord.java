@@ -41,9 +41,7 @@ public class AddingNewRecord {
 
         workThread = new HandlerThreadOfFilling("AddingNewRecord");
     }
-
     public void Save(){
-
         workThread.bg_operations(new Runnable() {
             @Override
             public void run() {
@@ -53,18 +51,14 @@ public class AddingNewRecord {
                         notifyViews_before.Save();
                     }
                 });
-
                 if(parent_id==0)
                     AddNewObject();
-
                 if(field_id>0) {
                     Log.d(TAG, "Save: writeRequests.AddRecord");
                     writeRequests.AddRecord(object_id, parent_id, field_id, _time);
                     successAddingNewRecord = true;
                 }
                 else{
-                    Log.d(TAG, "Save: _name.length()="+String.valueOf(_name.length())+" _name="+_name);
-
                     if(_name.length()>0){
                         DefinitionNameId();
                         DefinitionFieldId();
@@ -73,13 +67,11 @@ public class AddingNewRecord {
                     }else
                         successAddingNewRecord = false;
                 }
-
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
                 workThread.ui_operations(new Runnable() {
                     @Override
                     public void run() {
@@ -103,18 +95,6 @@ public class AddingNewRecord {
         return _type;
     }
 
-    /*
-    private void DefinitionsInit(){
-        if(parent_id>0){
-            cursor = readRequests.getObjectNameType(parent_id);
-            if(cursor.moveToFirst()) {
-                object_id = cursor.getInt(0);
-                parentName = cursor.getString(1);
-                parentType = cursor.getInt(2);
-            }
-        }
-    }
-    */
     private void AddNewObject(){
         cursor = readRequests.getObjects();
         if(cursor.moveToLast())

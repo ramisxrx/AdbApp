@@ -31,24 +31,13 @@ public class ListFilling extends RecordList{
         readRequests = new ReadRequests(context);
     }
 
-
     public void ActionDown(int position){
 
     }
-
     public void ActionUp(int position){
 
     }
-
     public void ToPreviousLevel(){
 
     }
-
-    public int get_ParentIdOfCurrentLevel(){
-
-        Log.d(TAG, "get_ParentIdOfCurrentLevel: ParentIdOfCurrentLevel="+String.valueOf(parentIdByLevels.get(cur_level)));
-
-        return parentIdByLevels.get(cur_level);
-    }
-
 }

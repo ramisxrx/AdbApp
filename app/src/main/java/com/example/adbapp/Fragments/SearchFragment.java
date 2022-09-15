@@ -1,4 +1,4 @@
-package com.example.adbapp.Search;
+package com.example.adbapp.Fragments;
 
 import android.os.Bundle;
 

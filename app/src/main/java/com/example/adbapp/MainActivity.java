@@ -23,7 +23,7 @@ import com.example.adbapp.Fragments.OverviewFragment;
 import com.example.adbapp.Interfaces.Associations_ActionsOfActivity;
 import com.example.adbapp.PopupMenuOfRecord.ActionsPopupMenu;
 import com.example.adbapp.RecordList.Record;
-import com.example.adbapp.Search.SearchFragment;
+import com.example.adbapp.Fragments.SearchFragment;
 import com.example.adbapp.ToPreviousLevel.FAB_ToPreviousLevel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
