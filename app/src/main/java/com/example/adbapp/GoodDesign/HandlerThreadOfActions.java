@@ -10,6 +10,7 @@ public class HandlerThreadOfActions extends HandlerThread {
 
     public HandlerThreadOfActions(String name) {
         super(name);
+        start();
         BG_handler = new Handler(getLooper());
         UI_handler = new Handler(Looper.getMainLooper());
     }
