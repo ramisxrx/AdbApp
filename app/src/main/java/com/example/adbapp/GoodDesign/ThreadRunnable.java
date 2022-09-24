@@ -1,26 +1,40 @@
 package com.example.adbapp.GoodDesign;
 
+import android.os.Handler;
 import android.os.HandlerThread;
 
 public abstract class ThreadRunnable implements Runnable{
-    private HandlerThreads handlerThreads;
+    private Runnable nextRunnable;
+    private Handler handler;
 
-    public ThreadRunnable(HandlerThreads handlerThreads){
-        this.handlerThreads = handlerThreads;
+    public ThreadRunnable(Handler handler){
+        this.handler = handler;
     }
 
     @Override
     public void run() {
-
+        operation();
+        goNext();
     }
 
-    abstract HandlerThreads operation();
+    abstract void operation();
 
+    public void goNext(){
+        if(nextRunnable!=null){
+            handler.post(nextRunnable);
+        }
+    }
 
-    public HandlerThreads bg_operation(){
-        handlerThreads.BG_handler.removeCallbacksAndMessages(null);
-        handlerThreads.BG_handler.post(this);
-        return handlerThreads;
+    public void start(){
+        handler.post(this);
+    }
+
+    public void setNextRunnable(Runnable nextRunnable) {
+        this.nextRunnable = nextRunnable;
+    }
+
+    public void setHandler(Handler handler){
+        this.handler = handler;
     }
 
 }
