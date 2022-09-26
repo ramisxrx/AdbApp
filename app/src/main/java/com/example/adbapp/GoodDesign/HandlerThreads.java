@@ -15,7 +15,4 @@ public class HandlerThreads extends HandlerThread {
         UI_handler = new Handler(Looper.getMainLooper());
     }
 
-    public void bg_operations(Runnable task){
-        BG_handler.post(task);
-    }
 }

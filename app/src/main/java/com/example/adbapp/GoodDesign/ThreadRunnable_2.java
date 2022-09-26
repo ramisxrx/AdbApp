@@ -1,52 +1,47 @@
 package com.example.adbapp.GoodDesign;
 
 import android.os.Handler;
-import android.os.HandlerThread;
 
 import java.util.List;
 
-public abstract class ThreadRunnable implements Runnable{
+public class ThreadRunnable_2 implements Runnable{
 
     protected static String TAG;
 
-    private ThreadRunnable nextRunnable;
-    private Handler handler;
+    private ThreadRunnable_2 nextRunnable;
+    private final Handler handler;
     private List<Action> actionList;
     private int pointerToAction;
 
-    public ThreadRunnable(Handler handler){
+    public ThreadRunnable_2(Handler handler){
         this.handler = handler;
     }
 
     @Override
     public void run() {
-        operation();
+        actionList.get(pointerToAction).doAction();
         goNext();
-
     }
 
-    public abstract void operation();
-
     public void goNext(){
-        if(nextRunnable!=null){
+        pointerToAction--;
+        if(nextRunnable!=null && pointerToAction>=0){
             nextRunnable.start();
         }
     }
 
     public void start(){
+        pointerToAction = 0;
         handler.post(this);
     }
 
-    public void setNextRunnable(ThreadRunnable nextRunnable) {
+    public void setNextRunnable(ThreadRunnable_2 nextRunnable,Action nextAction) {
         this.nextRunnable = nextRunnable;
+        nextRunnable.setAction(nextAction);
     }
 
-    private void setAction(Action action){
+    public void setAction(Action action){
         actionList.add(action);
-    }
-
-    public void setHandler(Handler handler){
-        this.handler = handler;
     }
 
 }
