@@ -16,10 +16,9 @@ import com.example.adbapp.Test.RunnableView_1;
 
 public class TestActivity extends AppCompatActivity {
 
-    HandlerThreadBG handlerThreadBG;
     Handler handlerUI;
 
-    ThreadRunnable_3 runnableUI_start_1;
+    ThreadRunnable_3 runnableUI_start_1,runnableUI_2_1;
 
     TextView textView;
     int count=1;
@@ -31,16 +30,15 @@ public class TestActivity extends AppCompatActivity {
 
         textView = (TextView) this.findViewById(R.id.textView);
 
-        count = 1;
-
-        handlerThreadBG = new HandlerThreadBG("BG_THREAD");
+        HandlerThreadBG handlerThreadBG_1 = new HandlerThreadBG("BG_THREAD_1");
+        HandlerThreadBG handlerThreadBG_2 = new HandlerThreadBG("BG_THREAD_2");
         handlerUI = new Handler(Looper.getMainLooper());
 
         Action actionBG_1 = new Action() {
             @Override
             public void doAction() {
                 try {
-                    Thread.sleep(20000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -51,7 +49,7 @@ public class TestActivity extends AppCompatActivity {
             @Override
             public void doAction() {
                 try {
-                    Thread.sleep(30000);
+                    Thread.sleep(25000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -65,10 +63,10 @@ public class TestActivity extends AppCompatActivity {
             }
         };
 
-        runnableUI_start_1 = new ThreadRunnable_3(handlerUI,null);
-        ThreadRunnable_3 runnableBG_1_1 = new ThreadRunnable_3(handlerThreadBG.handler,actionBG_1);
-        ThreadRunnable_3 runnableBG_1_2 = new ThreadRunnable_3(handlerThreadBG.handler,actionBG_2);
-        ThreadRunnable_3 runnableUI_2_1 = new ThreadRunnable_3(handlerUI,actionUI_1);
+        runnableUI_start_1 = new ThreadRunnable_3(handlerUI,actionUI_1);
+        ThreadRunnable_3 runnableBG_1_1 = new ThreadRunnable_3(handlerThreadBG_1.handler,actionBG_1);
+        ThreadRunnable_3 runnableBG_1_2 = new ThreadRunnable_3(handlerThreadBG_2.handler,actionBG_2);
+        runnableUI_2_1 = new ThreadRunnable_3(handlerUI,actionUI_1);
 
         runnableUI_start_1.setNextRunnable(runnableBG_1_1);
         runnableUI_start_1.setNextRunnable(runnableBG_1_2);
@@ -80,6 +78,6 @@ public class TestActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        runnableUI_start_1.start();
+        runnableUI_start_1.run();
     }
 }
