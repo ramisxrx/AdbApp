@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.adbapp.GoodDesign.Action;
@@ -15,6 +17,8 @@ import com.example.adbapp.Test.RunnableTest_1;
 import com.example.adbapp.Test.RunnableView_1;
 
 public class TestActivity extends AppCompatActivity {
+
+    String TAG = getClass().getCanonicalName();
 
     Handler handlerUI;
 
@@ -38,11 +42,12 @@ public class TestActivity extends AppCompatActivity {
             @Override
             public void doAction() {
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(15000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 count = 2;
+                Log.d(TAG, "doAction: count="+String.valueOf(count));
             }
         };
         Action actionBG_2 = new Action() {
@@ -54,12 +59,14 @@ public class TestActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 count = 3;
+                Log.d(TAG, "doAction: count="+String.valueOf(count));
             }
         };
         Action actionUI_1 = new Action() {
             @Override
             public void doAction() {
                 textView.setText(String.valueOf(count));
+                count = 1;
             }
         };
 
@@ -67,17 +74,23 @@ public class TestActivity extends AppCompatActivity {
         ThreadRunnable_3 runnableBG_1_1 = new ThreadRunnable_3(handlerThreadBG_1.handler,actionBG_1);
         ThreadRunnable_3 runnableBG_1_2 = new ThreadRunnable_3(handlerThreadBG_2.handler,actionBG_2);
         runnableUI_2_1 = new ThreadRunnable_3(handlerUI,actionUI_1);
+        ThreadRunnable_3 runnableUI_2_2 = new ThreadRunnable_3(handlerUI,actionUI_1);
 
         runnableUI_start_1.setNextRunnable(runnableBG_1_1);
         runnableUI_start_1.setNextRunnable(runnableBG_1_2);
         runnableBG_1_1.setNextRunnable(runnableUI_2_1);
-        runnableBG_1_2.setNextRunnable(runnableUI_2_1);
+        runnableBG_1_2.setNextRunnable(runnableUI_2_2);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        runnableUI_start_1.run();
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                runnableUI_start_1.run();
+            }
+        });
     }
 }

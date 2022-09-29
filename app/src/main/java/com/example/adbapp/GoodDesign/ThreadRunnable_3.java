@@ -26,9 +26,15 @@ public class ThreadRunnable_3 {
     }
 
     public void goNext(){
+        boolean flag=true;
         for (ThreadRunnable_3 nextRunnable:nextRunnableList) {
+            flag=false;
             nextRunnable.checkAndRun();
         }
+        if(flag){
+            setNotCompleted();
+        }
+
     }
 
     public void run(){
@@ -57,9 +63,9 @@ public class ThreadRunnable_3 {
     }
 
     private void runRaw(){
-        if(action!=null)
+        if(action!=null && !getIsCompleted())
             action.doAction();
-        isComplete = true;
+        setIsComplete(true);
         goNext();
     }
 
@@ -70,6 +76,19 @@ public class ThreadRunnable_3 {
 
     private void setPrevRunnable(ThreadRunnable_3 nextRunnable) {
         prevRunnableList.add(nextRunnable);
+    }
+
+    private void setNotCompleted(){
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                setIsComplete(false);
+                for (ThreadRunnable_3 prevRunnable:prevRunnableList) {
+                    prevRunnable.setNotCompleted();
+                }
+            }
+        };
+        handler.post(runnable);
     }
 
     private void setIsComplete(boolean val){
