@@ -14,6 +14,7 @@ public class ThreadRunnable_3 {
     private final Handler handler;
     private final Action action;
     private boolean isComplete;
+    private Runnable runnable,runnable2;
 
     public ThreadRunnable_3(Handler handler, Action action){
         this.handler = handler;
@@ -38,18 +39,18 @@ public class ThreadRunnable_3 {
     }
 
     public void run(){
-        Runnable runnable = new Runnable() {
+         runnable2 = new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG, "run: ");
                 runRaw();
             }
         };
-        handler.post(runnable);
+        handler.post(runnable2);
     }
 
     private void checkAndRun(){
-        Runnable runnable = new Runnable() {
+        runnable = new Runnable() {
             @Override
             public void run() {
                 for (ThreadRunnable_3 prevRunnable:prevRunnableList) {
@@ -67,6 +68,11 @@ public class ThreadRunnable_3 {
             action.doAction();
         setIsComplete(true);
         goNext();
+    }
+
+    public void cancelAction(){
+        handler.removeCallbacks(runnable);
+        handler.removeCallbacks(runnable2);
     }
 
     public void setNextRunnable(ThreadRunnable_3 nextRunnable) {
