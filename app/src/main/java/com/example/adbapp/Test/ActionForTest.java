@@ -17,10 +17,15 @@ public class ActionForTest implements Action {
     public void doAction() {
         Log.d(TAG, "doAction: Start Action "+String.valueOf(number));
 
-        try {
-            Thread.sleep(pause*1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        for(int i=1;i<=pause;i++){
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //Log.d(TAG, "Прошло "+String.valueOf(i)+" c "+" Action "+String.valueOf(number));
         }
 
         Log.d(TAG, "doAction: End Action "+String.valueOf(number));

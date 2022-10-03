@@ -23,7 +23,7 @@ public class TestActivity extends AppCompatActivity {
 
     Handler handlerUI;
 
-    ThreadRunnable_3 runnableUI_start,runnableUI_finish,runnable_1_1,runnable_2_1;
+    ThreadRunnable_3 runnableUI_start,runnableUI_finish,runnable_1_1,runnable_2_1,runnable_test;
 
     TextView textView,textView2;
     int count=1;
@@ -100,6 +100,10 @@ public class TestActivity extends AppCompatActivity {
 
         runnable_3_1.setNextRunnable(runnableUI_finish);
         runnable_3_2.setNextRunnable(runnableUI_finish);
+
+        runnable_test = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(2,10));
+        ThreadRunnable_3 runnable_test2 = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(3,10));
+        runnable_test.setNextRunnable(runnable_test2);
     }
 
     @Override
@@ -110,13 +114,15 @@ public class TestActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 runnableUI_start.run();
+                //runnable_test.run();
             }
         });
 
         textView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                runnable_1_1.cancelAction();
+                runnable_1_1.cancelNext();
+                //runnable_test.cancelNext();
             }
         });
 
