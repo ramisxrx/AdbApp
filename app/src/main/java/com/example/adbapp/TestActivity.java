@@ -11,11 +11,8 @@ import android.widget.TextView;
 
 import com.example.adbapp.GoodDesign.Action;
 import com.example.adbapp.GoodDesign.HandlerThreadBG;
-import com.example.adbapp.GoodDesign.ThreadRunnable;
 import com.example.adbapp.GoodDesign.ThreadRunnable_3;
 import com.example.adbapp.Test.ActionForTest;
-import com.example.adbapp.Test.RunnableTest_1;
-import com.example.adbapp.Test.RunnableView_1;
 
 public class TestActivity extends AppCompatActivity {
 
@@ -74,16 +71,16 @@ public class TestActivity extends AppCompatActivity {
             }
         };
 
-        runnableUI_start = new ThreadRunnable_3(handlerUI,new ActionForTest(1,0));
-        runnable_1_1 = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(2,10));
-        ThreadRunnable_3 runnable_1_2 = new ThreadRunnable_3(handlerThreadBG_2.handler,new ActionForTest(3,8));
-        runnable_2_1 = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(4,2));
-        ThreadRunnable_3 runnable_2_2 = new ThreadRunnable_3(handlerThreadBG_2.handler,new ActionForTest(5,1));
-        ThreadRunnable_3 runnable_2_3 = new ThreadRunnable_3(handlerThreadBG_3.handler,new ActionForTest(6,8));
-        ThreadRunnable_3 runnable_2_4 = new ThreadRunnable_3(handlerThreadBG_4.handler,new ActionForTest(7,18));
-        ThreadRunnable_3 runnable_3_1 = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(8,15));
-        ThreadRunnable_3 runnable_3_2 = new ThreadRunnable_3(handlerThreadBG_2.handler,new ActionForTest(9,4));
-        runnableUI_finish = new ThreadRunnable_3(handlerUI,new ActionForTest(10,0));
+        runnableUI_start = new ThreadRunnable_3(handlerUI,new ActionForTest(1,0), "runnableUI_start");
+        runnable_1_1 = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(2,10), "runnable_1_1");
+        ThreadRunnable_3 runnable_1_2 = new ThreadRunnable_3(handlerThreadBG_2.handler,new ActionForTest(3,8), "runnable_1_2");
+        runnable_2_1 = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(4,2), "runnable_2_1");
+        ThreadRunnable_3 runnable_2_2 = new ThreadRunnable_3(handlerThreadBG_2.handler,new ActionForTest(5,1), "runnable_2_2");
+        ThreadRunnable_3 runnable_2_3 = new ThreadRunnable_3(handlerThreadBG_3.handler,new ActionForTest(6,8), "runnable_2_3");
+        ThreadRunnable_3 runnable_2_4 = new ThreadRunnable_3(handlerThreadBG_4.handler,new ActionForTest(7,18), "runnable_2_4");
+        ThreadRunnable_3 runnable_3_1 = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(8,15), "runnable_3_1");
+        ThreadRunnable_3 runnable_3_2 = new ThreadRunnable_3(handlerThreadBG_2.handler,new ActionForTest(9,4), "runnable_3_2");
+        runnableUI_finish = new ThreadRunnable_3(handlerUI,new ActionForTest(10,0), "runnableUI_finish");
 
         runnableUI_start.setNextRunnable(runnable_1_1);
         runnableUI_start.setNextRunnable(runnable_1_2);
@@ -101,8 +98,8 @@ public class TestActivity extends AppCompatActivity {
         runnable_3_1.setNextRunnable(runnableUI_finish);
         runnable_3_2.setNextRunnable(runnableUI_finish);
 
-        runnable_test = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(2,10));
-        ThreadRunnable_3 runnable_test2 = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(3,10));
+        runnable_test = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(2,10), "runnable_test");
+        ThreadRunnable_3 runnable_test2 = new ThreadRunnable_3(handlerThreadBG_1.handler,new ActionForTest(3,10), "runnable_test2");
         runnable_test.setNextRunnable(runnable_test2);
     }
 
@@ -121,7 +118,7 @@ public class TestActivity extends AppCompatActivity {
         textView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                runnable_1_1.cancelNext();
+                runnableUI_start.cancelNext();
                 //runnable_test.cancelNext();
             }
         });

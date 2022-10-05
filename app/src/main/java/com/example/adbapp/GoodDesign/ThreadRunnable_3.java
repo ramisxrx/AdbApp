@@ -15,11 +15,12 @@ public class ThreadRunnable_3 {
     private final Action action;
     private boolean isComplete, cancelNext;
     private Runnable runnable,runnable2;
+    private final String name;
 
-    public ThreadRunnable_3(Handler handler, Action action){
+    public ThreadRunnable_3(Handler handler, Action action, String name){
         this.handler = handler;
         this.action = action;
-        TAG = getClass().getCanonicalName();
+        this.name = name;
 
         nextRunnableList = new ArrayList<>();
         prevRunnableList = new ArrayList<>();
@@ -61,7 +62,7 @@ public class ThreadRunnable_3 {
             @Override
             public void run() {
                 for (ThreadRunnable_3 prevRunnable:prevRunnableList) {
-                    if(!prevRunnable.getIsCompleted())
+                    if(!prevRunnable.isComplete)
                         return;
                 }
                 runRaw();
@@ -71,9 +72,9 @@ public class ThreadRunnable_3 {
     }
 
     private void runRaw(){
-        if(action!=null && !getIsCompleted())
+        if(action!=null && !isComplete)
             action.doAction();
-        setIsComplete(true);
+        isComplete = true;
         goNext();
     }
 
@@ -85,18 +86,13 @@ public class ThreadRunnable_3 {
     }
 
     private void cancelNextRaw(){
-        Log.d(TAG, "cancelNextRaw: ");
+        Log.d(name, "cancelNextRaw: ");
         cancelNext = true;
         if(isComplete){
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    for (ThreadRunnable_3 nextRunnable:nextRunnableList) {
-                        nextRunnable.cancelNextRaw();
-                    }
-                }
-            };
-            handler.post(runnable);
+            for (ThreadRunnable_3 nextRunnable:nextRunnableList) {
+                nextRunnable.cancelNextRaw();
+            }
+            setNotCompletedAndNotCancel();
         }
     }
 
@@ -113,7 +109,8 @@ public class ThreadRunnable_3 {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                setIsComplete(false);
+                Log.d(name, "setNotCompletedAndNotCancel: ");
+                isComplete = false;
                 cancelNext = false;
                 for (ThreadRunnable_3 prevRunnable:prevRunnableList) {
                     prevRunnable.setNotCompletedAndNotCancel();
@@ -123,11 +120,4 @@ public class ThreadRunnable_3 {
         handler.post(runnable);
     }
 
-    private void setIsComplete(boolean val){
-        isComplete = val;
-    }
-
-    private boolean getIsCompleted(){
-        return isComplete;
-    }
 }
