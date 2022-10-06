@@ -6,26 +6,22 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ThreadRunnable_3 {
+public class ThreadRunnable_4 {
 
     private static String TAG;
 
     private static final byte READY = 0;
-    private static final byte RUNNING = 1;
-    private static final byte COMPLETE = 2;
-    private static final byte CANCEL = 3;
 
     private byte state;
-    private boolean toCancel;
 
-    private final List<ThreadRunnable_3> nextRunnableList, prevRunnableList;
+    private final List<ThreadRunnable_4> nextRunnableList, prevRunnableList;
     private final Handler handler;
     private final Action action;
     private boolean isComplete, cancelNext;
     private Runnable runnable,runnable2;
     private final String name;
 
-    public ThreadRunnable_3(Handler handler, Action action, String name){
+    public ThreadRunnable_4(Handler handler, Action action, String name){
         this.handler = handler;
         this.action = action;
         this.name = name;
@@ -43,7 +39,7 @@ public class ThreadRunnable_3 {
             setNotCompletedAndNotCancel();
             return;
         }
-        for (ThreadRunnable_3 nextRunnable:nextRunnableList) {
+        for (ThreadRunnable_4 nextRunnable:nextRunnableList) {
             flag=false;
             nextRunnable.checkAndRun();
         }
@@ -54,69 +50,63 @@ public class ThreadRunnable_3 {
 
     public void run(){
         Log.d(TAG, "run(out): ");
-
+        if(runnable2!=null)
+            handler.removeCallbacks(runnable2);
          runnable2 = new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG, "run: ");
                 runRaw();
-                goNext();
             }
         };
-        if(state==READY)
-            handler.post(runnable2);
+        handler.post(runnable2);
     }
 
     private void checkAndRun(){
         runnable = new Runnable() {
             @Override
             public void run() {
-                for (ThreadRunnable_3 prevRunnable:prevRunnableList) {
-                    if(prevRunnable.state!=COMPLETE)
+                for (ThreadRunnable_4 prevRunnable:prevRunnableList) {
+                    if(!prevRunnable.isComplete)
                         return;
                 }
                 runRaw();
-                goNext();
             }
         };
         handler.post(runnable);
     }
 
     private void runRaw(){
-        state = RUNNING;
-        if(action!=null)
+        if(action!=null && !isComplete)
             action.doAction();
-        state = COMPLETE;
+        isComplete = true;
+        goNext();
     }
 
     public void cancelNext(){
         Log.d(TAG, "cancelNext:");
         //handler.removeCallbacks(runnable);
-        //handler.removeCallbacks(runnable2);
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                cancelNextRaw();
-            }
-        };
-        handler.post(runnable);
+        handler.removeCallbacks(runnable2);
+        cancelNextRaw();
     }
 
     private void cancelNextRaw(){
         Log.d(name, "cancelNextRaw: ");
-        toCancel = true;
-        for (ThreadRunnable_3 nextRunnable:nextRunnableList) {
-            if(!nextRunnable.toCancel)
+        cancelNext = true;
+        if(isComplete){
+            for (ThreadRunnable_4 nextRunnable:nextRunnableList) {
                 nextRunnable.cancelNextRaw();
+            }
+            setNotCompletedAndNotCancel();
         }
     }
 
-    public void setNextRunnable(ThreadRunnable_3 nextRunnable) {
+    public void setNextRunnable(ThreadRunnable_4 nextRunnable) {
         nextRunnableList.add(nextRunnable);
         nextRunnable.setPrevRunnable(this);
     }
 
-    private void setPrevRunnable(ThreadRunnable_3 nextRunnable) {
+    private void setPrevRunnable(ThreadRunnable_4 nextRunnable) {
         prevRunnableList.add(nextRunnable);
     }
 
@@ -127,7 +117,7 @@ public class ThreadRunnable_3 {
                 Log.d(name, "setNotCompletedAndNotCancel: ");
                 isComplete = false;
                 cancelNext = false;
-                for (ThreadRunnable_3 prevRunnable:prevRunnableList) {
+                for (ThreadRunnable_4 prevRunnable:prevRunnableList) {
                     prevRunnable.setNotCompletedAndNotCancel();
                 }
             }
