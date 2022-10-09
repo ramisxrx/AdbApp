@@ -32,39 +32,30 @@ public class ThreadRunnable_3 {
 
         nextRunnableList = new ArrayList<>();
         prevRunnableList = new ArrayList<>();
-        isComplete = false;
-        cancelNext = false;
         state = READY;
+        toCancel = false;
     }
 
     private void goNext(){
         boolean flag=true;
-        if(cancelNext){
-            setNotCompletedAndNotCancel();
-            return;
-        }
         for (ThreadRunnable_3 nextRunnable:nextRunnableList) {
             flag=false;
             nextRunnable.checkAndRun();
         }
         if(flag){
-            setNotCompletedAndNotCancel();
+            setReadyAndNotToCancel();
         }
     }
 
     public void run(){
-        Log.d(TAG, "run(out): ");
-
-         runnable2 = new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "run: ");
-                runRaw();
-                goNext();
-            }
-        };
-        if(state==READY)
-            handler.post(runnable2);
+        Log.d(TAG, "run: ");
+         runnable2 = () -> {
+             if(state==READY) {
+                 runRaw();
+                 goNext();
+             }
+         };
+         handler.post(runnable2);
     }
 
     private void checkAndRun(){
@@ -72,10 +63,13 @@ public class ThreadRunnable_3 {
             @Override
             public void run() {
                 for (ThreadRunnable_3 prevRunnable:prevRunnableList) {
-                    if(prevRunnable.state!=COMPLETE)
+                    if(!(prevRunnable.state==COMPLETE || prevRunnable.state==CANCEL))
                         return;
                 }
-                runRaw();
+                if(toCancel)
+                    state = CANCEL;
+                else
+                    runRaw();
                 goNext();
             }
         };
@@ -91,12 +85,11 @@ public class ThreadRunnable_3 {
 
     public void cancelNext(){
         Log.d(TAG, "cancelNext:");
-        //handler.removeCallbacks(runnable);
-        //handler.removeCallbacks(runnable2);
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                cancelNextRaw();
+                if(!toCancel && state!=READY)
+                    cancelNextRaw();
             }
         };
         handler.post(runnable);
@@ -120,15 +113,16 @@ public class ThreadRunnable_3 {
         prevRunnableList.add(nextRunnable);
     }
 
-    private void setNotCompletedAndNotCancel(){
+    private void setReadyAndNotToCancel(){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Log.d(name, "setNotCompletedAndNotCancel: ");
-                isComplete = false;
-                cancelNext = false;
+                Log.d(name, "setReadyAndNotToCancel: ");
+                toCancel = false;
+                state = READY;
                 for (ThreadRunnable_3 prevRunnable:prevRunnableList) {
-                    prevRunnable.setNotCompletedAndNotCancel();
+                    if(prevRunnable.state!=READY || prevRunnable.toCancel)
+                        prevRunnable.setReadyAndNotToCancel();
                 }
             }
         };
