@@ -1,52 +1,141 @@
 package com.example.adbapp.GoodDesign;
 
 import android.os.Handler;
-import android.os.HandlerThread;
+import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ThreadRunnable implements Runnable{
+public class ThreadRunnable {
 
-    protected static String TAG;
+    private static String TAG;
 
-    private ThreadRunnable nextRunnable;
-    private Handler handler;
-    private List<Action> actionList;
-    private int pointerToAction;
+    private static final byte READY = 0;
+    private static final byte RUNNING = 1;
+    private static final byte COMPLETE = 2;
+    private static final byte CANCEL = 3;
 
-    public ThreadRunnable(Handler handler){
+    private byte state;
+    private boolean toCancel;
+
+    private final List<ThreadRunnable> nextRunnableList, prevRunnableList;
+    private final List<Action> actionList;
+    private final Handler handler;
+    private Runnable runnable,runnable2;
+    private final String name;
+
+    public ThreadRunnable(Handler handler, String name){
         this.handler = handler;
+        this.name = name;
+
+        nextRunnableList = new ArrayList<>();
+        prevRunnableList = new ArrayList<>();
+        actionList = new ArrayList<>();
+        state = READY;
+        toCancel = false;
     }
 
-    @Override
-    public void run() {
-        operation();
-        goNext();
-
-    }
-
-    public abstract void operation();
-
-    public void goNext(){
-        if(nextRunnable!=null){
-            nextRunnable.start();
+    private void goNext(){
+        boolean flag=true;
+        for (ThreadRunnable nextRunnable:nextRunnableList) {
+            flag=false;
+            nextRunnable.checkAndRun();
+        }
+        if(flag){
+            setReadyAndNotToCancel();
         }
     }
 
-    public void start(){
-        handler.post(this);
+    public void run(){
+        Log.d(TAG, "run: ");
+         runnable2 = () -> {
+             if(state==READY) {
+                 runRaw();
+                 goNext();
+             }
+         };
+         handler.post(runnable2);
     }
 
-    public void setNextRunnable(ThreadRunnable nextRunnable) {
-        this.nextRunnable = nextRunnable;
+    private void checkAndRun(){
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                for (ThreadRunnable prevRunnable:prevRunnableList) {
+                    if(!(prevRunnable.state==COMPLETE || prevRunnable.state==CANCEL))
+                        return;
+                }
+                if(toCancel)
+                    state = CANCEL;
+                else
+                    runRaw();
+                goNext();
+            }
+        };
+        handler.post(runnable);
     }
 
-    private void setAction(Action action){
+    private void runRaw(){
+        state = RUNNING;
+        for (Action action:actionList) {
+            action.doAction();
+            if(toCancel){
+                state = CANCEL;
+                return;
+            }
+        }
+        state = COMPLETE;
+    }
+
+    public void cancelNext(){
+        Log.d(TAG, "cancelNext:");
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if(!toCancel && state!=READY)
+                    cancelNextRaw();
+            }
+        };
+        handler.post(runnable);
+    }
+
+    private void cancelNextRaw(){
+        Log.d(name, "cancelNextRaw: ");
+        toCancel = true;
+        for (ThreadRunnable nextRunnable:nextRunnableList) {
+            if(!nextRunnable.toCancel)
+                nextRunnable.cancelNextRaw();
+        }
+    }
+
+    private void setReadyAndNotToCancel(){
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.d(name, "setReadyAndNotToCancel: ");
+                toCancel = false;
+                state = READY;
+                for (ThreadRunnable prevRunnable:prevRunnableList) {
+                    if(prevRunnable.state!=READY || prevRunnable.toCancel)
+                        prevRunnable.setReadyAndNotToCancel();
+                }
+            }
+        };
+        handler.post(runnable);
+    }
+
+    public ThreadRunnable setActions(Action action){
         actionList.add(action);
+        return this;
     }
 
-    public void setHandler(Handler handler){
-        this.handler = handler;
+    public ThreadRunnable setNextRunnable(ThreadRunnable nextRunnable) {
+        nextRunnableList.add(nextRunnable);
+        nextRunnable.setPrevRunnable(this);
+        return this;
     }
 
+    private void setPrevRunnable(ThreadRunnable nextRunnable) {
+        prevRunnableList.add(nextRunnable);
+    }
 }

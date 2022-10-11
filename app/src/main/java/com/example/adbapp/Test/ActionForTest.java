@@ -6,16 +6,17 @@ import com.example.adbapp.GoodDesign.Action;
 
 public class ActionForTest implements Action {
     private final String TAG = getClass().getCanonicalName();
-    private final int number, pause;
+    private final int pause;
+    private final String number;
 
-    public ActionForTest(int number, int pause) {
+    public ActionForTest(String number, int pause) {
         this.number = number;
         this.pause = pause;
     }
 
     @Override
     public void doAction() {
-        Log.d(TAG, "doAction: Start Action "+String.valueOf(number));
+        Log.d(TAG, "doAction: Start Action "+number);
 
         for(int i=1;i<=pause;i++){
 
@@ -28,6 +29,6 @@ public class ActionForTest implements Action {
             //Log.d(TAG, "Прошло "+String.valueOf(i)+" c "+" Action "+String.valueOf(number));
         }
 
-        Log.d(TAG, "doAction: End Action "+String.valueOf(number));
+        Log.d(TAG, "doAction: End Action "+number);
     }
 }
