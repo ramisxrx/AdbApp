@@ -1,4 +1,4 @@
-package com.example.adbapp.GoodDesign;
+package com.example.adbapp.GoodDesign.Threads;
 
 public interface Action {
     void doAction();

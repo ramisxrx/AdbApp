@@ -1,4 +1,4 @@
-package com.example.adbapp.GoodDesign;
+package com.example.adbapp.GoodDesign.Threads;
 
 import android.os.Handler;
 import android.os.HandlerThread;

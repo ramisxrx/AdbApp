@@ -2,7 +2,7 @@ package com.example.adbapp.Test;
 
 import android.util.Log;
 
-import com.example.adbapp.GoodDesign.Action;
+import com.example.adbapp.GoodDesign.Threads.Action;
 
 public class ActionForTest implements Action {
     private final String TAG = getClass().getCanonicalName();

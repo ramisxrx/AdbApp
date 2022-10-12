@@ -1,4 +1,4 @@
-package com.example.adbapp.GoodDesign;
+package com.example.adbapp.GoodDesign.Threads;
 
 import android.os.Handler;
 import android.util.Log;
@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThreadRunnable {
-
-    private static String TAG;
 
     private static final byte READY = 0;
     private static final byte RUNNING = 1;
@@ -21,7 +19,7 @@ public class ThreadRunnable {
     private final List<ThreadRunnable> nextRunnableList, prevRunnableList;
     private final List<Action> actionList;
     private final Handler handler;
-    private Runnable runnable,runnable2;
+    private Runnable runnable;
     private final String name;
 
     public ThreadRunnable(Handler handler, String name){
@@ -47,30 +45,27 @@ public class ThreadRunnable {
     }
 
     public void run(){
-        Log.d(TAG, "run: ");
-         runnable2 = () -> {
+        Log.d(name, "run: ");
+         runnable = () -> {
              if(state==READY) {
                  runRaw();
                  goNext();
              }
          };
-         handler.post(runnable2);
+         handler.post(runnable);
     }
 
     private void checkAndRun(){
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                for (ThreadRunnable prevRunnable:prevRunnableList) {
-                    if(!(prevRunnable.state==COMPLETE || prevRunnable.state==CANCEL))
-                        return;
-                }
-                if(toCancel)
-                    state = CANCEL;
-                else
-                    runRaw();
-                goNext();
+        runnable = () -> {
+            for (ThreadRunnable prevRunnable:prevRunnableList) {
+                if(!(prevRunnable.state==COMPLETE || prevRunnable.state==CANCEL))
+                    return;
             }
+            if(toCancel)
+                state = CANCEL;
+            else
+                runRaw();
+            goNext();
         };
         handler.post(runnable);
     }
@@ -88,13 +83,10 @@ public class ThreadRunnable {
     }
 
     public void cancelNext(){
-        Log.d(TAG, "cancelNext:");
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if(!toCancel && state!=READY)
-                    cancelNextRaw();
-            }
+        Log.d(name, "cancelNext:");
+        Runnable runnable = () -> {
+            if(!toCancel && state!=READY)
+                cancelNextRaw();
         };
         handler.post(runnable);
     }
@@ -109,16 +101,13 @@ public class ThreadRunnable {
     }
 
     private void setReadyAndNotToCancel(){
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Log.d(name, "setReadyAndNotToCancel: ");
-                toCancel = false;
-                state = READY;
-                for (ThreadRunnable prevRunnable:prevRunnableList) {
-                    if(prevRunnable.state!=READY || prevRunnable.toCancel)
-                        prevRunnable.setReadyAndNotToCancel();
-                }
+        Runnable runnable = () -> {
+            Log.d(name, "setReadyAndNotToCancel: ");
+            toCancel = false;
+            state = READY;
+            for (ThreadRunnable prevRunnable:prevRunnableList) {
+                if(prevRunnable.state!=READY || prevRunnable.toCancel)
+                    prevRunnable.setReadyAndNotToCancel();
             }
         };
         handler.post(runnable);
