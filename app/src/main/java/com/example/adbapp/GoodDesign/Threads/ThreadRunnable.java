@@ -124,6 +124,10 @@ public class ThreadRunnable {
         return this;
     }
 
+    public ThreadRunnable getNextRunnable(int number){
+        return nextRunnableList.get(number);
+    }
+
     private void setPrevRunnable(ThreadRunnable nextRunnable) {
         prevRunnableList.add(nextRunnable);
     }
